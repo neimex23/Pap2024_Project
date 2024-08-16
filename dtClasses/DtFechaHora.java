@@ -21,4 +21,4 @@ public class DtFechaHora {
     public int getHora () {return this.hora;}
     public int getMinutos() {return this.minutos;}
 }
-}
+
