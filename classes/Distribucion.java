@@ -3,10 +3,16 @@ import dtClasses.DtFechaHora;
 
 public class Distribucion {
 	
-	public DtFechaHora FechaPreparacion;
-	public DtFechaHora FechaEntrega;
-	public EstadoDistribucion estado;	
+	private DtFechaHora FechaPreparacion;
+	private DtFechaHora FechaEntrega;
+	private EstadoDistribucion estado;	
 	
+    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EstadoDistribucion estado){
+        this.FechaEntrega = FechaEntrega;
+        this.FechaPreparacion = FechaPreparacion;
+        this.estado = estado;
+    }
+
 	public DtFechaHora getFechaPreparacion() {
         return FechaPreparacion;
     }

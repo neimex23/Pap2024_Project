@@ -2,8 +2,8 @@ package classes;
 
 public class Alimento extends Donacion{
 	    
-	public string descProducto;
-	public int cantElemntos;
+	private string descProducto;
+	private int cantElemntos;
 	
 	 // Getter para descProducto
     public String getDescProducto() {
@@ -23,10 +23,6 @@ public class Alimento extends Donacion{
     // Setter para cantElemntos
     public void setCantElemntos(int cantElemntos) {
         this.cantElemntos = cantElemntos;
-    }
-    
-    public Alimento() {
-        super();
     }
 
     public Alimento(int id, DateTime fechaIngresada, String descProducto, int cantElemntos) {

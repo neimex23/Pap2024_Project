@@ -2,14 +2,10 @@ package classes;
 
 public class Articulo extends Donacion {
 
-	public string direccion;
-	public DtFecha fechaNacimiento;
-	public EstadoBeneficiario estado;
-	public Barrio barrio;
-	
-	public Articulo() {
-        super();
-    }
+	private string direccion;
+	private DtFecha fechaNacimiento;
+	private EstadoBeneficiario estado;
+	private Barrio barrio;
 
     public Articulo(int id, DateTime fechaIngresada, String direccion, DtFecha fechaNacimiento, EstadoBeneficiario estado, Barrio barrio) {
         super(id, fechaIngresada);

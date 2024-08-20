@@ -2,9 +2,9 @@ package classes;
 
 public class Articulo extends Donacion {
 
-	public string descr;
-	public float peso;
-	public string dimensiones;
+	private string descr;
+	private float peso;
+	private string dimensiones;
 	
 	// Getter para descr
     public String getDescr() {
@@ -34,10 +34,6 @@ public class Articulo extends Donacion {
     // Setter para dimensiones
     public void setDimensiones(String dimensiones) {
         this.dimensiones = dimensiones;
-    }
-    
-    public Articulo() {
-        super();
     }
 
     public Articulo(int id, DateTime fechaIngresada, String descr, float peso, String dimensiones) {

@@ -2,8 +2,13 @@ package classes;
 
 public class Donacion {
 	
-	    public int id;
-	    public DateTime fechaIngresada;
+	    private int id;
+	    private DateTime fechaIngresada;
+
+		public Donacion(int id, DateTime fechaIngresada) {
+	        this.id = id;
+	        this.fechaIngresada = fechaIngresada;
+	    }
 	    
 	    public int getId() {
 	        return id;
@@ -20,15 +25,6 @@ public class Donacion {
 	    public void setFechaIngresada(DateTime fechaIngresada) {
 	        this.fechaIngresada = fechaIngresada;
 	    }
-	    
-	    public Donacion() {
-	    }
-
-	    public Donacion(int id, DateTime fechaIngresada) {
-	        this.id = id;
-	        this.fechaIngresada = fechaIngresada;
-	    }
-
 
 }
 
