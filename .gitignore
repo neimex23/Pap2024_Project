@@ -28,5 +28,9 @@ replay_pid*
 .project
 .classpath
 
+#Intelij IDE
+.idea
+.settings
+
 #Visual IDE
 /.vs/
