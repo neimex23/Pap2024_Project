@@ -5,17 +5,17 @@ import java.util.List;
 import classes.Distribucion;
 
 public class ManejadorDistribucion {
-	private static ManejadorDistribucion intancia = null;
+	private static ManejadorDistribucion instancia = null;
 	private List<Distribucion> distribuciones = new ArrayList<Distribucion>();
 	
 	private ManejadorDistribucion() {}
 	
-	static ManejadorDistribucion getIntancia() {
-		if (intancia == null) 
+	static ManejadorDistribucion getInstancia() {
+		if (instancia == null) 
 		{
-			intancia = new ManejadorDistribucion();
+			instancia = new ManejadorDistribucion();
 		}
-		return intancia;
+		return instancia;
 	}
 	
 	public void añadirDistribucion(Distribucion dist) {
