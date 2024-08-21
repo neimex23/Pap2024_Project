@@ -1,4 +1,4 @@
-package manejadores;
+package handlers;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +9,8 @@ public class ManejadorDistribucion {
 	private List<Distribucion> distribuciones = new ArrayList<Distribucion>();
 	
 	private ManejadorDistribucion() {}
-	
-	static ManejadorDistribucion getInstancia() {
+
+	public static ManejadorDistribucion getInstancia() {
 		if (instancia == null) 
 		{
 			instancia = new ManejadorDistribucion();
