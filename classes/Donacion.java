@@ -1,7 +1,7 @@
 package classes;
 import dtClasses.DtFechaHora;
 
-public class Donacion {
+public abstract class Donacion {
 	
 	    private int id;
 	    private DtFechaHora fechaIngresada;
