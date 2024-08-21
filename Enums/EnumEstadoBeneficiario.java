@@ -1,7 +1,6 @@
-package classes;
+package enums;
 
-
-public enum EstadoBeneficiatio {
+public enum EnumEstadoBeneficiario {
 	    ACTIVO, SUSPENDIDO
 	}
 	

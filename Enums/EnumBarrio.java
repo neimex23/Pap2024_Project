@@ -1,5 +1,5 @@
-package classes;	
+package enums;
 
-public enum Barrio {
+public enum EnumBarrio {
 	    CIUDADVIEJA, CORDON, PARQUERODO, CENTRO, PALERMO
 	}

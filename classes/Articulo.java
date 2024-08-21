@@ -2,9 +2,9 @@ package classes;
 
 public class Articulo extends Donacion {
 
-	private string descr;
+	private String descr;
 	private float peso;
-	private string dimensiones;
+	private String dimensiones;
 	
 	// Getter para descr
     public String getDescr() {

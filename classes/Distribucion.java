@@ -1,44 +1,45 @@
 package classes;
 import dtClasses.DtFechaHora;
+import enums.EnumEstadoDistribucion;
 
 public class Distribucion {
 	
-	private DtFechaHora FechaPreparacion;
-	private DtFechaHora FechaEntrega;
-	private EstadoDistribucion estado;	
+	private DtFechaHora fechaPreparacion;
+	private DtFechaHora fechaEntrega;
+	private EnumEstadoDistribucion estado;
 	
-    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EstadoDistribucion estado){
-        this.FechaEntrega = FechaEntrega;
-        this.FechaPreparacion = FechaPreparacion;
+    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EnumEstadoDistribucion estado){
+        this.fechaEntrega = FechaEntrega;
+        this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
     }
 
 	public DtFechaHora getFechaPreparacion() {
-        return FechaPreparacion;
+        return fechaPreparacion;
     }
 
     // Setter para FechaPreparacion
     public void setFechaPreparacion(DtFechaHora FechaPreparacion) {
-        this.FechaPreparacion = FechaPreparacion;
+        this.fechaPreparacion = FechaPreparacion;
     }
 
     // Getter para FechaEntrega
     public DtFechaHora getFechaEntrega() {
-        return FechaEntrega;
+        return fechaEntrega;
     }
 
     // Setter para FechaEntrega
     public void setFechaEntrega(DtFechaHora FechaEntrega) {
-        this.FechaEntrega = FechaEntrega;
+        this.fechaEntrega = FechaEntrega;
     }
 
     // Getter para estado
-    public EstadoDistribucion getEstado() {
+    public EnumEstadoDistribucion getEstado() {
         return estado;
     }
 
     // Setter para estado
-    public void setEstado(EstadoDistribucion estado) {
+    public void setEstado(EnumEstadoDistribucion estado) {
         this.estado = estado;
     }
 }

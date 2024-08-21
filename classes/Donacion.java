@@ -1,11 +1,12 @@
-package classes;	
+package classes;
+import dtClasses.DtFechaHora;
 
 public class Donacion {
 	
 	    private int id;
-	    private DateTime fechaIngresada;
+	    private DtFechaHora fechaIngresada;
 
-		public Donacion(int id, DateTime fechaIngresada) {
+		public Donacion(int id, DtFechaHora fechaIngresada) {
 	        this.id = id;
 	        this.fechaIngresada = fechaIngresada;
 	    }
@@ -14,7 +15,7 @@ public class Donacion {
 	        return id;
 	    }
 	
-	    public DateTime getFechaIngresada() {
+	    public DtFechaHora getFechaIngresada() {
 	        return fechaIngresada;
 	    }
 	    
@@ -22,7 +23,7 @@ public class Donacion {
 	        this.id = id;
 	    }
 	    
-	    public void setFechaIngresada(DateTime fechaIngresada) {
+	    public void setFechaIngresada(DtFechaHora fechaIngresada) {
 	        this.fechaIngresada = fechaIngresada;
 	    }
 

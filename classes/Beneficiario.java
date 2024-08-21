@@ -1,14 +1,17 @@
-package classes;	
+package classes;
+import enums.EnumBarrio;
+import enums.EnumEstadoBeneficiario;
+import dtClasses.DtFechaHora;
 
-public class Articulo extends Donacion {
+public class Beneficiario extends Usuario {
 
-	private string direccion;
-	private DtFecha fechaNacimiento;
-	private EstadoBeneficiario estado;
-	private Barrio barrio;
+	private String direccion;
+	private DtFechaHora fechaNacimiento;
+	private EnumEstadoBeneficiario estado;
+	private EnumBarrio barrio;
 
-    public Articulo(int id, DateTime fechaIngresada, String direccion, DtFecha fechaNacimiento, EstadoBeneficiario estado, Barrio barrio) {
-        super(id, fechaIngresada);
+    public Beneficiario(String nombre,String email, String direccion, DtFechaHora fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
+        super(nombre, email);
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
         this.estado = estado;
@@ -26,32 +29,32 @@ public class Articulo extends Donacion {
     }
 
     // Getter para fechaNacimiento
-    public DtFecha getFechaNacimiento() {
+    public DtFechaHora getFechaNacimiento() {
         return fechaNacimiento;
     }
 
     // Setter para fechaNacimiento
-    public void setFechaNacimiento(DtFecha fechaNacimiento) {
+    public void setFechaNacimiento(DtFechaHora fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
     // Getter para estado
-    public EstadoBeneficiario getEstado() {
+    public EnumEstadoBeneficiario getEstado() {
         return estado;
     }
 
     // Setter para estado
-    public void setEstado(EstadoBeneficiario estado) {
+    public void setEstado(EnumEstadoBeneficiario estado) {
         this.estado = estado;
     }
 
     // Getter para barrio
-    public Barrio getBarrio() {
+    public EnumBarrio getBarrio() {
         return barrio;
     }
 
     // Setter para barrio
-    public void setBarrio(Barrio barrio) {
+    public void setBarrio(EnumBarrio barrio) {
         this.barrio = barrio;
     }
     

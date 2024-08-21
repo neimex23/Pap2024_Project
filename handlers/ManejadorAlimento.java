@@ -1,16 +1,15 @@
-package manejadores;
+package handlers;
 import java.util.ArrayList;
 import java.util.List;
-
-import classes.Distribucion;
+import classes.Alimento;
 
 public class ManejadorAlimento {
 	private static ManejadorAlimento instancia = null;
 	private List<Alimento> alimentos = new ArrayList<Alimento>();
 	
 	private ManejadorAlimento() {}
-	
-	static ManejadorAlimento getInstancia() {
+
+	public static ManejadorAlimento getInstancia() {
 		if (instancia == null) 
 		{
 			instancia = new ManejadorAlimento();

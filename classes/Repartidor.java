@@ -2,7 +2,7 @@ package classes;
 
 public class Repartidor extends Usuario {
 	
-	    private string numeroLicencia;
+	    private String numeroLicencia;
 
 	    public Repartidor(String nombre, String email, String numeroLicencia) {
 	        super(nombre, email);
