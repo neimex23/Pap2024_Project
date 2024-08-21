@@ -1,13 +1,14 @@
-package classes;	
+package classes;
+import dtClasses.DtFechaHora;
 
 public class Alimento extends Donacion{
 	    
-	private string descProducto;
+	private String descProducto;
 	private int cantElemntos;
 	
 	 // Getter para descProducto
     public String getDescProducto() {
-        return descProducto;
+        return this.descProducto;
     }
 
     // Setter para descProducto
@@ -25,7 +26,7 @@ public class Alimento extends Donacion{
         this.cantElemntos = cantElemntos;
     }
 
-    public Alimento(int id, DateTime fechaIngresada, String descProducto, int cantElemntos) {
+    public Alimento(int id, DtFechaHora fechaIngresada, String descProducto, int cantElemntos) {
         super(id, fechaIngresada);
         this.descProducto = descProducto;
         this.cantElemntos = cantElemntos;

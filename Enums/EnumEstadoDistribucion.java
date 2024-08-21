@@ -1,5 +1,5 @@
-package classes;
+package enums;
 
-public enum EstadoDistribucion {
+public enum EnumEstadoDistribucion {
 	    PENDIENTE, ENCAMINO, ENTREGADO
 	}

@@ -2,8 +2,8 @@ package classes;
 
 public class Usuario {
 
-	private string nombre;
-	private string email;
+	private String nombre;
+	private String email;
 
     public Usuario(String nombre, String email) {
         this.nombre = nombre;
