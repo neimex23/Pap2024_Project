@@ -19,7 +19,7 @@ public class ManejadorUsuario {
 		return instancia;
 	}
 	
-	public void añadirUsuario(Usuario user) {
+	public void agregarUsuario(Usuario user) {
 		this.usuarios.add(user);
 	}
 	//listar los beneficiarios 
