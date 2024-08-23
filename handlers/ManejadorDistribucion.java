@@ -18,7 +18,7 @@ public class ManejadorDistribucion {
 		return instancia;
 	}
 	
-	public void añadirDistribucion(Distribucion dist) {
+	public void agregarDistribucion(Distribucion dist) {
 		this.distribuciones.add(dist);
 	}
 	

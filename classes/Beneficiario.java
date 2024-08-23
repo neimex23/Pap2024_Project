@@ -1,7 +1,8 @@
 package classes;
-import enums.EnumBarrio;
-import enums.EnumEstadoBeneficiario;
+import Enums.EnumBarrio;
+import Enums.EnumEstadoBeneficiario;
 import dtClasses.DtFechaHora;
+import dtClasses.DTBeneficiario;
 
 public class Beneficiario extends Usuario {
 
@@ -57,6 +58,9 @@ public class Beneficiario extends Usuario {
     public void setBarrio(EnumBarrio barrio) {
         this.barrio = barrio;
     }
-    
+    // Metodo para convertir Beneficiario a DTBeneficiario
+    public DTBeneficiario toDTBeneficiario() {
+        return new DTBeneficiario(this.getNombre(), this.getEmail(), this.direccion, this.fechaNacimiento, this.estado, this.barrio);
+    }
     
 	}
