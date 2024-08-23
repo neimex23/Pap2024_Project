@@ -39,6 +39,8 @@ public class Articulo extends Donacion {
 
     public Articulo(int id, DtFechaHora fechaIngresada, String descr, float peso, String dimensiones) {
         super(id, fechaIngresada);
+
+        // Inicializar las variables de la subclase
         this.descr = descr;
         this.peso = peso;
         this.dimensiones = dimensiones;
