@@ -5,6 +5,9 @@ import dtClasses.*;
 import Enums.*;
 import handlers.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
     private ManejadorDonacion manejadorDonacion;
@@ -91,7 +94,7 @@ public class Controlador implements IControlador {
 
     @Override
     public void agregarDistribucion(DTBeneficiario ben, DTDonacion Donacion) {
-        // Implementar la lógica para agregar una distribución
+        // Implementar la logica para agregar una distribuciï¿½n
     }
 
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
