@@ -22,25 +22,20 @@ public class ManejadorUsuario {
 	public void agregarUsuario(Usuario user) {
 		this.usuarios.add(user);
 	}
-	//listar los beneficiarios 
-	public List<DTBeneficiario> listarBeneficiarios() {
-	    List<DTBeneficiario> dtBeneficiarios = new ArrayList<>();
-	    for (Usuario u : usuarios) {
-	        if (u instanceof Beneficiario) {
-	            dtBeneficiarios.add(((Beneficiario) u).toDTBeneficiario());
-	        }
-	    }
-	    return dtBeneficiarios;
-	}
+	// Nueva función para obtener todos los usuarios
+    public List<Usuario> obtenerUsuarios() {
+        return new ArrayList<>(usuarios);
+    }
+	
 	//obtener DTbeneficiario  de beneficiario x email
-	public DTBeneficiario obtenerDTBeneficiario(String email) {
-	    for (Usuario u : usuarios) {
-	        if (u instanceof Beneficiario && u.getEmail().equals(email)) {
-	            return ((Beneficiario) u).toDTBeneficiario();
-	        }
-	    }
-	    return null; // Si no se encuentra el beneficiario, devuelve null.
-	}
+	//public DTBeneficiario obtenerDTBeneficiario(String email) {
+	//    for (Usuario u : usuarios) {
+	//        if (u instanceof Beneficiario && u.getEmail().equals(email)) {
+	//            return ((Beneficiario) u).toDTBeneficiario();
+	//        }
+	  //  }
+	 //   return null; // Si no se encuentra el beneficiario, devuelve null.
+	//}
 
 	public Object existeUsuario(String email) {
 		// TODO Auto-generated method stub

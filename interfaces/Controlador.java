@@ -3,12 +3,14 @@ import dtClasses.DTBeneficiario;
 import dtClasses.DtFechaHora;
 import Enums.EnumEstadoBeneficiario;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Enums.EnumBarrio;
 import Enums.EnumEstadoDistribucion;
 import handlers.ManejadorUsuario;
 import classes.Beneficiario;
+import classes.Usuario;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -40,6 +42,7 @@ public class Controlador implements IControlador {
     public void existeLicencia(String licencia) {
 
     }
+    
 
     //Operaciones de Donacion
     
@@ -60,14 +63,35 @@ public class Controlador implements IControlador {
     public void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion) {
 
     }
+    //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
+    @Override
+    public List<DTBeneficiario> ListarBeneficiario() {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        List<DTBeneficiario> beneficiarios = new ArrayList<>();
+        
+        for (Usuario usuario : usuarios) {
+            if (usuario instanceof Beneficiario) {
+                beneficiarios.add(((Beneficiario) usuario).toDTBeneficiario());
+            }
+        }
+        
+        return beneficiarios;
+    }
+    
+    // Nueva función para obtener DTBeneficiario por email
+    public DTBeneficiario obtenerDTBeneficiario(String email) {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        
+        for (Usuario usuario : usuarios) {
+            if (usuario instanceof Beneficiario && usuario.getEmail().equals(email)) {
+                return ((Beneficiario) usuario).toDTBeneficiario();
+            }
+        }
+        
+        return null; // Si no se encuentra el beneficiario, devuelve null.
+    }
 
 	
-
-
-	@Override
-	public List<DTBeneficiario> ListarBeneficiario() {
-		return manejadorUsuario.listarBeneficiarios();
-	}
 
 
 	@Override
