@@ -1,7 +1,7 @@
 package dtClasses;
 
-import Enums.EnumBarrio;
-import Enums.EnumEstadoBeneficiario;
+import Enums.*;
+
 public class DTBeneficiario {
 	private String nombre;
     private String email;

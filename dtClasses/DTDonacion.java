@@ -1,6 +1,5 @@
 package dtClasses;
 
-
 public abstract class DTDonacion {
 	private int id;
     
@@ -19,11 +18,6 @@ public abstract class DTDonacion {
 
     public DtFechaHora getFechaIngresada() {
         return fechaIngresada;
-    }
-
-    // Setters
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setFechaIngresada(DtFechaHora fechaIngresada) {

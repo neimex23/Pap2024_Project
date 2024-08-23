@@ -7,14 +7,15 @@ import handlers.*;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
+    private ManejadorDonacion manejadorDonacion;
 	public Controlador() {
         super();
         this.manejadorUsuario = ManejadorUsuario.getInstancia();
+        this.manejadorDonacion = ManejadorDonacion.getInstancia();
     }
 
 
     //Operaciones de usario
-    
 	
     @Override
 	public void altaBeneficiario(String nombre, String email, String dir, DtFechaHora fNac,
@@ -54,24 +55,45 @@ public class Controlador implements IControlador {
     }
 
     //Operaciones de Donacion
-    
 
     @Override
     public void altaDonacionAlimento(DtFechaHora FechaIng, String descripcionProducto, int cantElementos) {
         //Tener en cuenta que Id es autoincremental
+        int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
+        manejadorDonacion.agregarDonacion(new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos));
     }
 
     @Override
     public void altaDonacionArticulo(DtFechaHora FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
+        int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
+        manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt,peso, dimensiones));
+    }
+    @Override
+    public List<DTDonacion> ListarDonaciones() { //Manejar Instancia de alimentos o articulos en Main
+        List<Donacion> donaciones = manejadorDonacion.obtenerDonaciones();
+        List<DTDonacion> dTDonaciones = new ArrayList<>();
+        for (Donacion donacion : donaciones) {
+            int idDon = donacion.getId(); DtFechaHora fechaIng = donacion.getFechaIngresada();
+            if (donacion instanceof Articulo) {
+                DTArticulo artToAdd = new DTArticulo(idDon, fechaIng,((Articulo) donacion).getDescr(), ((Articulo) donacion).getPeso(), ((Articulo) donacion).getDimensiones());
+                dTDonaciones.add(artToAdd);
+            }else {
+                DTAlimento alimToAdd = new DTAlimento(idDon,fechaIng, ((Alimento)donacion).getDescProducto(), ((Alimento) donacion).getCantElemntos() );
+                dTDonaciones.add(alimToAdd);
+            }
+        }
+
+        return dTDonaciones;
     }
 
-      
+    //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion) {
-
+    public void agregarDistribucion(DTBeneficiario ben, DTDonacion Donacion) {
+        // Implementar la lógica para agregar una distribución
     }
+
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
     @Override
     public List<DTBeneficiario> ListarBeneficiario() {
@@ -100,29 +122,11 @@ public class Controlador implements IControlador {
         return null; // Si no se encuentra el beneficiario, devuelve null.
     }
 
-	
-
-
 	@Override
-	public List<DTDistribuciones> ListarDistribuciones(EnumEstadoDistribucion estado) {
+	public List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado) {
 		// falta Implementar para listar distribuciones por estado
 		return null;
 	}
-
-
-	@Override
-	public List<DTDonaciones> ListarDonaciones() {
-		
-		return null;
-	}
-
-
-	@Override
-	public void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion) {
-		// Implementar la lï¿½gica para agregar una distribuciï¿½n
-		
-	}
-
 
 }
 

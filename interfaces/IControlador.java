@@ -21,10 +21,10 @@ public interface IControlador {
     public void altaDonacionArticulo(DtFechaHora FechaIng, String descripcionArt, float peso, String dimensiones);
 
     List<DTBeneficiario> ListarBeneficiario(); //CrearDTBeneficiario
-    List<DTDistribuciones> ListarDistribuciones(EnumEstadoDistribucion estado); //Crear DTDistribuciones
-    List<DTDonaciones> ListarDonaciones(); //CrearDTDonaciones
+    List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado); //Crear DTDistribuciones
+    List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
 
-    void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion);
+    void agregarDistribucion(DTBeneficiario ben, DTDonacion Donacion);
     //Pensar ModificarDistribucion
 	
 

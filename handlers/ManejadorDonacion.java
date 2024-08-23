@@ -22,7 +22,9 @@ public class ManejadorDonacion {
 		this.donaciones.add(don);
 	}
 	
-	
+	public int obtenerUltimoID(){ return this.donaciones.size(); }
+
+	public List<Donacion> obtenerDonaciones(){ return this.donaciones; }
 	
 }
 
