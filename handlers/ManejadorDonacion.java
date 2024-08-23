@@ -18,7 +18,7 @@ public class ManejadorDonacion {
 		return instancia;
 	}
 	
-	public void añadirDonacion(Donacion don) {
+	public void agregarDonacion(Donacion don) {
 		this.donaciones.add(don);
 	}
 	
