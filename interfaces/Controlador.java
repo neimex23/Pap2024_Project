@@ -27,24 +27,31 @@ public class Controlador implements IControlador {
 	}
     @Override
     public void altaRepartidor(String nombre, String email, String numeroLicencia) {
-    	
-    }    	
+        // Se crea la instancia del nuevo usuario
+        Usuario NuevoUsuario = new Repartidor(nombre, email, numeroLicencia);
+        // Se agrega la instancia a la coleccion
+        manejadorUsuario.agregarUsuario(NuevoUsuario);
+    }
+
     @Override
     public boolean existeEmail(String email) {
-        boolean exMail = false;
-        if(manejadorUsuario.existeUsuario(email)){
-            exMail = true;
-        }
-        return exMail;
-
+        return manejadorUsuario.existeUsuario(email);
     }
 
     @Override
     public boolean existeLicencia(String licencia) {
-
-        return false;
+        return manejadorUsuario.manExisteLicencia(licencia);
     }
-    
+
+    @Override
+    public int conGetCantBeneficiarios(){
+        return manejadorUsuario.manGetCantBeneficiarios();
+    }
+
+    @Override
+    public int conGetCantRepartidores(){
+        return manejadorUsuario.manGetCantRepartidores();
+    }
 
     //Operaciones de Donacion
     
