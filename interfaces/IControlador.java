@@ -13,6 +13,9 @@ public interface IControlador {
     public void altaRepartidor(String nombre, String email, String numeroLicencia);
     public boolean existeEmail(String email);
     public boolean existeLicencia(String licencia);
+    public int conGetCantBeneficiarios();
+    public int conGetCantRepartidores();
+
 
     public void altaDonacionAlimento(DtFechaHora FechaIng, String descripcionProducto, int cantElementos);
     public void altaDonacionArticulo(DtFechaHora FechaIng, String descripcionArt, float peso, String dimensiones);
