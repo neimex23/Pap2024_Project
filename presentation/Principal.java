@@ -195,25 +195,29 @@ public class Principal {
             try {
                 // Validar el email
                 validarEmail(txtEmail.getText());
+                int cantBeneficiario = 0;
+                cantBeneficiario=icontrolador.conGetCantBeneficiarios(); // Obtengo la cantidad de Beneficiaros registrados
+                if(cantBeneficiario>=50){ // Si se alzanzo el limite de usuarios se manda mensaje de error
+                    JOptionPane.showMessageDialog(null, "Se ha alcanzado el limite de Beneficiarios", "Error", JOptionPane.INFORMATION_MESSAGE);
+                }else { // Si hay menos de 50 Beneficiaros se procede a ingresar uno nuevo
+                    if (icontrolador.existeEmail(txtEmail.getText())) { // Si existe un usuario con el mismo mail
+                        JOptionPane.showMessageDialog(null, "Ya existe un usario registrado con este mail", "Error", JOptionPane.INFORMATION_MESSAGE);
+                    } else {// Si no existe el mail, se crea el usuario
+                        // Guardar la información
+                        // Capturar la fecha de nacimiento desde los JSpinner
+                        int dia = (int) spnDia.getValue();
+                        int mes = (int) spnMes.getValue();
+                        int anio = (int) spnAno.getValue();
+                        DtFechaHora fechaNacimiento = new DtFechaHora(dia, mes, anio, 0, 0);
 
-                if(icontrolador.existeEmail(txtEmail.getText())){ // Si existe el usuario
-                    JOptionPane.showMessageDialog(null, "Ya existe un usario registrado con este mail", "Error", JOptionPane.INFORMATION_MESSAGE);
-                }
-                else {// Si no existe el mail, se crea el usuario
-                    // Guardar la información
-                    // Capturar la fecha de nacimiento desde los JSpinner
-                    int dia = (int) spnDia.getValue();
-                    int mes = (int) spnMes.getValue();
-                    int anio = (int) spnAno.getValue();
-                    DtFechaHora fechaNacimiento = new DtFechaHora(dia, mes, anio, 0, 0);
+                        // Convertir el estado y barrio seleccionados a los correspondientes Enum
+                        EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
+                        EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
 
-                    // Convertir el estado y barrio seleccionados a los correspondientes Enum
-                    EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
-                    EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
-
-                    //Crear beneficirio con los datos obtenidos
-                    icontrolador.altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
-                    JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        //Crear beneficirio con los datos obtenidos
+                        icontrolador.altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
+                        JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
                 // Esperar un poco antes de cerrar el frame para dar tiempo a mostrar el mensaje de finalización
                 Thread.sleep(500);
@@ -286,13 +290,23 @@ public class Principal {
                 // Validar el email
                 validarEmail(txtEmail.getText());
 
-                // Guardar la información
-                System.out.println("Nombre: " + txtNombre.getText());
-                System.out.println("Email: " + txtEmail.getText());
-                System.out.println("Licencia: " + txtLicencia.getText());
-
-                JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
+                int cantRepartidor = 0;
+                cantRepartidor = icontrolador.conGetCantRepartidores(); // Obtengo la cantidad de Repartidores registrados
+                if (cantRepartidor >= 5) { // Si se alzanzo el limite de usuarios se manda mensaje de error
+                    JOptionPane.showMessageDialog(null, "Se ha alcanzado el limite de Repartidores", "Error", JOptionPane.INFORMATION_MESSAGE);
+                } else {// Si hay menos de 5 Repartidores se procede a ingresar uno nuevo
+                    if (icontrolador.existeEmail(txtEmail.getText())) { // Si existe un usuario con el mismo mail
+                        JOptionPane.showMessageDialog(null, "Ya existe un usario registrado con el mail ingresado", "Error", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        if (icontrolador.existeLicencia(txtLicencia.getText())) { // Si existe un usuario con la misma Licencia
+                            JOptionPane.showMessageDialog(null, "Ya existe un usario registrado con la licencia ingresada", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            //Crear beneficirio con los datos obtenidos
+                            icontrolador.altaRepartidor(txtNombre.getText(), txtEmail.getText(), txtLicencia.getText());
+                            JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
                 // Cerrar el frame después de guardar
                 internalFrame.dispose();
             } catch (InvalidEmailException ema) {
