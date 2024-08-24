@@ -1,16 +1,9 @@
 package interfaces;
-import dtClasses.DTBeneficiario;
-import dtClasses.DtFechaHora;
-import Enums.EnumEstadoBeneficiario;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import Enums.EnumBarrio;
-import Enums.EnumEstadoDistribucion;
-import handlers.ManejadorUsuario;
-import classes.Beneficiario;
-import classes.Usuario;
+import classes.*;
+import dtClasses.*;
+import Enums.*;
+import handlers.*;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -25,8 +18,11 @@ public class Controlador implements IControlador {
 	
     @Override
 	public void altaBeneficiario(String nombre, String email, String dir, DtFechaHora fNac,
-			EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
-		// TODO Auto-generated method stub
+	    EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
+        // Se crea la instancia del nuevo usuario
+        Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
+        // Se agrega la instancia a la coleccion
+        manejadorUsuario.agregarUsuario(NuevoUsuario);
 		
 	}
     @Override
@@ -34,13 +30,19 @@ public class Controlador implements IControlador {
     	
     }    	
     @Override
-    public void existeEmail(String email) {
-        
+    public boolean existeEmail(String email) {
+        boolean exMail = false;
+        if(manejadorUsuario.existeUsuario(email)){
+            exMail = true;
+        }
+        return exMail;
+
     }
 
     @Override
-    public void existeLicencia(String licencia) {
+    public boolean existeLicencia(String licencia) {
 
+        return false;
     }
     
 
@@ -78,7 +80,7 @@ public class Controlador implements IControlador {
         return beneficiarios;
     }
     
-    // Nueva función para obtener DTBeneficiario por email
+    // Nueva funciï¿½n para obtener DTBeneficiario por email
     public DTBeneficiario obtenerDTBeneficiario(String email) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         
@@ -110,7 +112,7 @@ public class Controlador implements IControlador {
 
 	@Override
 	public void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion) {
-		// Implementar la lógica para agregar una distribución
+		// Implementar la lï¿½gica para agregar una distribuciï¿½n
 		
 	}
 
