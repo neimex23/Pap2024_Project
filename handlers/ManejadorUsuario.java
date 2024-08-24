@@ -5,6 +5,7 @@ import java.util.List;
 import classes.Usuario;
 import classes.Beneficiario;
 import dtClasses.DTBeneficiario;
+
 public class ManejadorUsuario {
 	private static ManejadorUsuario instancia = null;
 	private List<Usuario> usuarios = new ArrayList<Usuario>();
@@ -37,10 +38,17 @@ public class ManejadorUsuario {
 	 //   return null; // Si no se encuentra el beneficiario, devuelve null.
 	//}
 
-	public Object existeUsuario(String email) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean existeUsuario(String email) {
+		boolean existe = false;
+		for (Usuario users : usuarios) {
+			if (users.getEmail().equals(email)) {
+				existe = true;
+			}
+		}
+		return existe;
 	}
+
+
 
 }
 
