@@ -31,7 +31,7 @@ public class DTBeneficiario {
     public String toString() {
         return "Beneficiario: " + nombre + "\n" +
                "Email: " + email + "\n" +
-               "Dirección: " + direccion + "\n" +
+               "Direccion: " + direccion + "\n" +
                "Fecha de Nacimiento: " + fechaNacimiento + "\n" +
                "Estado: " + estado + "\n" +
                "Barrio: " + barrio;

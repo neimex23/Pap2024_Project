@@ -1,8 +1,6 @@
 package interfaces;
-
 import classes.*;
 import dtClasses.*;
-import Enums.*;
 import handlers.*;
 
 import java.util.ArrayList;
@@ -79,10 +77,12 @@ public class Controlador implements IControlador {
         for (Donacion donacion : donaciones) {
             int idDon = donacion.getId(); DtFechaHora fechaIng = donacion.getFechaIngresada();
             if (donacion instanceof Articulo) {
-                DTArticulo artToAdd = new DTArticulo(idDon, fechaIng,((Articulo) donacion).getDescr(), ((Articulo) donacion).getPeso(), ((Articulo) donacion).getDimensiones());
+                Articulo articuloCast = (Articulo) donacion;
+                DTArticulo artToAdd = new DTArticulo(idDon, fechaIng, articuloCast.getDescr(), articuloCast.getPeso(), articuloCast.getDimensiones());
                 dTDonaciones.add(artToAdd);
             }else {
-                DTAlimento alimToAdd = new DTAlimento(idDon,fechaIng, ((Alimento)donacion).getDescProducto(), ((Alimento) donacion).getCantElemntos() );
+                Alimento alimentoCast = (Alimento) donacion;
+                DTAlimento alimToAdd = new DTAlimento(idDon,fechaIng, alimentoCast.getDescProducto(), alimentoCast.getCantElemntos() );
                 dTDonaciones.add(alimToAdd);
             }
         }
@@ -94,7 +94,7 @@ public class Controlador implements IControlador {
 
     @Override
     public void agregarDistribucion(DTBeneficiario ben, DTDonacion Donacion) {
-        // Implementar la logica para agregar una distribuci�n
+        // Implementar la logica para agregar una distribucion
     }
 
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
