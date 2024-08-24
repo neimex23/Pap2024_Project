@@ -2,9 +2,7 @@ package handlers;
 import java.util.ArrayList;
 import java.util.List;
 
-import classes.Usuario;
-import classes.Beneficiario;
-import dtClasses.DTBeneficiario;
+import classes.*;
 
 public class ManejadorUsuario {
 	private static ManejadorUsuario instancia = null;
@@ -23,7 +21,7 @@ public class ManejadorUsuario {
 	public void agregarUsuario(Usuario user) {
 		this.usuarios.add(user);
 	}
-	// Nueva función para obtener todos los usuarios
+	// Nueva funciï¿½n para obtener todos los usuarios
     public List<Usuario> obtenerUsuarios() {
         return new ArrayList<>(usuarios);
     }
@@ -39,15 +37,64 @@ public class ManejadorUsuario {
 	//}
 
 	public boolean existeUsuario(String email) {
-		boolean existe = false;
-		for (Usuario users : usuarios) {
-			if (users.getEmail().equals(email)) {
-				existe = true;
+		boolean Existe = false;
+		int i = 0;
+
+		while (i < usuarios.size() && !Existe) {
+			if (usuarios.get(i).getEmail().equals(email)) {
+				Existe = true;
 			}
+			i++;
 		}
-		return existe;
+
+		return Existe;
 	}
 
+	public boolean manExisteLicencia(String licencia) {
+		boolean Existe = false;
+		int i = 0;
+
+		while (i < usuarios.size() && !Existe) {
+			Usuario user = usuarios.get(i);
+
+			// Verificamos si el usuario es una instancia de Repartidor
+			if (user instanceof Repartidor) {
+				// Convertimos el Usuario a Repartidor para acceder a su licencia
+				Repartidor repartidor = (Repartidor) user;
+				// Comparamos la licencia
+				if (repartidor.getNumeroLicencia().equals(licencia)) {
+					Existe = true; // Licencia encontrada
+				}
+			}
+			i++;
+		}
+
+		return Existe; // Devuelve si se encontrÃ³ la licencia o no
+	}
+
+	public int manGetCantBeneficiarios() {
+		int cant = 0;
+		for (Usuario user : usuarios) {
+			// Verificamos si el usuario es una instancia de Beneficiario
+			if (user instanceof Beneficiario) {
+				// Si el Usuario es de tipo Beneficiario lo contamos
+				cant ++;
+			}
+		}
+		return cant;
+	}
+
+	public int manGetCantRepartidores() {
+		int cant = 0;
+		for (Usuario user : usuarios) {
+			// Verificamos si el usuario es una instancia de Beneficiario
+			if (user instanceof Repartidor) {
+				// Si el Usuario es de tipo Repartidor lo contamos
+				cant ++;
+			}
+		}
+		return cant;
+	}
 
 
 }
