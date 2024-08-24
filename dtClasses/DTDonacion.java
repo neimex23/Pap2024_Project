@@ -19,9 +19,5 @@ public abstract class DTDonacion {
     public DtFechaHora getFechaIngresada() {
         return fechaIngresada;
     }
-
-    public void setFechaIngresada(DtFechaHora fechaIngresada) {
-        this.fechaIngresada = fechaIngresada;
-    }
 }
 

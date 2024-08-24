@@ -2,6 +2,7 @@ package interfaces;
 import classes.*;
 import dtClasses.*;
 import handlers.*;
+import Enums.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,9 +94,27 @@ public class Controlador implements IControlador {
     //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(DTBeneficiario ben, DTDonacion Donacion) {
+    public void agregarDistribucion(DTBeneficiario ben, DTDonacion donacion) {
         // Implementar la logica para agregar una distribucion
     }
+
+    @Override
+    public void modificarDistribucion(DTDistribucion distribucion) {
+
+    }
+
+    @Override
+    public List<DTDistribucion> listarDistribuciones() {
+        return null;
+    }
+
+    @Override
+    public List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado) {
+        // falta Implementar para listar distribuciones por estado
+        return null;
+    }
+
+    // Operaciones Beneficiario
 
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
     @Override
@@ -112,7 +131,7 @@ public class Controlador implements IControlador {
         return beneficiarios;
     }
     
-    // Nueva funci�n para obtener DTBeneficiario por email
+    // Nueva funcion para obtener DTBeneficiario por email
     public DTBeneficiario obtenerDTBeneficiario(String email) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         
@@ -124,13 +143,6 @@ public class Controlador implements IControlador {
         
         return null; // Si no se encuentra el beneficiario, devuelve null.
     }
-
-	@Override
-	public List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado) {
-		// falta Implementar para listar distribuciones por estado
-		return null;
-	}
-
 }
 
 
