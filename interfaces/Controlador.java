@@ -10,10 +10,12 @@ import java.util.List;
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
     private ManejadorDonacion manejadorDonacion;
+    private ManejadorDistribucion manejadorDistribucion;
 	public Controlador() {
         super();
         this.manejadorUsuario = ManejadorUsuario.getInstancia();
         this.manejadorDonacion = ManejadorDonacion.getInstancia();
+        this.manejadorDistribucion = ManejadorDistribucion.getInstancia();
     }
 
 
@@ -94,8 +96,9 @@ public class Controlador implements IControlador {
     //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(DTDistribucion distribucion, DTDonacion donacion){
-
+    public void agregarDistribucion(DtFechaHora fechaPreparacion, DtFechaHora fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
+        Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
+        manejadorDistribucion.agregarDistribucion(new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion));
     }
 
     @Override

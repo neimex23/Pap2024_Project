@@ -7,12 +7,13 @@ public class Distribucion {
 	private DtFechaHora fechaPreparacion;
 	private DtFechaHora fechaEntrega;
 	private EnumEstadoDistribucion estado;
-        private Donacion donacion;
+    private Donacion donacion;
 	
-    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EnumEstadoDistribucion estado){
+    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
+        this.donacion = donacion;
     }
 
 	public DtFechaHora getFechaPreparacion() {
