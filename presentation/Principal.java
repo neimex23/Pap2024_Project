@@ -35,6 +35,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.swing.*;
 
+//Damaso Testings
+import handlers.*;
+import classes.*;
+
 public class Principal {
 
     private static JFrame ventanaP;
@@ -241,7 +245,9 @@ public class Principal {
                     } else {// Si no existe el mail, se crea el usuario
                         // Guardar la información
                         // Capturar la fecha de nacimiento desde los JSpinner
-
+                        int dia = (int) spnDia.getValue();
+                        int mes = (int) spnMes.getValue();
+                        int anio = (int) spnAno.getValue();
                         DtFechaHora fechaNacimiento = new DtFechaHora(dia, mes, anio, 0, 0);
 
                         // Convertir el estado y barrio seleccionados a los correspondientes Enum
