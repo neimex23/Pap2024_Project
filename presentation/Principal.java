@@ -617,8 +617,7 @@ public class Principal {
                         .findFirst().orElse(null);  // Si findFirst() devuelve un Optional vacío (es decir, no se encontró ningún Beneficiario que cumpla con la condición), entonces orElse(null) devuelve null. Si se encontró un Beneficiario, se devuelve ese Beneficiario.
 
                 if (beneficiarioSeleccionado != null && donacionSeleccionada != null) {
-                    DTDistribucion nuevaDistribucion = new DTDistribucion(fechaDistribucion, fechaEntrega, EnumEstadoDistribucion.PENDIENTE, null);
-                    fabrica.getIControlador().agregarDistribucion(nuevaDistribucion, donacionSeleccionada);
+                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion,fechaEntrega,EnumEstadoDistribucion.PENDIENTE , donacionSeleccionada.getId());
 
                     JOptionPane.showMessageDialog(internalFrame, "Distribución registrada exitosamente.");
                     internalFrame.dispose();

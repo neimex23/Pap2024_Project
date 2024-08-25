@@ -26,6 +26,19 @@ public class ManejadorDonacion {
 
 	public List<Donacion> obtenerDonaciones(){ return this.donaciones; }
 
+	public Donacion obtenerDonacionPorID(int id){
+		boolean encontrado = false;
+		int i = 0;
+		Donacion donacion = null;
+		while(i <= donaciones.size() && !encontrado ){
+			if(donaciones.get(i).getId() == id){
+				encontrado = true;
+				donacion = this.donaciones.get(i);
+			}
+		}
+		return donacion;
+	}
+
     public List<Donacion> getListaDonacion() {
         return this.donaciones;
     }
