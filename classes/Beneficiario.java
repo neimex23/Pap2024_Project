@@ -1,6 +1,6 @@
 package classes;
-import Enums.EnumBarrio;
-import Enums.EnumEstadoBeneficiario;
+import enums.EnumBarrio;
+import enums.EnumEstadoBeneficiario;
 import dtClasses.DtFechaHora;
 import dtClasses.DTBeneficiario;
 

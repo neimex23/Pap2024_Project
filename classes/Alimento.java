@@ -1,12 +1,13 @@
 package classes;
+
 import dtClasses.DtFechaHora;
 
-public class Alimento extends Donacion{
-	    
-	private String descProducto;
-	private int cantElemntos;
-	
-	 // Getter para descProducto
+public class Alimento extends Donacion {
+
+    private String descProducto;
+    private int cantElemntos;
+
+    // Getter para descProducto
     public String getDescProducto() {
         return this.descProducto;
     }

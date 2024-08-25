@@ -1,12 +1,13 @@
 package classes;
 import dtClasses.DtFechaHora;
-import Enums.EnumEstadoDistribucion;
+import enums.*;
 
 public class Distribucion {
 	
 	private DtFechaHora fechaPreparacion;
 	private DtFechaHora fechaEntrega;
 	private EnumEstadoDistribucion estado;
+        private Donacion donacion;
 	
     public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EnumEstadoDistribucion estado){
         this.fechaEntrega = FechaEntrega;
@@ -41,5 +42,15 @@ public class Distribucion {
     // Setter para estado
     public void setEstado(EnumEstadoDistribucion estado) {
         this.estado = estado;
+    }
+    
+    // Devuelve la donacion asociada a la distribucion
+    
+    public Donacion getDonacion(){
+        return this.donacion;
+    }
+
+    public void setDonacion(Donacion donacionSeleccionada) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -22,7 +22,9 @@ public class ManejadorDistribucion {
 		this.distribuciones.add(dist);
 	}
 	
-	
+	public List<Distribucion> getListaDistribuciones(){
+            return distribuciones;
+        }
 	
 }
 

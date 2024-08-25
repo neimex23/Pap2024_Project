@@ -1,9 +1,7 @@
 package interfaces;
 
-import classes.*;
 import dtClasses.*;
-import Enums.*;
-import handlers.*;
+import enums.*;
 
 import java.util.List;
 
