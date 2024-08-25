@@ -21,7 +21,7 @@ public class ManejadorUsuario {
 	public void agregarUsuario(Usuario user) {
 		this.usuarios.add(user);
 	}
-	// Nueva funci�n para obtener todos los usuarios
+	// Nueva funcion para obtener todos los usuarios
     public List<Usuario> obtenerUsuarios() {
         return new ArrayList<>(usuarios);
     }

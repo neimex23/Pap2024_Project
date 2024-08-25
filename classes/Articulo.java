@@ -1,4 +1,5 @@
-package classes;	
+package classes;
+import dtClasses.DtFechaHora;
 
 public class Articulo extends Donacion {
 
@@ -36,7 +37,7 @@ public class Articulo extends Donacion {
         this.dimensiones = dimensiones;
     }
 
-    public Articulo(int id, DateTime fechaIngresada, String descr, float peso, String dimensiones) {
+    public Articulo(int id, DtFechaHora fechaIngresada, String descr, float peso, String dimensiones) {
         super(id, fechaIngresada);
         this.descr = descr;
         this.peso = peso;

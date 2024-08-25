@@ -4,28 +4,28 @@ import classes.*;
 import dtClasses.*;
 import Enums.*;
 import handlers.*;
-import interfaces.*;
 
 import java.util.List;
 
 public interface IControlador {
-    public void altaBeneficiario(String nombre, String email, String dir, DtFechaHora fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
-    public void altaRepartidor(String nombre, String email, String numeroLicencia);
-    public boolean existeEmail(String email);
-    public boolean existeLicencia(String licencia);
-    public int conGetCantBeneficiarios();
-    public int conGetCantRepartidores();
+    void altaBeneficiario(String nombre, String email, String dir, DtFechaHora fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
+    void altaRepartidor(String nombre, String email, String numeroLicencia);
+    boolean existeEmail(String email);
+    boolean existeLicencia(String licencia);
+    int conGetCantBeneficiarios();
+    int conGetCantRepartidores();
 
 
-    public void altaDonacionAlimento(DtFechaHora FechaIng, String descripcionProducto, int cantElementos);
-    public void altaDonacionArticulo(DtFechaHora FechaIng, String descripcionArt, float peso, String dimensiones);
+    void altaDonacionAlimento(DtFechaHora FechaIng, String descripcionProducto, int cantElementos);
+    void altaDonacionArticulo(DtFechaHora FechaIng, String descripcionArt, float peso, String dimensiones);
 
     List<DTBeneficiario> ListarBeneficiario(); //CrearDTBeneficiario
-    List<DTDistribuciones> ListarDistribuciones(EnumEstadoDistribucion estado); //Crear DTDistribuciones
-    List<DTDonaciones> ListarDonaciones(); //CrearDTDonaciones
+    List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
 
-    void agregarDistribucion(DTBeneficiario ben, DTDonaciones Donacion);
-    //Pensar ModificarDistribucion
+    void agregarDistribucion(DTBeneficiario ben, DTDonacion donacion);
+    void modificarDistribucion(DTDistribucion distribucion);
+    List<DTDistribucion> listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
+    List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado
 	
 
 

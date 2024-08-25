@@ -1,5 +1,7 @@
 # Compiled class file
 *.class
+out/
+bin/
 
 # Log file
 *.log
@@ -31,6 +33,17 @@ replay_pid*
 #Intelij IDE
 .idea
 .settings
+*.iml
 
 #Visual IDE
-/.vs/
+.vs/
+.vscode/
+
+# Directorios de construcción de Maven y Gradle
+target/
+build/
+effective-pom.xml
+
+# Archivos de sistema
+*.DS_Store
+Thumbs.db
