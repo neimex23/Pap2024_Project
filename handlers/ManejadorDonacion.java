@@ -21,11 +21,17 @@ public class ManejadorDonacion {
 	public void agregarDonacion(Donacion don) {
 		this.donaciones.add(don);
 	}
-	
+
 	public int obtenerUltimoID(){ return this.donaciones.size(); }
 
 	public List<Donacion> obtenerDonaciones(){ return this.donaciones; }
-	
+
+    public List<Donacion> getListaDonacion() {
+        return this.donaciones;
+    }
+
+
+
 }
 
 

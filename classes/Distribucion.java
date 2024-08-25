@@ -1,6 +1,6 @@
 package classes;
 import dtClasses.DtFechaHora;
-import Enums.EnumEstadoDistribucion;
+import Enums.*;
 
 public class Distribucion {
 	
@@ -48,5 +48,9 @@ public class Distribucion {
     
     public Donacion getDonacion(){
         return this.donacion;
+    }
+
+    public void setDonacion(Donacion donacionSeleccionada) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
