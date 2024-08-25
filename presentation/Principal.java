@@ -16,7 +16,7 @@ implementación de cambios en las reglas de negocio.
  */
 
 import dtClasses.*;
-import Enums.*;
+import enums.*;
 import interfaces.*;
 
 import java.awt.GridLayout;

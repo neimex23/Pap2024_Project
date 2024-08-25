@@ -1,6 +1,6 @@
 package dtClasses;
 
-import Enums.*;
+import enums.*;
 
 public class DTBeneficiario {
 	private String nombre;

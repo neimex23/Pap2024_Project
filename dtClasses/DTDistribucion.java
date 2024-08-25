@@ -1,6 +1,6 @@
 package dtClasses;
 
-import Enums.EnumEstadoDistribucion;
+import enums.EnumEstadoDistribucion;
 
 public class DTDistribucion {
     private DtFechaHora fechaPreparacion;

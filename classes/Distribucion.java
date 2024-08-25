@@ -1,6 +1,6 @@
 package classes;
 import dtClasses.DtFechaHora;
-import Enums.*;
+import enums.*;
 
 public class Distribucion {
 	
