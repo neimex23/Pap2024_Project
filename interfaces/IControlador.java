@@ -20,7 +20,7 @@ public interface IControlador {
     List<DTBeneficiario> ListarBeneficiario(); //CrearDTBeneficiario
     List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
 
-    void agregarDistribucion(DTBeneficiario ben, DTDonacion donacion);
+    void agregarDistribucion(DTDistribucion distribucion, DTDonacion donacion);
     void modificarDistribucion(DTDistribucion distribucion);
     List<DTDistribucion> listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado

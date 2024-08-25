@@ -94,8 +94,8 @@ public class Controlador implements IControlador {
     //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(DTBeneficiario ben, DTDonacion donacion) {
-        // Implementar la logica para agregar una distribucion
+    public void agregarDistribucion(DTDistribucion distribucion, DTDonacion donacion){
+
     }
 
     @Override
