@@ -4,13 +4,22 @@ import org.pap.dtClasses.*;
 import org.pap.handlers.*;
 import org.pap.Enums.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
     private ManejadorDonacion manejadorDonacion;
     private ManejadorDistribucion manejadorDistribucion;
+
+    private static EntityManager em;
+    private static EntityManagerFactory emf;
+
 	public Controlador() {
         super();
         this.manejadorUsuario = ManejadorUsuario.getInstancia();
@@ -28,7 +37,24 @@ public class Controlador implements IControlador {
         Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
-		
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+
+        //Generamos un EntityManager
+        em = emf.createEntityManager();
+
+        //Iniciamos una transacción
+        em.getTransaction().begin();
+
+        //Persistimos el objeto
+        em.persist(NuevoUsuario);
+
+        //Commmiteamos la transacción
+        em.getTransaction().commit();
+
+        //Cerramos el EntityManager
+        em.close();
+
 	}
     @Override
     public void altaRepartidor(String nombre, String email, String numeroLicencia) {
@@ -36,6 +62,13 @@ public class Controlador implements IControlador {
         Usuario NuevoUsuario = new Repartidor(nombre, email, numeroLicencia);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(NuevoUsuario);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -64,14 +97,30 @@ public class Controlador implements IControlador {
     public void altaDonacionAlimento(DTFechaHora FechaIng, String descripcionProducto, int cantElementos) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
-        manejadorDonacion.agregarDonacion(new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos));
+        Alimento alimentoAgregar = new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos);
+        manejadorDonacion.agregarDonacion(alimentoAgregar);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(alimentoAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
     public void altaDonacionArticulo(DTFechaHora FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
-        manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt,peso, dimensiones));
+        Donacion donacionAgregar = new Articulo(ultimoID, FechaIng, descripcionArt,peso, dimensiones);
+        manejadorDonacion.agregarDonacion(donacionAgregar);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(donacionAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
     @Override
     public List<DTDonacion> ListarDonaciones() { //Manejar Instancia de alimentos o articulos en Main
@@ -88,7 +137,16 @@ public class Controlador implements IControlador {
     @Override
     public void agregarDistribucion(DTFechaHora fechaPreparacion, DTFechaHora fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
         Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
-        manejadorDistribucion.agregarDistribucion(new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion));
+        Distribucion distAgregar = new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion);
+        manejadorDistribucion.agregarDistribucion(distAgregar);
+
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(distAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
