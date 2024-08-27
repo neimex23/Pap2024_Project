@@ -9,8 +9,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -37,7 +39,7 @@ public class Controlador implements IControlador {
         Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
-        
+
         emf = Persistence.createEntityManagerFactory("Conexion");
 
         //Generamos un EntityManager
@@ -148,6 +150,22 @@ public class Controlador implements IControlador {
     }
 
     @Override
+    public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
+        Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
+        Distribucion distribucion = new Distribucion(fechaPreparacion,fechaEntrega,estado);
+        manejadorDistribucion.agregarDistribucion(distribucion, donacion);
+        Distribucion distAgregar = new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion);
+        manejadorDistribucion.agregarDistribucion(distAgregar);
+
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(distAgregar);
+        em.getTransaction().commit();
+        em.close();
+    }
+
     public void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado){
         // Obtener la lista de distribuciones del manejador
         List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
