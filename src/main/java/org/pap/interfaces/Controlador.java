@@ -1,27 +1,35 @@
 package org.pap.interfaces;
-
 import org.pap.Clases.*;
 import org.pap.dtClasses.*;
 import org.pap.handlers.*;
 import org.pap.Enums.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Controlador implements IControlador {
-
-    private ManejadorUsuario manejadorUsuario;
+	private ManejadorUsuario manejadorUsuario;
     private ManejadorDonacion manejadorDonacion;
     private ManejadorDistribucion manejadorDistribucion;
 
-    public Controlador() {
+    private static EntityManager em;
+    private static EntityManagerFactory emf;
+
+	public Controlador() {
         super();
         this.manejadorUsuario = ManejadorUsuario.getInstancia();
         this.manejadorDonacion = ManejadorDonacion.getInstancia();
         this.manejadorDistribucion = ManejadorDistribucion.getInstancia();
     }
 
+
     //Operaciones de usario
+	
     @Override
     public void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
             EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
@@ -29,15 +37,38 @@ public class Controlador implements IControlador {
         Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
+        
+        emf = Persistence.createEntityManagerFactory("Conexion");
 
-    }
+        //Generamos un EntityManager
+        em = emf.createEntityManager();
 
+        //Iniciamos una transacción
+        em.getTransaction().begin();
+
+        //Persistimos el objeto
+        em.persist(NuevoUsuario);
+
+        //Commmiteamos la transacción
+        em.getTransaction().commit();
+
+        //Cerramos el EntityManager
+        em.close();
+
+	}
     @Override
     public void altaRepartidor(String nombre, String email, String numeroLicencia) {
         // Se crea la instancia del nuevo usuario
         Usuario NuevoUsuario = new Repartidor(nombre, email, numeroLicencia);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(NuevoUsuario);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -60,7 +91,6 @@ public class Controlador implements IControlador {
         return manejadorUsuario.manGetCantRepartidores();
     }
 
-
     //Operaciones de Donacion
 
     @Override
@@ -68,6 +98,13 @@ public class Controlador implements IControlador {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones));
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(alimentoAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -76,6 +113,13 @@ public class Controlador implements IControlador {
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         Alimento alimentoAgregar = new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos);
         manejadorDonacion.agregarDonacion(alimentoAgregar);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(donacionAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -94,6 +138,13 @@ public class Controlador implements IControlador {
         int ultimoID = manejadorDistribucion.obtenerUltimoID() + 1;
         Distribucion distribucion = new Distribucion(ultimoID, fechaPreparacion, fechaEntrega, estado, donacionID, emailBenf);
         manejadorDistribucion.agregarDistribucion(distribucion);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(distAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -175,7 +226,7 @@ public class Controlador implements IControlador {
 
         return beneficiarios;
     }
-
+    
     // Nueva funcion para obtener DTBeneficiario por email
     @Override
     public DTUsuario obtenerDTBeneficiario(String email) {
@@ -195,4 +246,6 @@ public class Controlador implements IControlador {
         DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
         return donacion;
     }
+
 }
+
