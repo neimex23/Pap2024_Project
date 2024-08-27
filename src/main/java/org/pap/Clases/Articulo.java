@@ -1,5 +1,5 @@
 package org.pap.Clases;
-import org.pap.dtClasses.DtFechaHora;
+import org.pap.dtClasses.DTFechaHora;
 import org.pap.dtClasses.DTDonacion;
 import org.pap.dtClasses.DTArticulo;
 
@@ -39,7 +39,7 @@ public class Articulo extends Donacion {
         this.dimensiones = dimensiones;
     }
 
-    public Articulo(int id, DtFechaHora fechaIngresada, String descr, float peso, String dimensiones) {
+    public Articulo(int id, DTFechaHora fechaIngresada, String descr, float peso, String dimensiones) {
         super(id, fechaIngresada);
 
         // Inicializar las variables de la subclase

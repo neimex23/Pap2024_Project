@@ -1,37 +1,37 @@
 package org.pap.Clases;
-import org.pap.dtClasses.DtFechaHora;
+import org.pap.dtClasses.DTFechaHora;
 import org.pap.Enums.*;
 
 public class Distribucion {
 
-    private DtFechaHora fechaPreparacion;
-    private DtFechaHora fechaEntrega;
+    private DTFechaHora fechaPreparacion;
+    private DTFechaHora fechaEntrega;
     private EnumEstadoDistribucion estado;
     private Donacion donacion;
 
-    public Distribucion(DtFechaHora FechaPreparacion, DtFechaHora FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
+    public Distribucion(DTFechaHora FechaPreparacion, DTFechaHora FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
         this.donacion = donacion;
     }
 
-    public DtFechaHora getFechaPreparacion() {
+    public DTFechaHora getFechaPreparacion() {
         return fechaPreparacion;
     }
 
     // Setter para FechaPreparacion
-    public void setFechaPreparacion(DtFechaHora FechaPreparacion) {
+    public void setFechaPreparacion(DTFechaHora FechaPreparacion) {
         this.fechaPreparacion = FechaPreparacion;
     }
 
     // Getter para FechaEntrega
-    public DtFechaHora getFechaEntrega() {
+    public DTFechaHora getFechaEntrega() {
         return fechaEntrega;
     }
 
     // Setter para FechaEntrega
-    public void setFechaEntrega(DtFechaHora FechaEntrega) {
+    public void setFechaEntrega(DTFechaHora FechaEntrega) {
         this.fechaEntrega = FechaEntrega;
     }
 

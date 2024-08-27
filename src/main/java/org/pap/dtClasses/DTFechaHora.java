@@ -1,13 +1,13 @@
 package org.pap.dtClasses;
 
-public class DtFechaHora {
+public class DTFechaHora {
     private int dia;
     private int mes;
     private int anio;
     private int hora;
     private int minutos;
 
-    public DtFechaHora(int dia, int mes, int anio, int hora, int minutos) {
+    public DTFechaHora(int dia, int mes, int anio, int hora, int minutos) {
     this.dia = dia;
     this.mes = mes;
     this.anio = anio;
