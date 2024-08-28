@@ -23,6 +23,7 @@ import org.pap.interfaces.Fabrica;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,6 +38,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.LinkedHashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -207,7 +210,7 @@ public class Principal {
                 int dia = (int) spnDia.getValue();
                 int mes = (int) spnMes.getValue();
                 int anio = (int) spnAno.getValue();
-                LocalDateTime fechaNacimiento =  LocalDateTime.of(anio, mes, dia, 0, 0, 0);
+                LocalDateTime fechaNacimiento = LocalDateTime.of(anio, mes, dia, 0, 0, 0);
 
                 // Convertir el estado y barrio seleccionados a los correspondientes Enum
                 EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
@@ -618,7 +621,7 @@ public class Principal {
                         .findFirst().orElse(null);  // Si findFirst() devuelve un Optional vacío (es decir, no se encontró ningún Beneficiario que cumpla con la condición), entonces orElse(null) devuelve null. Si se encontró un Beneficiario, se devuelve ese Beneficiario.
 
                 if (beneficiarioSeleccionado != null && donacionSeleccionada != null) {
-                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion,fechaEntrega,EnumEstadoDistribucion.PENDIENTE , donacionSeleccionada.getId());
+                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion, fechaEntrega, EnumEstadoDistribucion.PENDIENTE, donacionSeleccionada.getId());
 
                     JOptionPane.showMessageDialog(internalFrame, "Distribución registrada exitosamente.");
                     internalFrame.dispose();
@@ -687,9 +690,16 @@ public class Principal {
         JScrollPane descripcionScroll = new JScrollPane(txtDescripcion);
 
 // Obtener la lista de distribuciones ordenada por fecha de preparación
-        List<DTDistribucion> distribucionesOrdenadas = fabrica.getIControlador().listarDistribuciones().stream()
-                .sorted((d1, d2) -> compararFechas(d1.getFechaPreparacion(), d2.getFechaPreparacion()))
-                .collect(Collectors.toList());
+        Map<DTDistribucion, DTDonacion> distribucionesOrdenadas = fabrica.getIControlador().listarDistribuciones()
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey((d1, d2) -> compararFechas(d1.getFechaPreparacion(), d2.getFechaPreparacion())))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, // Manejo de colisiones, si es necesario
+                        LinkedHashMap::new // Mantener el orden de inserción
+                ));
 
         // Actualizar la información al cambiar la fecha en el spinner
         spnFechaDistribucion.addChangeListener(e -> {
@@ -729,8 +739,16 @@ public class Principal {
 
         // Establecer la primera fecha como la fecha inicial en el spinner
         if (!distribucionesOrdenadas.isEmpty()) {
-            LocalDateTime fechaInicial = distribucionesOrdenadas.get(0).getFechaPreparacion();
+            // Obtener el primer elemento del Map usando un iterador
+            Map.Entry<DTDistribucion, DTDonacion> primeraEntrada = distribucionesOrdenadas.entrySet().iterator().next();
+
+            // Obtener la fecha de preparación de la primera distribución
+            LocalDateTime fechaInicial = primeraEntrada.getKey().getFechaPreparacion();
+
+            // Convertir LocalDateTime a Date
             Date fechaInicialDate = convertirLocalDateTimeADate(fechaInicial);
+
+            // Establecer el valor en el SpinnerDateModel
             ((SpinnerDateModel) spnFechaDistribucion.getModel()).setValue(fechaInicialDate);
         }
 
@@ -782,7 +800,7 @@ public class Principal {
         txtDescripcion.setEditable(true);
 
         // Configurar la lista de distribuciones
-        List<DTDistribucion> distribuciones = fabrica.getIControlador().listarDistribuciones();
+        Map<DTDistribucion, DTDonacion> distribuciones = fabrica.getIControlador().listarDistribuciones();
 
         // Actualizar la información al cambiar el ID de la distribución
         spnIdDistribucion.addChangeListener(e -> {
@@ -854,8 +872,8 @@ public class Principal {
         internalFrame.setVisible(true);
     }
 
-    private static DTDistribucion obtenerDistribucionSegunFecha(LocalDateTime fecha, List<DTDistribucion> distribuciones) {
-        for (DTDistribucion distribucion : distribuciones) {
+    private static DTDistribucion obtenerDistribucionSegunFecha(LocalDateTime fecha, Map<DTDistribucion, DTDonacion> distribuciones) {
+        for (DTDistribucion distribucion : distribuciones.keySet()) {
             if (distribucion.getFechaPreparacion().equals(fecha)) {
                 return distribucion;
             }
@@ -864,7 +882,7 @@ public class Principal {
     }
 
     private static DTDistribucion obtenerDistribucionConDonacion(int id) {
-        for (DTDistribucion distribucion : fabrica.getIControlador().listarDistribuciones()) {
+        for (DTDistribucion distribucion : fabrica.getIControlador().listarDistribuciones().keySet()) {
             DTDonacion donacion = distribucion.getDonacionAsc();
             if (donacion != null && donacion.getId() == id) {
                 return distribucion;
@@ -885,7 +903,7 @@ public class Principal {
         int minutos = calendario.get(Calendar.MINUTE);
 
         // Crear una instancia de LocalDateTime con la fecha actual
-        LocalDateTime fechaActual = new LocalDateTime(dia, mes, anio, hora, minutos);
+        LocalDateTime fechaActual = LocalDateTime.of(anio, mes, dia, hora, minutos);
         return fechaActual;
     }
 
@@ -902,30 +920,17 @@ public class Principal {
         return LocalDateTime.of(dia, mes, anio, hora, minutos);
     }
 
-    //Adaptar para LocalDateTime
-    private static Date convertirLocalDateTimeADate(LocalDateTime fechaHora) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, fechaHora.getAnio());
-        calendar.set(Calendar.MONTH, fechaHora.getMes() - 1);  // Los meses empiezan en 0 en Calendar
-        calendar.set(Calendar.DAY_OF_MONTH, fechaHora.getDia());
-        calendar.set(Calendar.HOUR_OF_DAY, fechaHora.getHora());
-        calendar.set(Calendar.MINUTE, fechaHora.getMinutos());
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
     private static int compararFechas(LocalDateTime fecha1, LocalDateTime fecha2) {
-        if (fecha1.getAnio() != fecha2.getAnio()) {
-            return fecha1.getAnio() - fecha2.getAnio();
-        } else if (fecha1.getMes() != fecha2.getMes()) {
-            return fecha1.getMes() - fecha2.getMes();
-        } else if (fecha1.getDia() != fecha2.getDia()) {
-            return fecha1.getDia() - fecha2.getDia();
-        } else if (fecha1.getHora() != fecha2.getHora()) {
-            return fecha1.getHora() - fecha2.getHora();
+        if (fecha1.getYear() != fecha2.getYear()) {
+            return fecha1.getYear() - fecha2.getYear();
+        } else if (fecha1.getMonthValue() != fecha2.getMonthValue()) {
+            return fecha1.getMonthValue() - fecha2.getMonthValue();
+        } else if (fecha1.getDayOfMonth() != fecha2.getDayOfMonth()) {
+            return fecha1.getDayOfMonth() - fecha2.getDayOfMonth();
+        } else if (fecha1.getHour() != fecha2.getHour()) {
+            return fecha1.getHour() - fecha2.getHour();
         } else {
-            return fecha1.getMinutos() - fecha2.getMinutos();
+            return fecha1.getMinute() - fecha2.getMinute();
         }
     }
 
@@ -935,8 +940,8 @@ public class Principal {
             return "";
         }
         return String.format("%02d/%02d/%04d %02d:%02d",
-                fecha.getDia(), fecha.getMes(), fecha.getAnio(),
-                fecha.getHora(), fecha.getMinutos());
+                fecha.getDayOfMonth(), fecha.getMonthValue(), fecha.getYear(),
+                fecha.getHour(), fecha.getMinute());
     }
 
     private static String[] getBeneficiariosDisponibles() {
@@ -959,6 +964,14 @@ public class Principal {
         if (!matcher.matches()) {
             throw new InvalidEmailException("Email inválido.");
         }
+    }
+
+    private static Date convertirLocalDateTimeADate(LocalDateTime fechaInicial) {
+        // Convertir LocalDateTime a un Instant en la zona horaria del sistema
+        Instant instant = fechaInicial.atZone(ZoneId.systemDefault()).toInstant();
+
+        // Convertir el Instant a Date
+        return Date.from(instant);
     }
 
     static class InvalidEmailException extends Exception {
