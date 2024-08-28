@@ -4,8 +4,15 @@ import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 import org.pap.dtClasses.DTAlimento;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.DiscriminatorValue;
+
+@Entity
+@DiscriminatorValue("AL")
 public class Alimento extends Donacion {
 
+    @Id
     private String descProducto;
     private int cantElemntos;
 

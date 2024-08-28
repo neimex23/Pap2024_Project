@@ -3,8 +3,16 @@ import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 import org.pap.dtClasses.DTArticulo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.DiscriminatorValue;
+
+
+@Entity
+@DiscriminatorValue("AR")
 public class Articulo extends Donacion {
 
+    @Id
 	private String descr;
 	private float peso;
 	private String dimensiones;

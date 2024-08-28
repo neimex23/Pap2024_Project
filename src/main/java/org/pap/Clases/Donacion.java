@@ -2,8 +2,16 @@ package org.pap.Clases;
 import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
+@Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public abstract class Donacion {
-	
+
+		@Id
 	    private int id;
 	    private LocalDateTime fechaIngresada;
 
