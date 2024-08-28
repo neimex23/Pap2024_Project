@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -206,7 +207,7 @@ public class Principal {
                 int dia = (int) spnDia.getValue();
                 int mes = (int) spnMes.getValue();
                 int anio = (int) spnAno.getValue();
-                LocalDateTime fechaNacimiento = new LocalDateTime(dia, mes, anio, 0, 0);
+                LocalDateTime fechaNacimiento =  LocalDateTime.of(anio, mes, dia, 0, 0, 0);
 
                 // Convertir el estado y barrio seleccionados a los correspondientes Enum
                 EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
@@ -898,9 +899,10 @@ public class Principal {
         int hora = calendar.get(Calendar.HOUR_OF_DAY);
         int minutos = calendar.get(Calendar.MINUTE);
 
-        return new LocalDateTime(dia, mes, anio, hora, minutos);
+        return LocalDateTime.of(dia, mes, anio, hora, minutos);
     }
 
+    //Adaptar para LocalDateTime
     private static Date convertirLocalDateTimeADate(LocalDateTime fechaHora) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, fechaHora.getAnio());

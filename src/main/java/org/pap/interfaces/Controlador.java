@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -89,7 +91,8 @@ public class Controlador implements IControlador {
     @Override
     public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
         Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
-        manejadorDistribucion.agregarDistribucion(new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion));
+        Distribucion distribucion = new Distribucion(fechaPreparacion,fechaEntrega,estado);
+        manejadorDistribucion.agregarDistribucion(distribucion, donacion);
     }
 
     @Override
@@ -98,12 +101,12 @@ public class Controlador implements IControlador {
     }
 
     @Override
-    public List<DTDistribucion> listarDistribuciones() {
+    public Map<DTDistribucion, DTDonacion> listarDistribuciones() {
         return null;
     }
 
     @Override
-    public List<DTDistribucion> ListarDistribuciones(EnumEstadoDistribucion estado) {
+    public Map<DTDistribucion, DTDonacion> ListarDistribuciones(EnumEstadoDistribucion estado) {
         // falta Implementar para listar distribuciones por estado
         return null;
     }

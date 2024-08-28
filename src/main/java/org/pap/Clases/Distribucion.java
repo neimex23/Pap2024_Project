@@ -7,13 +7,11 @@ public class Distribucion {
     private LocalDateTime fechaPreparacion;
     private LocalDateTime fechaEntrega;
     private EnumEstadoDistribucion estado;
-    private Donacion donacion;
 
-    public Distribucion(LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
+    public Distribucion(LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
-        this.donacion = donacion;
     }
 
     public LocalDateTime getFechaPreparacion() {
@@ -45,16 +43,4 @@ public class Distribucion {
         this.estado = estado;
     }
 
-    // Devuelve la donacion asociada a la distribucion
-
-    public Donacion getDonacion() {
-        return this.donacion;
-    }
-
-    public void setDonacion(Donacion donacionSeleccionada) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-
-        //esta operacion no esta implementada`, implemento el setter (Viky comment)
-        this.donacion =donacionSeleccionada;
-    }
 }
