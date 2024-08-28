@@ -25,6 +25,7 @@ public interface IControlador {
 
     void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf);
     void modificarDistribucion(DTDistribucion distribucion);
+
     void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
     List<DTDistribucion>  listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado

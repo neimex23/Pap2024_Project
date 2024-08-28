@@ -12,7 +12,7 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("AR")
 public class Articulo extends Donacion {
 
-    @Id
+
 	private String descr;
 	private float peso;
 	private String dimensiones;

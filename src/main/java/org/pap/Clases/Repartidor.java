@@ -12,7 +12,7 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("R")
 public class Repartidor extends Usuario {
 
-		@Id
+
 	    private String numeroLicencia;
 
 	    public Repartidor(String nombre, String email, String numeroLicencia) {

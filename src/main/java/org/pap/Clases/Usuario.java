@@ -2,13 +2,12 @@ package org.pap.Clases;
 
 import org.pap.dtClasses.DTUsuario;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
+
 
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="TIPOUSUARIO")
 public abstract class Usuario {
 
     @Id

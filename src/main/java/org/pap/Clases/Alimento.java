@@ -12,7 +12,7 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("AL")
 public class Alimento extends Donacion {
 
-    @Id
+
     private String descProducto;
     private int cantElemntos;
 
