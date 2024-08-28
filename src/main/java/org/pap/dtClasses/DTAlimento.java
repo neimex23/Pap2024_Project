@@ -1,4 +1,5 @@
 package org.pap.dtClasses;
+import java.time.LocalDateTime;
 
 public class DTAlimento extends DTDonacion{
 	    
@@ -15,7 +16,7 @@ public class DTAlimento extends DTDonacion{
         return cantElemntos;
     }
 
-    public DTAlimento(int id, DTFechaHora fechaIngresada, String descProducto, int cantElemntos) {
+    public DTAlimento(int id, LocalDateTime fechaIngresada, String descProducto, int cantElemntos) {
         super(id, fechaIngresada);
         this.descProducto = descProducto;
         this.cantElemntos = cantElemntos;

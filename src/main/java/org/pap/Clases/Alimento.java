@@ -1,6 +1,6 @@
 package org.pap.Clases;
 
-import org.pap.dtClasses.DTFechaHora;
+import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 import org.pap.dtClasses.DTAlimento;
 
@@ -29,7 +29,7 @@ public class Alimento extends Donacion {
         this.cantElemntos = cantElemntos;
     }
 
-    public Alimento(int id, DTFechaHora fechaIngresada, String descProducto, int cantElemntos) {
+    public Alimento(int id, LocalDateTime fechaIngresada, String descProducto, int cantElemntos) {
         super(id, fechaIngresada);
         this.descProducto = descProducto;
         this.cantElemntos = cantElemntos;

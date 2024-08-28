@@ -2,17 +2,17 @@ package org.pap.Clases;
 import org.pap.Enums.EnumBarrio;
 import org.pap.Enums.EnumEstadoBeneficiario;
 import org.pap.dtClasses.DTUsuario;
-import org.pap.dtClasses.DTFechaHora;
+import java.time.LocalDateTime;
 import org.pap.dtClasses.DTBeneficiario;
 
 public class Beneficiario extends Usuario {
 
 	private String direccion;
-	private DTFechaHora fechaNacimiento;
+	private LocalDateTime fechaNacimiento;
 	private EnumEstadoBeneficiario estado;
 	private EnumBarrio barrio;
 
-    public Beneficiario(String nombre, String email, String direccion, DTFechaHora fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
+    public Beneficiario(String nombre, String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
         super(nombre, email);
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
@@ -31,12 +31,12 @@ public class Beneficiario extends Usuario {
     }
 
     // Getter para fechaNacimiento
-    public DTFechaHora getFechaNacimiento() {
+    public LocalDateTime getFechaNacimiento() {
         return fechaNacimiento;
     }
 
     // Setter para fechaNacimiento
-    public void setFechaNacimiento(DTFechaHora fechaNacimiento) {
+    public void setFechaNacimiento(LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 

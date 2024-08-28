@@ -1,30 +1,33 @@
 package org.pap.handlers;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.pap.Clases.Donacion;
 import org.pap.Clases.Distribucion;
+
+import java.util.Map;
+import java.util.HashMap;
+
 
 public class ManejadorDistribucion {
 	private static ManejadorDistribucion instancia = null;
-	private List<Distribucion> distribuciones = new ArrayList<Distribucion>();
-	
+	private Map<Distribucion, Donacion> distribuciones = new HashMap<>();
+
 	private ManejadorDistribucion() {}
 
 	public static ManejadorDistribucion getInstancia() {
-		if (instancia == null) 
+		if (instancia == null)
 		{
 			instancia = new ManejadorDistribucion();
 		}
 		return instancia;
 	}
-	
-	public void agregarDistribucion(Distribucion dist) {
-		this.distribuciones.add(dist);
+
+	public void agregarDistribucion(Distribucion dist, Donacion don) {
+		this.distribuciones.put(dist, don);
 	}
-	
-	public List<Distribucion> getListaDistribuciones(){
-            return distribuciones;
-        }
-	
+
+	public Map<Distribucion, Donacion> getDistribuciones() {
+		return distribuciones;
+	}
+
 }
 

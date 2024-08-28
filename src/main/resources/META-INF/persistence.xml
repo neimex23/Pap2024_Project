@@ -7,12 +7,19 @@
 
 	<persistence-unit name="Conexion">
 
-		<class>pap.Usuario</class>
+		<class>org.pap.Clases.Usuario</class>
+		<class>org.pap.Clases.Repartidor</class>
+		<class>org.pap.Clases.Donacion</class>
+		<class>org.pap.Clases.Distribucion</class>
+		<class>org.pap.Clases.Beneficiario</class>
+		<class>org.pap.Clases.Articulo</class>
+		<class>org.pap.Clases.Alimento</class>
+
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/PapBD" />
-			<property name="javax.persistence.jdbc.user" value="admin" />
-			<property name="javax.persistence.jdbc.password" value="admin" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/papdb" />
+			<property name="javax.persistence.jdbc.user" value="root" />
+			<property name="javax.persistence.jdbc.password" value="root" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 		</properties>
