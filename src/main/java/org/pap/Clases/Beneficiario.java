@@ -6,7 +6,6 @@ import org.pap.dtClasses.DTUsuario;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.pap.dtClasses.DTBeneficiario;
-import org.pap.dtClasses.DTDonacion;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
