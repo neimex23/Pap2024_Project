@@ -3,10 +3,10 @@ package org.pap.dtClasses;
 public abstract class DTDonacion {
 	private int id;
     
-    private DTFechaHora fechaIngresada;
+    private LocalDateTime fechaIngresada;
     
     // Constructor
-    public DTDonacion(int id, DTFechaHora fechaIngresada) {
+    public DTDonacion(int id, LocalDateTime fechaIngresada) {
         this.id = id;
         this.fechaIngresada = fechaIngresada;
     }
@@ -16,7 +16,7 @@ public abstract class DTDonacion {
         return id;
     }
 
-    public DTFechaHora getFechaIngresada() {
+    public LocalDateTime getFechaIngresada() {
         return fechaIngresada;
     }
 }

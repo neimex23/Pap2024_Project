@@ -200,13 +200,13 @@ public class Principal {
                 // Validar el email
                 validarEmail(txtEmail.getText());
 
-                //Beneficiario(String nombre,String email, String direccion, DtFechaHora fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio)
+                //Beneficiario(String nombre,String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio)
                 // Guardar la información    
                 // Capturar la fecha de nacimiento desde los JSpinner
                 int dia = (int) spnDia.getValue();
                 int mes = (int) spnMes.getValue();
                 int anio = (int) spnAno.getValue();
-                DTFechaHora fechaNacimiento = new DTFechaHora(dia, mes, anio, 0, 0);
+                LocalDateTime fechaNacimiento = new LocalDateTime(dia, mes, anio, 0, 0);
 
                 // Convertir el estado y barrio seleccionados a los correspondientes Enum
                 EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
@@ -348,7 +348,7 @@ public class Principal {
                 int cantidad = Integer.parseInt(cantElem);
 
                 // Obtner la fecha ya que se le pasa la fecha de hoy y no una ingresada por usuario
-                DTFechaHora fechaHoy = obtenerFechaHora();
+                LocalDateTime fechaHoy = obtenerFechaHora();
 
                 // Si la conversión es exitosa, guardar
                 fabrica.getIControlador().altaDonacionAlimento(fechaHoy, descripcion, cantidad);
@@ -416,7 +416,7 @@ public class Principal {
                 float peso = Float.parseFloat(txtPeso.getText());
                 double dimension = Double.parseDouble(txtDimension.getText());
 
-                DTFechaHora fechaHoy = obtenerFechaHora();
+                LocalDateTime fechaHoy = obtenerFechaHora();
                 // Agregar el articulo creado
                 fabrica.getIControlador().altaDonacionArticulo(fechaHoy, txtDescripcion.getText(), peso, txtDimension.getText());
 
@@ -604,8 +604,8 @@ public class Principal {
         // Botón para registrar
         JButton btnRegistrar = new JButton("Registrar");
         btnRegistrar.addActionListener((ActionEvent e) -> {
-            DTFechaHora fechaDistribucion = convertirDateADtFechaHora((Date) spnFechaDistribucion.getValue());
-            DTFechaHora fechaEntrega = convertirDateADtFechaHora((Date) spnFechaEntrega.getValue());
+            LocalDateTime fechaDistribucion = convertirDateALocalDateTime((Date) spnFechaDistribucion.getValue());
+            LocalDateTime fechaEntrega = convertirDateALocalDateTime((Date) spnFechaEntrega.getValue());
             DTDonacion donacionSeleccionada = (DTDonacion) spnDonacion.getValue();
             String direccionSeleccionada = (String) spnDireccion.getValue();
             String nombreBeneficiarioSeleccionado = listBeneficiarios.getSelectedValue();
@@ -693,7 +693,7 @@ public class Principal {
         // Actualizar la información al cambiar la fecha en el spinner
         spnFechaDistribucion.addChangeListener(e -> {
             Date fechaSeleccionadaDate = (Date) spnFechaDistribucion.getValue();
-            DTFechaHora fechaSeleccionada = convertirDateADtFechaHora(fechaSeleccionadaDate);
+            LocalDateTime fechaSeleccionada = convertirDateALocalDateTime(fechaSeleccionadaDate);
             DTDistribucion distribucionSeleccionada = obtenerDistribucionSegunFecha(fechaSeleccionada, distribucionesOrdenadas);
 
             if (distribucionSeleccionada != null) {
@@ -728,8 +728,8 @@ public class Principal {
 
         // Establecer la primera fecha como la fecha inicial en el spinner
         if (!distribucionesOrdenadas.isEmpty()) {
-            DTFechaHora fechaInicial = distribucionesOrdenadas.get(0).getFechaPreparacion();
-            Date fechaInicialDate = convertirDtFechaHoraADate(fechaInicial);
+            LocalDateTime fechaInicial = distribucionesOrdenadas.get(0).getFechaPreparacion();
+            Date fechaInicialDate = convertirLocalDateTimeADate(fechaInicial);
             ((SpinnerDateModel) spnFechaDistribucion.getModel()).setValue(fechaInicialDate);
         }
 
@@ -853,7 +853,7 @@ public class Principal {
         internalFrame.setVisible(true);
     }
 
-    private static DTDistribucion obtenerDistribucionSegunFecha(DTFechaHora fecha, List<DTDistribucion> distribuciones) {
+    private static DTDistribucion obtenerDistribucionSegunFecha(LocalDateTime fecha, List<DTDistribucion> distribuciones) {
         for (DTDistribucion distribucion : distribuciones) {
             if (distribucion.getFechaPreparacion().equals(fecha)) {
                 return distribucion;
@@ -872,7 +872,7 @@ public class Principal {
         return null;
     }
 
-    private static DTFechaHora obtenerFechaHora() {
+    private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
         Calendar calendario = Calendar.getInstance();
 
@@ -883,12 +883,12 @@ public class Principal {
         int hora = calendario.get(Calendar.HOUR_OF_DAY);
         int minutos = calendario.get(Calendar.MINUTE);
 
-        // Crear una instancia de DtFechaHora con la fecha actual
-        DTFechaHora fechaActual = new DTFechaHora(dia, mes, anio, hora, minutos);
+        // Crear una instancia de LocalDateTime con la fecha actual
+        LocalDateTime fechaActual = new LocalDateTime(dia, mes, anio, hora, minutos);
         return fechaActual;
     }
 
-    private static DTFechaHora convertirDateADtFechaHora(Date fecha) {
+    private static LocalDateTime convertirDateALocalDateTime(Date fecha) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(fecha);
 
@@ -898,10 +898,10 @@ public class Principal {
         int hora = calendar.get(Calendar.HOUR_OF_DAY);
         int minutos = calendar.get(Calendar.MINUTE);
 
-        return new DTFechaHora(dia, mes, anio, hora, minutos);
+        return new LocalDateTime(dia, mes, anio, hora, minutos);
     }
 
-    private static Date convertirDtFechaHoraADate(DTFechaHora fechaHora) {
+    private static Date convertirLocalDateTimeADate(LocalDateTime fechaHora) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, fechaHora.getAnio());
         calendar.set(Calendar.MONTH, fechaHora.getMes() - 1);  // Los meses empiezan en 0 en Calendar
@@ -913,7 +913,7 @@ public class Principal {
         return calendar.getTime();
     }
 
-    private static int compararFechas(DTFechaHora fecha1, DTFechaHora fecha2) {
+    private static int compararFechas(LocalDateTime fecha1, LocalDateTime fecha2) {
         if (fecha1.getAnio() != fecha2.getAnio()) {
             return fecha1.getAnio() - fecha2.getAnio();
         } else if (fecha1.getMes() != fecha2.getMes()) {
@@ -928,7 +928,7 @@ public class Principal {
     }
 
     // Método para formatear la fecha a una cadena
-    private static String formatearFecha(DTFechaHora fecha) {
+    private static String formatearFecha(LocalDateTime fecha) {
         if (fecha == null) {
             return "";
         }

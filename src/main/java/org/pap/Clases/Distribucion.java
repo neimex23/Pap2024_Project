@@ -1,37 +1,37 @@
 package org.pap.Clases;
-import org.pap.dtClasses.DTFechaHora;
+import org.pap.dtClasses.LocalDateTime;
 import org.pap.Enums.*;
 
 public class Distribucion {
 
-    private DTFechaHora fechaPreparacion;
-    private DTFechaHora fechaEntrega;
+    private LocalDateTime fechaPreparacion;
+    private LocalDateTime fechaEntrega;
     private EnumEstadoDistribucion estado;
     private Donacion donacion;
 
-    public Distribucion(DTFechaHora FechaPreparacion, DTFechaHora FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
+    public Distribucion(LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, Donacion donacion) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
         this.donacion = donacion;
     }
 
-    public DTFechaHora getFechaPreparacion() {
+    public LocalDateTime getFechaPreparacion() {
         return fechaPreparacion;
     }
 
     // Setter para FechaPreparacion
-    public void setFechaPreparacion(DTFechaHora FechaPreparacion) {
+    public void setFechaPreparacion(LocalDateTime FechaPreparacion) {
         this.fechaPreparacion = FechaPreparacion;
     }
 
     // Getter para FechaEntrega
-    public DTFechaHora getFechaEntrega() {
+    public LocalDateTime getFechaEntrega() {
         return fechaEntrega;
     }
 
     // Setter para FechaEntrega
-    public void setFechaEntrega(DTFechaHora FechaEntrega) {
+    public void setFechaEntrega(LocalDateTime FechaEntrega) {
         this.fechaEntrega = FechaEntrega;
     }
 

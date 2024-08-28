@@ -22,7 +22,7 @@ public class Controlador implements IControlador {
     //Operaciones de usario
 	
     @Override
-	public void altaBeneficiario(String nombre, String email, String dir, DTFechaHora fNac,
+	public void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
 	    EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
         // Se crea la instancia del nuevo usuario
         Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
@@ -61,14 +61,14 @@ public class Controlador implements IControlador {
     //Operaciones de Donacion
 
     @Override
-    public void altaDonacionAlimento(DTFechaHora FechaIng, String descripcionProducto, int cantElementos) {
+    public void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         manejadorDonacion.agregarDonacion(new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos));
     }
 
     @Override
-    public void altaDonacionArticulo(DTFechaHora FechaIng, String descripcionArt, float peso, String dimensiones) {
+    public void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt,peso, dimensiones));
@@ -86,7 +86,7 @@ public class Controlador implements IControlador {
     //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(DTFechaHora fechaPreparacion, DTFechaHora fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
+    public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
         Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
         manejadorDistribucion.agregarDistribucion(new Distribucion(fechaPreparacion,fechaEntrega,estado, donacion));
     }

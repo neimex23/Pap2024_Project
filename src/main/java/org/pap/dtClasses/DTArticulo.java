@@ -21,7 +21,7 @@ public class DTArticulo extends DTDonacion {
         return dimensiones;
     }
 
-    public DTArticulo(int id, DTFechaHora fechaIngresada, String descr, float peso, String dimensiones) {
+    public DTArticulo(int id, LocalDateTime fechaIngresada, String descr, float peso, String dimensiones) {
         super(id, fechaIngresada);
         this.descr = descr;
         this.peso = peso;

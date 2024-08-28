@@ -3,12 +3,12 @@ package org.pap.dtClasses;
 import org.pap.Enums.EnumEstadoDistribucion;
 
 public class DTDistribucion {
-    private DTFechaHora fechaPreparacion;
-    private DTFechaHora fechaEntrega;
+    private LocalDateTime fechaPreparacion;
+    private LocalDateTime fechaEntrega;
     private EnumEstadoDistribucion estado;
     private DTDonacion donacionAsc;
 
-    public DTDistribucion(DTFechaHora FechaPreparacion, DTFechaHora FechaEntrega, EnumEstadoDistribucion estado, DTDonacion DonacionAsc) {
+    public DTDistribucion(LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, DTDonacion DonacionAsc) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
@@ -16,12 +16,12 @@ public class DTDistribucion {
     }
 
     // Getter para fechaPreparacion
-    public DTFechaHora getFechaPreparacion() {
+    public LocalDateTime getFechaPreparacion() {
         return fechaPreparacion;
     }
 
     // Getter para FechaEntrega
-    public DTFechaHora getFechaEntrega() {
+    public LocalDateTime getFechaEntrega() {
         return fechaEntrega;
     }
 

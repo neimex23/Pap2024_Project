@@ -1,13 +1,13 @@
 package org.pap.Clases;
-import org.pap.dtClasses.DTFechaHora;
+import org.pap.dtClasses.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 
 public abstract class Donacion {
 	
 	    private int id;
-	    private DTFechaHora fechaIngresada;
+	    private LocalDateTime fechaIngresada;
 
-		public Donacion(int id, DTFechaHora fechaIngresada) {
+		public Donacion(int id, LocalDateTime fechaIngresada) {
 	        this.id = id;
 	        this.fechaIngresada = fechaIngresada;
 	    }
@@ -16,7 +16,7 @@ public abstract class Donacion {
 	        return id;
 	    }
 	
-	    public DTFechaHora getFechaIngresada() {
+	    public LocalDateTime getFechaIngresada() {
 	        return fechaIngresada;
 	    }
 	    
@@ -24,7 +24,7 @@ public abstract class Donacion {
 	        this.id = id;
 	    }
 	    
-	    public void setFechaIngresada(DTFechaHora fechaIngresada) {
+	    public void setFechaIngresada(LocalDateTime fechaIngresada) {
 	        this.fechaIngresada = fechaIngresada;
 	    }
 
