@@ -1,5 +1,5 @@
 package org.pap.Clases;
-import org.pap.dtClasses.LocalDateTime;
+import java.time.LocalDateTime;
 import org.pap.Enums.*;
 
 public class Distribucion {

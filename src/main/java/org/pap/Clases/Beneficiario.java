@@ -2,7 +2,7 @@ package org.pap.Clases;
 import org.pap.Enums.EnumBarrio;
 import org.pap.Enums.EnumEstadoBeneficiario;
 import org.pap.dtClasses.DTUsuario;
-import org.pap.dtClasses.LocalDateTime;
+import java.time.LocalDateTime;
 import org.pap.dtClasses.DTBeneficiario;
 
 public class Beneficiario extends Usuario {

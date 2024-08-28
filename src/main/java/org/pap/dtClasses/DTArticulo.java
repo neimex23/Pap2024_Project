@@ -1,4 +1,5 @@
 package org.pap.dtClasses;
+import java.time.LocalDateTime;
 
 public class DTArticulo extends DTDonacion {
 

@@ -1,6 +1,6 @@
 package org.pap.Clases;
 
-import org.pap.dtClasses.LocalDateTime;
+import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 import org.pap.dtClasses.DTAlimento;
 

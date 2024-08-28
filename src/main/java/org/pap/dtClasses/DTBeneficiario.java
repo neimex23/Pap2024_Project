@@ -1,6 +1,6 @@
 package org.pap.dtClasses;
-
 import org.pap.Enums.*;
+import java.time.LocalDateTime;
 
 public class DTBeneficiario extends DTUsuario{
 
