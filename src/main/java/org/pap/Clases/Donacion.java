@@ -13,6 +13,9 @@ public abstract class Donacion {
 	    private int id;
 	    private LocalDateTime fechaIngresada;
 
+
+		public Donacion(){};
+
 		public Donacion(int id, LocalDateTime fechaIngresada) {
 	        this.id = id;
 	        this.fechaIngresada = fechaIngresada;

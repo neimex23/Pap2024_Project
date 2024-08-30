@@ -20,6 +20,7 @@ public class Repartidor extends Usuario {
 	        this.numeroLicencia = numeroLicencia;
 	    }
 
+		public Repartidor() {};
 	    // Getter para numeroLicencia
 	    public String getNumeroLicencia() {
 	        return numeroLicencia;

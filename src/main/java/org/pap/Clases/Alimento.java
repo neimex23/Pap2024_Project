@@ -16,6 +16,8 @@ public class Alimento extends Donacion {
     private String descProducto;
     private int cantElemntos;
 
+    public Alimento(){};
+
     // Getter para descProducto
     public String getDescProducto() {
         return this.descProducto;

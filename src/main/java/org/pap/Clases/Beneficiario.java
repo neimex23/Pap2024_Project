@@ -30,6 +30,8 @@ public class Beneficiario extends Usuario {
         this.barrio = barrio;
     }
 
+    public Beneficiario(){};
+
     // Getter para direccion
     public String getDireccion() {
         return direccion;

@@ -16,7 +16,11 @@ public class Articulo extends Donacion {
 	private String descr;
 	private float peso;
 	private String dimensiones;
-	
+
+
+    public Articulo(){};
+
+
 	// Getter para descr
     public String getDescr() {
         return descr;
