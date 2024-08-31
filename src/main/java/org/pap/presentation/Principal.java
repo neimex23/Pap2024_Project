@@ -26,29 +26,20 @@ import java.awt.event.ActionEvent;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.LinkedHashMap;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -56,11 +47,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.table.DefaultTableModel;
 
 public class Principal {
 
@@ -92,9 +84,13 @@ public class Principal {
         JMenu mnAgregarDonacion = new JMenu("Agregar Donacion");
         menuBar.add(mnAgregarDonacion);
 
-        // Crear el menú "Agregar Donacion"
+        // Crear el menú "Agregar Distribucion"
         JMenu mnDistribucion = new JMenu("Distribucion");
         menuBar.add(mnDistribucion);
+
+        // Crear el menú "Agregar Distribucion"
+        JMenu mnListar = new JMenu("Listar");
+        menuBar.add(mnListar);
 
         // Crear y añadir el elemento de menú "Beneficiario"
         JMenuItem mntmBeneficiario = new JMenuItem("Beneficiario");
@@ -127,7 +123,7 @@ public class Principal {
         // Crear y añadir el elemento de menú "Distribucion"
         JMenuItem mntmDistribucion = new JMenuItem("Alta distribucion");
         mntmDistribucion.addActionListener((ActionEvent arg0) -> {
-            mostrarFormularioCrearDistribucion("Agregar Distribucion");
+            mostrarFormularioAltaDistribucion("Agregar Distribucion");
         });
         mnDistribucion.add(mntmDistribucion);
 
@@ -138,12 +134,19 @@ public class Principal {
         });
         mnDistribucion.add(mntmModDistribucion);
 
-        // Crear y añadir el elemento de menú "Distribucion"
-        JMenuItem mntmModListarDistribucion = new JMenuItem("Listar distribuciones");
-        mntmModDistribucion.addActionListener((ActionEvent arg0) -> {
-            mostrarFormularioDistribucion("Listar Distribucion");
+        // Crear y añadir el elemento de menú "Listar beneficiario"
+        JMenuItem mntmListBeneficiarios = new JMenuItem("Listar beneficiarios");
+        mntmListBeneficiarios.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarBeneficiario("Listar Distribucion");
         });
-        mnDistribucion.add(mntmModDistribucion);
+        mnListar.add(mntmListBeneficiarios);
+
+        // Crear y añadir el elemento de menú "Listar Distribucion"
+        JMenuItem mntmListDistribucion = new JMenuItem("Listar distribuciones");
+        mntmListDistribucion.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarDistribucion("Listar Distribucion");
+        });
+        mnListar.add(mntmListDistribucion);
 
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
@@ -217,10 +220,13 @@ public class Principal {
                 EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
 
                 // Agregar beneficirio con los datos obtenidos
-                fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, EnumEstadoBeneficiario.ACTIVO, barrio);
-
-                // Mensaje de operacion realizada satisfactoriamente
-                JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
+                    JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, EnumEstadoBeneficiario.ACTIVO, barrio);
+                    // Mensaje de operacion realizada satisfactoriamente
+                    JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                }           
 
                 // Esperar un poco antes de cerrar el frame para dar tiempo a mostrar el mensaje de finalización
                 Thread.sleep(500);
@@ -229,9 +235,10 @@ public class Principal {
                 internalFrame.dispose();
                 // Captura el error de formato incorrecto de correo
             } catch (InvalidEmailException ema) {
-                JOptionPane.showMessageDialog(internalFrame, "Ocurrió un error: " + ema.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(internalFrame, "Formato de correo con errores: " + ema.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 // Captura el error generico
             } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(internalFrame, "Ocurrio un error", "Error", JOptionPane.ERROR_MESSAGE);
                 Thread.currentThread().interrupt();
             }
         });
@@ -454,442 +461,413 @@ public class Principal {
         internalFrame.setVisible(true);
     }
 
-    private static void mostrarFormularioCrearDistribucion(String titulo) {
+    private static void mostrarFormularioAltaDistribucion(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
         internalFrame.setSize(800, 400);
         internalFrame.setLayout(new BorderLayout());
-        internalFrame.setLocation(100, 150);
+        internalFrame.setLocation(100, 100);
 
-        // Panel principal donde se verá la información de la distribución
-        JPanel panelPrincipal = new JPanel(new GridLayout(7, 2)); // Cambiado a 7 filas para acomodar la fecha de entrega
+        // Panel principal donde se ve la información de la distribución
+        JPanel panelPrincipal = new JPanel(new GridLayout(6, 2)); // Acomoda los elementos
 
-        // Etiquetas y campos de texto
-        JLabel lblFechaDistribucion = new JLabel("Fecha de Distribución:");
-        JSpinner spnFechaDistribucion = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFechaDistribucion, "dd-MM-yyyy");
-        spnFechaDistribucion.setEditor(dateEditor);
-
-        JLabel lblFechaPreparacion = new JLabel("Fecha Preparación:");
-        JTextField txtFechaPreparacion = new JTextField();
+        // Fecha de Preparación (autoasignada como hoy)
+        JLabel lblFechaPreparacion = new JLabel("Fecha de Preparación:");
+        JTextField txtFechaPreparacion = new JTextField(LocalDate.now().toString());
         txtFechaPreparacion.setEditable(false);
 
-        JLabel lblFechaEntrega = new JLabel("Fecha Entrega:");
-        JSpinner spnFechaEntrega = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dateEditorEntrega = new JSpinner.DateEditor(spnFechaEntrega, "dd-MM-yyyy");
-        spnFechaEntrega.setEditor(dateEditorEntrega);
+        // Estado (PENDIENTE)
+        JLabel lblEstado = new JLabel("Estado:");
+        JTextField txtEstado = new JTextField("PENDIENTE");
+        txtEstado.setEditable(false);
 
-        JLabel lblTipo = new JLabel("Tipo de distribución:");
-        JTextField txtTipo = new JTextField();
-        txtTipo.setEditable(false);
+        // Beneficiarios disponibles
+        JLabel lblBeneficiario = new JLabel("Beneficiario:");
+        JComboBox<String> cbBeneficiarios = new JComboBox<>();
 
-        JLabel lblDescripcion = new JLabel("Descripción:");
-        JTextArea txtDescripcion = new JTextArea();
-        txtDescripcion.setEditable(false);
-        JScrollPane descripcionScroll = new JScrollPane(txtDescripcion);
+        List<DTBeneficiario> listaBeneficiarios = (List<DTBeneficiario>) (List<?>) fabrica.getIControlador().ListarBeneficiario();
+        if (listaBeneficiarios.isEmpty()) {
+            cbBeneficiarios.addItem("No hay beneficiarios disponibles");
+            cbBeneficiarios.setEnabled(false);
+        } else {
+            for (DTBeneficiario beneficiario : listaBeneficiarios) {
+                cbBeneficiarios.addItem(beneficiario.getNombre());
+            }
+        }
 
-        panelPrincipal.add(lblFechaDistribucion);
-        panelPrincipal.add(spnFechaDistribucion);
+        // Donaciones disponibles
+        JLabel lblDonacion = new JLabel("Donación:");
+        JComboBox<String> cbDonaciones = new JComboBox<>();
+
+        List<DTDonacion> listaDonaciones = fabrica.getIControlador().ListarDonaciones();
+        if (listaDonaciones.isEmpty()) {
+            cbDonaciones.addItem("No hay donaciones disponibles");
+            cbDonaciones.setEnabled(false);
+        } else {
+            String descripcion = null;
+            for (DTDonacion donacion : listaDonaciones) {
+                if (donacion instanceof DTArticulo) {
+                    descripcion = ((DTArticulo) donacion).getDescr();
+                } else if (donacion instanceof DTAlimento) {
+                    descripcion = ((DTAlimento) donacion).getDescProducto();
+                }
+                cbDonaciones.addItem(donacion.getId() + " - " + descripcion);
+            }
+        }
+
+        // Fecha de entrega
+        JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
+        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
+        spinnerFechaEntrega.setEditor(dateEditor);
+
+        // Hora de entrega
+        JLabel lblHoraEntrega = new JLabel("Hora de Entrega:");
+
+// Configuración del modelo para que el spinner cambie los minutos
+        SpinnerDateModel modelHoraEntrega = new SpinnerDateModel();
+        JSpinner spinnerHoraEntrega = new JSpinner(modelHoraEntrega);
+        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spinnerHoraEntrega, "HH:mm");
+        spinnerHoraEntrega.setEditor(timeEditor);
+
+// Ajustar para que el spinner cambie minutos al cambiar el valor
+        spinnerHoraEntrega.addChangeListener(e -> {
+            Date date = modelHoraEntrega.getDate();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            // Forzar al spinner a cambiar solo los minutos
+            if (modelHoraEntrega.getCalendarField() != Calendar.MINUTE) {
+                modelHoraEntrega.setCalendarField(Calendar.MINUTE);
+            }
+
+            int currentMinutes = calendar.get(Calendar.MINUTE);
+            calendar.set(Calendar.MINUTE, currentMinutes);
+            modelHoraEntrega.setValue(calendar.getTime());
+        });
+
+        // Añadir componentes al panel principal
         panelPrincipal.add(lblFechaPreparacion);
         panelPrincipal.add(txtFechaPreparacion);
+        panelPrincipal.add(lblEstado);
+        panelPrincipal.add(txtEstado);
+        panelPrincipal.add(lblBeneficiario);
+        panelPrincipal.add(cbBeneficiarios);
+        panelPrincipal.add(lblDonacion);
+        panelPrincipal.add(cbDonaciones);
         panelPrincipal.add(lblFechaEntrega);
-        panelPrincipal.add(spnFechaEntrega); // Añadido el spinner de fecha de entrega
-        panelPrincipal.add(lblTipo);
-        panelPrincipal.add(txtTipo);
-        panelPrincipal.add(lblDescripcion);
-        panelPrincipal.add(descripcionScroll);
+        panelPrincipal.add(spinnerFechaEntrega);
+        panelPrincipal.add(lblHoraEntrega);
+        panelPrincipal.add(spinnerHoraEntrega);
 
-        // Panel derecho para beneficiarios y donaciones
-        JPanel panelDerecho = new JPanel(new BorderLayout());
-
-        // Panel superior para el spinner de dirección
-        JPanel panelDireccion = new JPanel(new GridLayout(1, 2));
-        JLabel lblDireccion = new JLabel("Dirección:");
-        JSpinner spnDireccion = new JSpinner(); // Inicializa sin datos
-        panelDireccion.add(lblDireccion);
-        panelDireccion.add(spnDireccion);
-
-        // Mapa para almacenar la relación entre direcciones y beneficiarios
-        Map<String, List<DTBeneficiario>> mapDireccionesBeneficiarios = new HashMap<>();
-
-        // Obtenemos el manejador de beneficiarios
-        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
-        Set<String> direcciones = new HashSet<>();
-
-        // Cargar direcciones y beneficiarios en el mapa
-        for (Iterator<DTUsuario> it = listaBeneficiarios.iterator(); it.hasNext();) {
-            DTBeneficiario tipoDDBeneficiario = (DTBeneficiario) it.next();
-            String direccion = tipoDDBeneficiario.getDireccion();
-            if (direccion != null && !direccion.isEmpty()) {
-                direcciones.add(direccion);
-                mapDireccionesBeneficiarios
-                        .computeIfAbsent(direccion, k -> new ArrayList<>())
-                        .add(tipoDDBeneficiario);
-            }
-        }
-
-// Configurar el Spinner con las direcciones disponibles
-        List<String> listaDirecciones = new ArrayList<>(direcciones);
-
-// Asegurarse de que la lista no esté vacía
-        if (listaDirecciones.isEmpty()) {
-            listaDirecciones.add("No hay direcciones disponibles");
-            spnDireccion.setEnabled(false);  // Deshabilitar el spinner si no hay direcciones
-        } else {
-            spnDireccion.setEnabled(true);
-        }
-
-        spnDireccion.setModel(new SpinnerListModel(listaDirecciones));
-
-        // Panel central para la lista de beneficiarios
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        JList<String> listBeneficiarios = new JList<>(listModel);
-        JScrollPane scrollBeneficiarios = new JScrollPane(listBeneficiarios);
-
-        // Panel inferior para detalles del beneficiario seleccionado
-        JPanel panelDetallesBeneficiario = new JPanel(new GridLayout(2, 2));
-        JLabel lblFechaNacimiento = new JLabel("Fecha Nacimiento:");
-        JTextField txtFechaNacimiento = new JTextField();
-        txtFechaNacimiento.setEditable(false);
-        JLabel lblEstado = new JLabel("Estado:");
-        JTextField txtEstado = new JTextField();
-        txtEstado.setEditable(false);
-        panelDetallesBeneficiario.add(lblFechaNacimiento);
-        panelDetallesBeneficiario.add(txtFechaNacimiento);
-        panelDetallesBeneficiario.add(lblEstado);
-        panelDetallesBeneficiario.add(txtEstado);
-
-        // Actualizar la lista de beneficiarios cuando se cambie la dirección
-        spnDireccion.addChangeListener(e -> {
-            String direccionSeleccionada = (String) spnDireccion.getValue();
-            listModel.clear();
-            if (direccionSeleccionada != null && mapDireccionesBeneficiarios.containsKey(direccionSeleccionada)) {
-                for (DTBeneficiario TDDBeneficiario : mapDireccionesBeneficiarios.get(direccionSeleccionada)) {
-                    listModel.addElement(TDDBeneficiario.getNombre());
-                }
-            }
-        });
-
-        // Mostrar detalles del beneficiario seleccionado al hacer clic en la lista
-        listBeneficiarios.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                String beneficiarioSeleccionado = listBeneficiarios.getSelectedValue();
-                if (beneficiarioSeleccionado != null) {
-                    DTBeneficiario tipoBeneficiario = mapDireccionesBeneficiarios.get((String) spnDireccion.getValue())
-                            .stream()
-                            .filter(b -> b.getNombre().equals(beneficiarioSeleccionado))
-                            .findFirst().orElse(null);
-                    if (tipoBeneficiario != null) {
-                        txtFechaNacimiento.setText(tipoBeneficiario.getFechaNacimiento().toString());
-                        txtEstado.setText(tipoBeneficiario.getEstado().toString());
-                    }
-                }
-            }
-        });
-
-        panelDerecho.add(panelDireccion, BorderLayout.NORTH);
-        panelDerecho.add(scrollBeneficiarios, BorderLayout.CENTER);
-        panelDerecho.add(panelDetallesBeneficiario, BorderLayout.SOUTH);
-
-        // Panel inferior para las donaciones
-        JPanel panelDonacion = new JPanel(new GridLayout(2, 2));
-        JLabel lblDonacion = new JLabel("Donación:");
-        JSpinner spnDonacion = new JSpinner();
-        try {
-            DTDonacion[] donacionesDisponibles = getDonacionesDisponibles();
-            spnDonacion.setModel(new SpinnerListModel(donacionesDisponibles));
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(internalFrame, "No hay donaciones disponibles.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            spnDonacion.setModel(new SpinnerListModel(new DTDonacion[]{null}));
-        }
-        panelDonacion.add(lblDonacion);
-        panelDonacion.add(spnDonacion);
-
-        // Botón para registrar
+        // Panel inferior con los botones Registrar y Cancelar
+        JPanel panelInferior = new JPanel();
         JButton btnRegistrar = new JButton("Registrar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        // Acción del botón Registrar
         btnRegistrar.addActionListener((ActionEvent e) -> {
-            LocalDateTime fechaDistribucion = convertirDateALocalDateTime((Date) spnFechaDistribucion.getValue());
-            LocalDateTime fechaEntrega = convertirDateALocalDateTime((Date) spnFechaEntrega.getValue());
-            DTDonacion donacionSeleccionada = (DTDonacion) spnDonacion.getValue();
-            String direccionSeleccionada = (String) spnDireccion.getValue();
-            String nombreBeneficiarioSeleccionado = listBeneficiarios.getSelectedValue();
+            String nombreBeneficiarioSeleccionado = (String) cbBeneficiarios.getSelectedItem();
+            String donacionSeleccionada = (String) cbDonaciones.getSelectedItem();
 
-            if (direccionSeleccionada != null && nombreBeneficiarioSeleccionado != null) {
-                DTBeneficiario beneficiarioSeleccionado = mapDireccionesBeneficiarios.get(direccionSeleccionada)
-                        .stream() // Convierte esa lista de Beneficiarios en un flujo (stream), lo que permite aplicar operaciones de filtrado y búsqueda.
-                        .filter(b -> b.getNombre().equals(nombreBeneficiarioSeleccionado)) //Filtra los elementos en el flujo, manteniendo solo aquellos Beneficiarios cuyo nombre (b.getNombre()) coincide con el nombre del beneficiario seleccionado (nombreBeneficiarioSeleccionado).
-                        .findFirst().orElse(null);  // Si findFirst() devuelve un Optional vacío (es decir, no se encontró ningún Beneficiario que cumpla con la condición), entonces orElse(null) devuelve null. Si se encontró un Beneficiario, se devuelve ese Beneficiario.
+            if (cbBeneficiarios.isEnabled() && cbDonaciones.isEnabled()
+                    && nombreBeneficiarioSeleccionado != null && donacionSeleccionada != null) {
 
-                if (beneficiarioSeleccionado != null && donacionSeleccionada != null) {
-                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion, fechaEntrega, EnumEstadoDistribucion.PENDIENTE, donacionSeleccionada.getId());
+                DTBeneficiario beneficiarioSeleccionado = listaBeneficiarios.stream()
+                        .filter(b -> b.getNombre().equals(nombreBeneficiarioSeleccionado))
+                        .findFirst().orElse(null);
 
-                    JOptionPane.showMessageDialog(internalFrame, "Distribución registrada exitosamente.");
-                    internalFrame.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(internalFrame, "Por favor, selecciona un beneficiario y una donación válida.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(internalFrame, "Por favor, selecciona una dirección y un beneficiario válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                DTDonacion donacionSeleccionadaObj = listaDonaciones.stream()
+                        .filter(d -> {
+                            String descripcion = null;
+                            if (d instanceof DTArticulo) {
+                                descripcion = ((DTArticulo) d).getDescr();
+                            } else if (d instanceof DTAlimento) {
+                                descripcion = ((DTAlimento) d).getDescProducto();
+                            }
+                            return (d.getId() + " - " + descripcion).equals(donacionSeleccionada);
+                        })
+                        .findFirst().orElse(null);
+
+                // Obtener la fecha y hora seleccionadas
+                Date fechaEntrega = (Date) spinnerFechaEntrega.getValue();
+                Date horaEntrega = (Date) spinnerHoraEntrega.getValue();
+
+                // Combinar fecha y hora
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(fechaEntrega);
+                calendar.set(Calendar.HOUR_OF_DAY, horaEntrega.getHours());
+                calendar.set(Calendar.MINUTE, horaEntrega.getMinutes());
+
+                LocalDateTime fechaHoraEntrega = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
+
+                // Guardar el beneficiarioSeleccionado, donacionSeleccionadaObj y fechaHoraEntrega
+                //El id de la donacion deberia ser generado por el controlador no?
+                fabrica.getIControlador().agregarDistribucion(fechaHoraEntrega, fechaHoraEntrega, EnumEstadoDistribucion.ENTREGADO, 0, beneficiarioSeleccionado.getEmail());
             }
         });
 
-        // Botón para cancelar
-        JButton btnCancelar = new JButton("Cancelar");
+        // Acción del botón Cancelar
         btnCancelar.addActionListener((ActionEvent e) -> internalFrame.dispose());
 
-        // Panel inferior para los botones
-        JPanel panelInferior = new JPanel();
+        // Añadir botones al panel inferior
         panelInferior.add(btnRegistrar);
         panelInferior.add(btnCancelar);
 
         // Añadir los paneles al JInternalFrame
         internalFrame.add(panelPrincipal, BorderLayout.CENTER);
-        internalFrame.add(panelDerecho, BorderLayout.EAST);
-        internalFrame.add(panelDonacion, BorderLayout.WEST);
         internalFrame.add(panelInferior, BorderLayout.SOUTH);
 
         // Añadir el JInternalFrame al JDesktopPane
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
-
-        // Simular el primer cambio para cargar los beneficiarios correspondientes a la primera dirección
-        if (!direcciones.isEmpty()) {
-            spnDireccion.setValue(direcciones.iterator().next());
-        }
     }
 
-    //mostrarFormularioDistribucion incompleto
-    private static void mostrarFormularioDistribucion(String titulo) {
+    private static void mostrarFormularioListarBeneficiario(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(400, 300);
-        internalFrame.setLayout(new GridLayout(11, 2));
-        internalFrame.setLocation(100, 150);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
 
-        // Etiquetas y campos de texto
-        JLabel lblFecha = new JLabel("Fecha de Distribución:");
-        JSpinner spnFechaDistribucion = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFechaDistribucion, "dd-MM-yyyy");
-        spnFechaDistribucion.setEditor(dateEditor);
+        // Crear el modelo de la tabla
+        String[] columnNames = {"Nombre", "Dirección", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable tablaBeneficiarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
 
-        JLabel lblFechaPreparacion = new JLabel("Fecha Preparación:");
-        JTextField txtFechaPreparacion = new JTextField();
-        txtFechaPreparacion.setEditable(false);
+        // Obtener la lista de beneficiarios
+        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
 
-        JLabel lblFechaEntrega = new JLabel("Fecha Entrega:");
-        JTextField txtFechaEntrega = new JTextField();
-        txtFechaEntrega.setEditable(false);
+        // Limpiar tabla existente
+        tableModel.setRowCount(0);
 
-        JLabel lblTipo = new JLabel("Tipo de distribución:");
-        JTextField txtTipo = new JTextField();
-        txtTipo.setEditable(false);
+        if (listaBeneficiarios.isEmpty()) {
+            tableModel.addRow(new Object[]{"No hay beneficiarios registrados", "", "", ""});
+        } else {
+            for (DTUsuario usuario : listaBeneficiarios) {
+                if (usuario instanceof DTBeneficiario) {
+                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
+                    String nombre = beneficiario.getNombre();
+                    String direccion = beneficiario.getDireccion(); // Asumiendo que hay un método getDireccion()
+                    String estado = beneficiario.getEstado().toString(); // Asumiendo que hay un método getEstado()
+                    EnumBarrio barrio = beneficiario.getBarrio(); // Asumiendo que hay un método getBarrio()
 
-        JLabel lblDescripcion = new JLabel("Descripción:");
-        JTextArea txtDescripcion = new JTextArea();
-        txtDescripcion.setEditable(false);
-        JScrollPane descripcionScroll = new JScrollPane(txtDescripcion);
-
-// Obtener la lista de distribuciones ordenada por fecha de preparación
-        Map<DTDistribucion, DTDonacion> distribucionesOrdenadas = fabrica.getIControlador().listarDistribuciones()
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey((d1, d2) -> compararFechas(d1.getFechaPreparacion(), d2.getFechaPreparacion())))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, // Manejo de colisiones, si es necesario
-                        LinkedHashMap::new // Mantener el orden de inserción
-                ));
-
-        // Actualizar la información al cambiar la fecha en el spinner
-        spnFechaDistribucion.addChangeListener(e -> {
-            Date fechaSeleccionadaDate = (Date) spnFechaDistribucion.getValue();
-            LocalDateTime fechaSeleccionada = convertirDateALocalDateTime(fechaSeleccionadaDate);
-            DTDistribucion distribucionSeleccionada = obtenerDistribucionSegunFecha(fechaSeleccionada, distribucionesOrdenadas);
-
-            if (distribucionSeleccionada != null) {
-                txtFechaPreparacion.setText(distribucionSeleccionada.getFechaPreparacion().toString());
-                txtFechaEntrega.setText(distribucionSeleccionada.getFechaEntrega().toString());
-                DTDonacion donacion = distribucionSeleccionada.getDonacionAsc();
-
-                if (donacion != null) {
-                    if (donacion instanceof DTAlimento) {
-                        DTAlimento alimento = (DTAlimento) donacion;
-                        txtTipo.setText("Alimento");
-                        txtDescripcion.setText(alimento.getDescProducto());
-                    } else if (donacion instanceof DTArticulo) {
-                        DTArticulo articulo = (DTArticulo) donacion;
-                        txtTipo.setText("Artículo");
-                        txtDescripcion.setText(articulo.getDescr());
-                    } else {
-                        txtTipo.setText("Desconocido");
-                        txtDescripcion.setText("Donación desconocida");
-                    }
-                } else {
-                    txtTipo.setText("N/A");
-                    txtDescripcion.setText("No hay donación asociada");
+                    tableModel.addRow(new Object[]{nombre, direccion, estado, barrio});
                 }
-            } else {
-                txtFechaPreparacion.setText("");
-                txtFechaEntrega.setText("");
-                txtTipo.setText("");
-                txtDescripcion.setText("No hay distribuciones para esta fecha");
             }
-        });
-
-        // Establecer la primera fecha como la fecha inicial en el spinner
-        if (!distribucionesOrdenadas.isEmpty()) {
-            // Obtener el primer elemento del Map usando un iterador
-            Map.Entry<DTDistribucion, DTDonacion> primeraEntrada = distribucionesOrdenadas.entrySet().iterator().next();
-
-            // Obtener la fecha de preparación de la primera distribución
-            LocalDateTime fechaInicial = primeraEntrada.getKey().getFechaPreparacion();
-
-            // Convertir LocalDateTime a Date
-            Date fechaInicialDate = convertirLocalDateTimeADate(fechaInicial);
-
-            // Establecer el valor en el SpinnerDateModel
-            ((SpinnerDateModel) spnFechaDistribucion.getModel()).setValue(fechaInicialDate);
         }
 
-        // Botón para cancelar
+        // Panel inferior con el botón Cancelar
+        JPanel panelInferior = new JPanel();
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener((ActionEvent e) -> internalFrame.dispose());
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
 
-        // Añadir los componentes al JInternalFrame
-        internalFrame.add(lblFecha);
-        internalFrame.add(spnFechaDistribucion);
-        internalFrame.add(lblFechaPreparacion);
-        internalFrame.add(txtFechaPreparacion);
-        internalFrame.add(lblFechaEntrega);
-        internalFrame.add(txtFechaEntrega);
-        internalFrame.add(lblTipo);
-        internalFrame.add(txtTipo);
-        internalFrame.add(lblDescripcion);
-        internalFrame.add(descripcionScroll);
-        internalFrame.add(btnCancelar);
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
 
         // Añadir el JInternalFrame al JDesktopPane
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
+
+private static void mostrarFormularioListarDistribucion(String titulo) {
+    // Crear un JInternalFrame para el formulario
+    JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+    internalFrame.setSize(600, 400);
+    internalFrame.setLayout(new BorderLayout());
+    internalFrame.setLocation(100, 100);
+
+    // Panel para el estado de distribución
+    JPanel panelEstado = new JPanel();
+    JLabel lblEstado = new JLabel("Estado de Distribución:");
+    JComboBox<EnumEstadoDistribucion> cbEstado = new JComboBox<>(EnumEstadoDistribucion.values());
+    panelEstado.add(lblEstado);
+    panelEstado.add(cbEstado);
+
+    // Tabla para mostrar las distribuciones
+    String[] columnNames = {"Fecha Preparación", "Fecha Entrega", "Tipo", "Descripción"};
+    DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+    JTable tablaDistribuciones = new JTable(tableModel);
+    JScrollPane scrollPane = new JScrollPane(tablaDistribuciones);
+
+    // Actualizar la tabla según el estado seleccionado
+    cbEstado.addActionListener(e -> {
+        EnumEstadoDistribucion estadoSeleccionado = (EnumEstadoDistribucion) cbEstado.getSelectedItem();
+        if (estadoSeleccionado != null) {
+            List<DTDistribucion> distribuciones = fabrica.getIControlador().listarDistribucionesPorEstado(estadoSeleccionado);
+            tableModel.setRowCount(0); // Limpiar tabla existente
+
+            if (distribuciones.isEmpty()) {
+                tableModel.addRow(new Object[]{"No hay distribuciones disponibles", "", "", ""});
+                return;
+            }
+
+            distribuciones.forEach(distribucion -> {
+                // Obtener la donación asociada a la distribución
+                DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getId());
+                
+                String tipo;
+                if (donacion instanceof DTAlimento) {
+                    tipo = "Alimento";
+                } else if (donacion instanceof DTArticulo) {
+                    tipo = "Artículo";
+                } else {
+                    tipo = "Desconocido";
+                }
+
+                String descripcion;
+                if (donacion instanceof DTAlimento) {
+                    descripcion = ((DTAlimento) donacion).getDescProducto();
+                } else if (donacion instanceof DTArticulo) {
+                    descripcion = ((DTArticulo) donacion).getDescr();
+                } else {
+                    descripcion = "N/A";
+                }
+
+                tableModel.addRow(new Object[]{
+                    distribucion.getFechaPreparacion().toString(),
+                    distribucion.getFechaEntrega().toString(),
+                    tipo,
+                    descripcion
+                });
+            });
+
+            // Si no hay distribuciones para el estado seleccionado
+            if (tableModel.getRowCount() == 0) {
+                tableModel.addRow(new Object[]{"No hay distribuciones para este estado", "", "", ""});
+            }
+        }
+    });
+
+    // Panel inferior con el botón Cancelar
+    JPanel panelInferior = new JPanel();
+    JButton btnCancelar = new JButton("Cancelar");
+    btnCancelar.addActionListener(e -> internalFrame.dispose());
+    panelInferior.add(btnCancelar);
+
+    // Añadir componentes al JInternalFrame
+    internalFrame.add(panelEstado, BorderLayout.NORTH);
+    internalFrame.add(scrollPane, BorderLayout.CENTER);
+    internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+    // Añadir el JInternalFrame al JDesktopPane
+    desktopPane.add(internalFrame);
+    internalFrame.setVisible(true);
+}
+
 
     //mostrarFormularioModDistribucion incompleto
-    private static void mostrarFormularioModDistribucion(String titulo) {
-        // Crear un JInternalFrame para el formulario
-        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(400, 300);
-        internalFrame.setLayout(new GridLayout(11, 2));
-        internalFrame.setLocation(100, 150);
+private static void mostrarFormularioModDistribucion(String titulo) {
+    // Crear un JInternalFrame para el formulario
+    JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+    internalFrame.setSize(400, 200);
+    internalFrame.setLayout(new GridLayout(6, 3));
+    internalFrame.setLocation(100, 150);
 
-        // Etiquetas y campos de texto
-        JLabel lblIdDistribucion = new JLabel("ID Donacion:");
-        JSpinner spnIdDistribucion = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1)); // Ajusta el rango según tu necesidad
+    // Etiquetas y campos de texto
+    JLabel lblIdDistribucion = new JLabel("ID Distribución:");
+    JSpinner spnIdDistribucion = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1)); // Ajusta el rango según tu necesidad
 
-        JLabel lblFechaPreparacion = new JLabel("Fecha Preparación:");
-        JTextField txtFechaPreparacion = new JTextField();
+    JLabel lblFechaPreparacion = new JLabel("Fecha Preparación:");
+    JTextField txtFechaPreparacion = new JTextField();
 
-        JLabel lblFechaEntrega = new JLabel("Fecha Entrega:");
-        JTextField txtFechaEntrega = new JTextField();
+    JLabel lblFechaEntrega = new JLabel("Fecha Entrega:");
+    JTextField txtFechaEntrega = new JTextField();
 
-        JLabel lblTipo = new JLabel("Tipo de distribucion:");
-        JTextField txtTipo = new JTextField();
+    JLabel lblTipo = new JLabel("Tipo de Distribución:");
+    JTextField txtTipo = new JTextField();
 
-        JLabel lblDescripcion = new JLabel("Descripción:");
-        JTextArea txtDescripcion = new JTextArea();
-        txtDescripcion.setEditable(true);
+    JLabel lblDescripcion = new JLabel("Descripción:");
+    JTextArea txtDescripcion = new JTextArea();
+    txtDescripcion.setEditable(true);
 
-        // Configurar la lista de distribuciones
-        Map<DTDistribucion, DTDonacion> distribuciones = fabrica.getIControlador().listarDistribuciones();
+    // Obtener la lista de distribuciones
+    List<DTDistribucion> distribuciones = fabrica.getIControlador().listarDistribuciones();
 
-        // Actualizar la información al cambiar el ID de la distribución
-        spnIdDistribucion.addChangeListener(e -> {
-            int idDistribucion = (Integer) spnIdDistribucion.getValue();
-            DTDistribucion distribucionSeleccionada = obtenerDistribucionConDonacion(idDistribucion);
+    // Actualizar la información al cambiar el ID de la distribución
+    spnIdDistribucion.addChangeListener(e -> {
+        int idDistribucion = (Integer) spnIdDistribucion.getValue();
+        
+        // Buscar la distribución en la lista
+        DTDistribucion distribucionSeleccionada = distribuciones.stream()
+            .filter(d -> d.getId() == idDistribucion)
+            .findFirst()
+            .orElse(null);
 
-            if (distribucionSeleccionada != null) {
-                // Actualizar los campos de fecha
-                txtFechaPreparacion.setText(formatearFecha(distribucionSeleccionada.getFechaPreparacion()));
-                txtFechaEntrega.setText(formatearFecha(distribucionSeleccionada.getFechaEntrega()));
+        if (distribucionSeleccionada != null) {
+            // Actualizar los campos de fecha
+            txtFechaPreparacion.setText(formatearFecha(distribucionSeleccionada.getFechaPreparacion()));
+            txtFechaEntrega.setText(formatearFecha(distribucionSeleccionada.getFechaEntrega()));
 
-                // Obtener la donación asociada
-                DTDonacion donacion = distribucionSeleccionada.getDonacionAsc();
-                if (donacion != null) {
-                    if (donacion instanceof DTAlimento) {
-                        DTAlimento alimento = (DTAlimento) donacion;
-                        txtTipo.setText("Alimento");
-                        txtDescripcion.setText(alimento.getDescProducto());
-                    } else if (donacion instanceof DTArticulo) {
-                        DTArticulo articulo = (DTArticulo) donacion;
-                        txtTipo.setText("Articulo");
-                        txtDescripcion.setText("Artículo: " + articulo.getDescr());
-                    } else {
-                        txtDescripcion.setText("Donación desconocida");
-                    }
+            // Obtener la donación asociada
+            DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucionSeleccionada.getDonacionAsc());
+            if (donacion != null) {
+                if (donacion instanceof DTAlimento) {
+                    DTAlimento alimento = (DTAlimento) donacion;
+                    txtTipo.setText("Alimento");
+                    txtDescripcion.setText(alimento.getDescProducto());
+                } else if (donacion instanceof DTArticulo) {
+                    DTArticulo articulo = (DTArticulo) donacion;
+                    txtTipo.setText("Artículo");
+                    txtDescripcion.setText(articulo.getDescr());
                 } else {
-                    txtDescripcion.setText("No hay donación asociada");
+                    txtDescripcion.setText("Donación desconocida");
                 }
+            } else {
+                txtDescripcion.setText("No hay donación asociada");
             }
-        });
+        } else {
+            // Limpiar los campos si no se encuentra la distribución
+            txtFechaPreparacion.setText("");
+            txtFechaEntrega.setText("");
+            txtTipo.setText("");
+            txtDescripcion.setText("Distribución no encontrada.");
+        }
+    });
 
-        // Botón para guardar
-        JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener((ActionEvent e) -> {
-            try {
+    // Botón para guardar
+    JButton btnGuardar = new JButton("Guardar");
+    btnGuardar.addActionListener((ActionEvent e) -> {
+        try {
+            // Lógica para guardar la información modificada (dependiendo de cómo se quiera implementar)
+            JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-                // Convertir y guardar la información
-                JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-                // Cerrar el frame después de guardar
-                internalFrame.dispose();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(internalFrame, "Ocurrió un error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        // Botón para cancelar
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener((ActionEvent e) -> {
+            // Cerrar el frame después de guardar
             internalFrame.dispose();
-        });
-
-        // Añadir los componentes al JInternalFrame
-        internalFrame.add(lblIdDistribucion);
-        internalFrame.add(spnIdDistribucion);
-        internalFrame.add(lblFechaPreparacion);
-        internalFrame.add(txtFechaPreparacion);
-        internalFrame.add(lblFechaEntrega);
-        internalFrame.add(txtFechaEntrega);
-        internalFrame.add(lblTipo);
-        internalFrame.add(txtTipo);
-        internalFrame.add(lblDescripcion);
-        internalFrame.add(new JScrollPane(txtDescripcion)); // Agregar JScrollPane para el JTextArea
-        internalFrame.add(btnGuardar);
-        internalFrame.add(btnCancelar);
-
-        // Añadir el JInternalFrame al JDesktopPane
-        desktopPane.add(internalFrame);
-        internalFrame.setVisible(true);
-    }
-
-    private static DTDistribucion obtenerDistribucionSegunFecha(LocalDateTime fecha, Map<DTDistribucion, DTDonacion> distribuciones) {
-        for (DTDistribucion distribucion : distribuciones.keySet()) {
-            if (distribucion.getFechaPreparacion().equals(fecha)) {
-                return distribucion;
-            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(internalFrame, "Ocurrió un error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return null;
-    }
+    });
 
-    private static DTDistribucion obtenerDistribucionConDonacion(int id) {
-        for (DTDistribucion distribucion : fabrica.getIControlador().listarDistribuciones().keySet()) {
-            DTDonacion donacion = distribucion.getDonacionAsc();
-            if (donacion != null && donacion.getId() == id) {
-                return distribucion;
-            }
-        }
-        return null;
-    }
+    // Botón para cancelar
+    JButton btnCancelar = new JButton("Cancelar");
+    btnCancelar.addActionListener((ActionEvent e) -> {
+        internalFrame.dispose();
+    });
+
+    // Añadir los componentes al JInternalFrame
+    internalFrame.add(lblIdDistribucion);
+    internalFrame.add(spnIdDistribucion);
+    internalFrame.add(lblFechaPreparacion);
+    internalFrame.add(txtFechaPreparacion);
+    internalFrame.add(lblFechaEntrega);
+    internalFrame.add(txtFechaEntrega);
+    internalFrame.add(lblTipo);
+    internalFrame.add(txtTipo);
+    internalFrame.add(lblDescripcion);
+    internalFrame.add(new JScrollPane(txtDescripcion)); // Agregar JScrollPane para el JTextArea
+    internalFrame.add(btnGuardar);
+    internalFrame.add(btnCancelar);
+
+    // Añadir el JInternalFrame al JDesktopPane
+    desktopPane.add(internalFrame);
+    internalFrame.setVisible(true);
+}
+
+
 
     private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
@@ -907,33 +885,6 @@ public class Principal {
         return fechaActual;
     }
 
-    private static LocalDateTime convertirDateALocalDateTime(Date fecha) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fecha);
-
-        int dia = calendar.get(Calendar.DAY_OF_MONTH);
-        int mes = calendar.get(Calendar.MONTH) + 1;  // Enero es 0 en Calendar, por eso se suma 1
-        int anio = calendar.get(Calendar.YEAR);
-        int hora = calendar.get(Calendar.HOUR_OF_DAY);
-        int minutos = calendar.get(Calendar.MINUTE);
-
-        return LocalDateTime.of(dia, mes, anio, hora, minutos);
-    }
-
-    private static int compararFechas(LocalDateTime fecha1, LocalDateTime fecha2) {
-        if (fecha1.getYear() != fecha2.getYear()) {
-            return fecha1.getYear() - fecha2.getYear();
-        } else if (fecha1.getMonthValue() != fecha2.getMonthValue()) {
-            return fecha1.getMonthValue() - fecha2.getMonthValue();
-        } else if (fecha1.getDayOfMonth() != fecha2.getDayOfMonth()) {
-            return fecha1.getDayOfMonth() - fecha2.getDayOfMonth();
-        } else if (fecha1.getHour() != fecha2.getHour()) {
-            return fecha1.getHour() - fecha2.getHour();
-        } else {
-            return fecha1.getMinute() - fecha2.getMinute();
-        }
-    }
-
     // Método para formatear la fecha a una cadena
     private static String formatearFecha(LocalDateTime fecha) {
         if (fecha == null) {
@@ -942,18 +893,6 @@ public class Principal {
         return String.format("%02d/%02d/%04d %02d:%02d",
                 fecha.getDayOfMonth(), fecha.getMonthValue(), fecha.getYear(),
                 fecha.getHour(), fecha.getMinute());
-    }
-
-    private static String[] getBeneficiariosDisponibles() {
-        // Lista de beneficiarios disponibles
-        return fabrica.getIControlador().ListarBeneficiario().stream()
-                .map(beneficiario -> beneficiario.getNombre())
-                .toArray(String[]::new);
-    }
-
-    private static DTDonacion[] getDonacionesDisponibles() {
-        // Lista de donaciones disponibles
-        return fabrica.getIControlador().ListarDonaciones().toArray(new DTDonacion[0]);
     }
 
     private static void validarEmail(String email) throws InvalidEmailException {
@@ -966,19 +905,10 @@ public class Principal {
         }
     }
 
-    private static Date convertirLocalDateTimeADate(LocalDateTime fechaInicial) {
-        // Convertir LocalDateTime a un Instant en la zona horaria del sistema
-        Instant instant = fechaInicial.atZone(ZoneId.systemDefault()).toInstant();
-
-        // Convertir el Instant a Date
-        return Date.from(instant);
-    }
-
     static class InvalidEmailException extends Exception {
 
         public InvalidEmailException(String message) {
             super(message);
         }
     }
-
 }
