@@ -1,33 +1,37 @@
 package org.pap.handlers;
 
+import java.util.ArrayList;
 import org.pap.Clases.Distribucion;
 
 import java.util.List;
 
-
 public class ManejadorDistribucion {
-	private static ManejadorDistribucion instancia = null;
-	private List<Distribucion> distribuciones;
 
-	private ManejadorDistribucion() {}
+    private static ManejadorDistribucion instancia = null;
+    private List<Distribucion> distribuciones;
 
-	public static ManejadorDistribucion getInstancia() {
-		if (instancia == null)
-		{
-			instancia = new ManejadorDistribucion();
-		}
-		return instancia;
-	}
+    private ManejadorDistribucion() {
+        // Inicializa la lista
+        this.distribuciones = new ArrayList<>();
+    }
 
-	public void agregarDistribucion(Distribucion dist) {
-		this.distribuciones.add(dist);
-	}
+    public static ManejadorDistribucion getInstancia() {
+        if (instancia == null) {
+            instancia = new ManejadorDistribucion();
+        }
+        return instancia;
+    }
 
-	public List<Distribucion> getDistribuciones() {
-		return distribuciones;
-	}
+    public void agregarDistribucion(Distribucion dist) {
+        this.distribuciones.add(dist);
+    }
 
-	public int obtenerUltimoID(){ return this.distribuciones.size(); }
+    public List<Distribucion> getDistribuciones() {
+        return distribuciones;
+    }
+
+    public int obtenerUltimoID() {
+        return this.distribuciones.size();
+    }
 
 }
-
