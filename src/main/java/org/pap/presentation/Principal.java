@@ -618,7 +618,7 @@ public class Principal {
                         .findFirst().orElse(null);  // Si findFirst() devuelve un Optional vacío (es decir, no se encontró ningún Beneficiario que cumpla con la condición), entonces orElse(null) devuelve null. Si se encontró un Beneficiario, se devuelve ese Beneficiario.
 
                 if (beneficiarioSeleccionado != null && donacionSeleccionada != null) {
-                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion,fechaEntrega,EnumEstadoDistribucion.PENDIENTE , donacionSeleccionada.getId());
+                    fabrica.getIControlador().agregarDistribucion(fechaDistribucion,fechaEntrega,EnumEstadoDistribucion.PENDIENTE , donacionSeleccionada.getId(),beneficiarioSeleccionado.getEmail());
 
                     JOptionPane.showMessageDialog(internalFrame, "Distribución registrada exitosamente.");
                     internalFrame.dispose();
@@ -700,7 +700,7 @@ public class Principal {
             if (distribucionSeleccionada != null) {
                 txtFechaPreparacion.setText(distribucionSeleccionada.getFechaPreparacion().toString());
                 txtFechaEntrega.setText(distribucionSeleccionada.getFechaEntrega().toString());
-                DTDonacion donacion = distribucionSeleccionada.getDonacionAsc();
+                DTDonacion donacion = distribucionSeleccionada.getIDDonacionAsc();
 
                 if (donacion != null) {
                     if (donacion instanceof DTAlimento) {
@@ -795,7 +795,7 @@ public class Principal {
                 txtFechaEntrega.setText(formatearFecha(distribucionSeleccionada.getFechaEntrega()));
 
                 // Obtener la donación asociada
-                DTDonacion donacion = distribucionSeleccionada.getDonacionAsc();
+                DTDonacion donacion = distribucionSeleccionada.getIDDonacionAsc();
                 if (donacion != null) {
                     if (donacion instanceof DTAlimento) {
                         DTAlimento alimento = (DTAlimento) donacion;
@@ -865,7 +865,7 @@ public class Principal {
 
     private static DTDistribucion obtenerDistribucionConDonacion(int id) {
         for (DTDistribucion distribucion : fabrica.getIControlador().listarDistribuciones()) {
-            DTDonacion donacion = distribucion.getDonacionAsc();
+            DTDonacion donacion = distribucion.getIDDonacionAsc();
             if (donacion != null && donacion.getId() == id) {
                 return distribucion;
             }

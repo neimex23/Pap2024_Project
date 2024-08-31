@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -89,10 +90,10 @@ public class Controlador implements IControlador {
     //Operaciones de Distribucion
 
     @Override
-    public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID){
-        Donacion donacion = manejadorDonacion.obtenerDonacionPorID(donacionID); //Donacion puede tirar null si el id no es controlado
-        Distribucion distribucion = new Distribucion(fechaPreparacion,fechaEntrega,estado);
-        manejadorDistribucion.agregarDistribucion(distribucion, donacion);
+    public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf) {
+        int ultimoID = manejadorDistribucion.obtenerUltimoID() + 1;
+        Distribucion distribucion = new Distribucion(ultimoID, fechaPreparacion, fechaEntrega, estado, donacionID, emailBenf);
+        manejadorDistribucion.agregarDistribucion(distribucion);
     }
 
     @Override
@@ -101,14 +102,22 @@ public class Controlador implements IControlador {
     }
 
     @Override
-    public Map<DTDistribucion, DTDonacion> listarDistribuciones() {
+    public List<DTDistribucion> listarDistribuciones() {
         return null;
     }
 
     @Override
-    public Map<DTDistribucion, DTDonacion> ListarDistribuciones(EnumEstadoDistribucion estado) {
-        // falta Implementar para listar distribuciones por estado
-        return null;
+    public List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado) {
+        List <Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
+        List<DTDistribucion> lista = new ArrayList<>();
+        if (estado != null) {
+            for (Distribucion distribucionIter : distribuciones) {
+                if (distribucionIter.getEstado().equals(estado)) {
+                    lista.add(distribucionIter.transform());
+                }
+            }
+        }
+        return lista;
     }
 
     // Operaciones Beneficiario

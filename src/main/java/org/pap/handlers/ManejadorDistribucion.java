@@ -3,13 +3,13 @@ package org.pap.handlers;
 import org.pap.Clases.Donacion;
 import org.pap.Clases.Distribucion;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ManejadorDistribucion {
 	private static ManejadorDistribucion instancia = null;
-	private Map<Distribucion, Donacion> distribuciones = new HashMap<>();
+	private List<Distribucion> distribuciones;
 
 	private ManejadorDistribucion() {}
 
@@ -21,13 +21,15 @@ public class ManejadorDistribucion {
 		return instancia;
 	}
 
-	public void agregarDistribucion(Distribucion dist, Donacion don) {
-		this.distribuciones.put(dist, don);
+	public void agregarDistribucion(Distribucion dist) {
+		this.distribuciones.add(dist);
 	}
 
-	public Map<Distribucion, Donacion> getDistribuciones() {
+	public List<Distribucion> getDistribuciones() {
 		return distribuciones;
 	}
+
+	public int obtenerUltimoID(){ return this.distribuciones.size(); }
 
 }
 

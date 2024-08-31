@@ -4,33 +4,44 @@ import java.time.LocalDateTime;
 import org.pap.Enums.EnumEstadoDistribucion;
 
 public class DTDistribucion {
+    private int Id;
     private LocalDateTime fechaPreparacion;
     private LocalDateTime fechaEntrega;
     private EnumEstadoDistribucion estado;
-    private DTDonacion donacionAsc;
+    private int donacionAsc;
+    private String emailBenefAsc;
 
-    public DTDistribucion(LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, DTDonacion DonacionAsc) {
+    public DTDistribucion(int Id, LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, int idDonacionAsc, String emailBenefAsc) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
-        this.donacionAsc = DonacionAsc;
+        this.Id = idDonacionAsc;
+        this.donacionAsc = idDonacionAsc;
+        this.emailBenefAsc = emailBenefAsc;
     }
 
-    // Getter para fechaPreparacion
+
+    public int getId() {
+        return Id;
+    }
+
     public LocalDateTime getFechaPreparacion() {
         return fechaPreparacion;
     }
 
-    // Getter para FechaEntrega
     public LocalDateTime getFechaEntrega() {
         return fechaEntrega;
     }
 
-    // Getter para estado
     public EnumEstadoDistribucion getEstado() {
         return estado;
     }
 
-    public DTDonacion getDonacionAsc() {return donacionAsc;}
+    public int getDonacionAsc() {
+        return donacionAsc;
+    }
 
+    public String getEmailBenefAsc() {
+        return emailBenefAsc;
+    }
 }
