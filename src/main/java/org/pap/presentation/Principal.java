@@ -137,7 +137,7 @@ public class Principal {
         // Crear y añadir el elemento de menú "Listar beneficiario"
         JMenuItem mntmListBeneficiarios = new JMenuItem("Listar beneficiarios");
         mntmListBeneficiarios.addActionListener((ActionEvent arg0) -> {
-            mostrarFormularioListarBeneficiario("Listar Distribucion");
+            mostrarFormularioListarBeneficiario("Listar beneficiarios");
         });
         mnListar.add(mntmListBeneficiarios);
 
@@ -692,6 +692,8 @@ public class Principal {
         JPanel panelEstado = new JPanel();
         JLabel lblEstado = new JLabel("Estado de Distribución:");
         JComboBox<String> cbEstado = new JComboBox<>();
+        String nullString = "";
+        cbEstado.addItem(nullString);
         cbEstado.addItem("Todas");  // Opción para todas las distribuciones
 
         panelEstado.add(lblEstado);
@@ -707,6 +709,7 @@ public class Principal {
 
         // Actualizar la tabla según el estado seleccionado
         cbEstado.addActionListener((ActionEvent e) -> {
+            cbEstado.removeItem(nullString);
             String estadoSeleccionado = (String) cbEstado.getSelectedItem();
 
             List<DTDistribucion> distribuciones;
@@ -772,6 +775,7 @@ public class Principal {
         internalFrame.add(scrollPane, BorderLayout.CENTER);
         internalFrame.add(panelInferior, BorderLayout.SOUTH);
 
+
         // Añadir el JInternalFrame al JDesktopPane
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
@@ -826,8 +830,23 @@ public class Principal {
         // Fecha de Entrega
         JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
         JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+
+        int distIndex = cbDistribuciones.getSelectedIndex();
+        LocalDateTime fechaEntregaDate = distribuciones.get(distIndex).getFechaEntrega();
+
+        int year = fechaEntregaDate.getYear();
+        int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
+        int day = fechaEntregaDate.getDayOfMonth(); // Utiliza getDayOfMonth() en lugar de getDayOfYear().
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
+        Date date = calendar.getTime();
+        spinnerFechaEntrega.setValue(date);
+
         JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
         spinnerFechaEntrega.setEditor(dateEditor);
+
+
 
         // Estado
         JLabel lblEstado = new JLabel("Estado:");
@@ -835,6 +854,9 @@ public class Principal {
         for (EnumEstadoDistribucion estado : EnumEstadoDistribucion.values()) {
             cbEstado.addItem(estado.name());
         }
+
+
+        cbEstado.setSelectedItem(distribuciones.get(distIndex).getEstado().name());
 
         // Añadir componentes al panel de detalles
         panelDetalles.add(lblFechaEntrega);

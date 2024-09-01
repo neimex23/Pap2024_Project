@@ -98,7 +98,20 @@ public class Controlador implements IControlador {
 
     @Override
     public void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado){
+        // Obtener la lista de distribuciones del manejador
+        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
 
+        // Buscar la distribución a actualizar por su ID
+        for (int i = 0; i < distribuciones.size(); i++) {
+            Distribucion distribucionActual = distribuciones.get(i);
+            if (distribucionActual.getId() == idDistribucion) {
+                // Se encontró la distribución, actualiza sus datos
+                distribucionActual.setFechaEntrega(fechaEntrega);
+                distribucionActual.setEstado(estado);
+                modificarDistribucion(distribucionActual.transform());
+                break;
+            }
+        }
     }
 
     @Override
