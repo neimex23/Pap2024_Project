@@ -99,12 +99,13 @@ public class Controlador implements IControlador {
     public void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
-        manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones));
+        Articulo artAgregar = new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones);
+        manejadorDonacion.agregarDonacion(artAgregar);
 
         emf = Persistence.createEntityManagerFactory("Conexion");
         em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(alimentoAgregar);
+        em.persist(artAgregar);
         em.getTransaction().commit();
         em.close();
     }
@@ -119,7 +120,7 @@ public class Controlador implements IControlador {
         emf = Persistence.createEntityManagerFactory("Conexion");
         em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(donacionAgregar);
+        em.persist(alimentoAgregar);
         em.getTransaction().commit();
         em.close();
     }
@@ -144,7 +145,7 @@ public class Controlador implements IControlador {
         emf = Persistence.createEntityManagerFactory("Conexion");
         em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(distAgregar);
+        em.persist(distribucion);
         em.getTransaction().commit();
         em.close();
     }

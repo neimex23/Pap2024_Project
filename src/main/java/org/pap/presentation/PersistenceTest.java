@@ -21,7 +21,7 @@ public class PersistenceTest {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        Distribucion d = new Distribucion(LocalDateTime.now(), LocalDateTime.now(), EnumEstadoDistribucion.ENCAMINO);
+        Distribucion d = new Distribucion(1, LocalDateTime.now(), LocalDateTime.now(), EnumEstadoDistribucion.ENCAMINO,1,"victoriapilone@gmail.com");
         em.persist(d);
         //em.getTransaction().commit();
 //        em.close();
