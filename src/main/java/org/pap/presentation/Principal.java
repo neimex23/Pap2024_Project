@@ -207,27 +207,32 @@ public class Principal {
                 // Validar el email
                 validarEmail(txtEmail.getText());
 
-                //Beneficiario(String nombre,String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio)
-                // Guardar la información    
-                // Capturar la fecha de nacimiento desde los JSpinner
-                int dia = (int) spnDia.getValue();
-                int mes = (int) spnMes.getValue();
-                int anio = (int) spnAno.getValue();
-                LocalDateTime fechaNacimiento = LocalDateTime.of(anio, mes, dia, 0, 0, 0);
-
-                // Convertir el estado y barrio seleccionados a los correspondientes Enum
-                EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
-                EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
-
-                // Agregar beneficirio con los datos obtenidos
-                if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
-                    JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
+                int cantBeneficiario = 0;
+                cantBeneficiario=fabrica.getIControlador().conGetCantBeneficiarios(); // Obtengo la cantidad de Beneficiaros registrados
+                if(cantBeneficiario>=50) { // Si se alzanzo el limite de usuarios se manda mensaje de error
+                    JOptionPane.showMessageDialog(null, "Se ha alcanzado el limite de Beneficiarios", "Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, EnumEstadoBeneficiario.ACTIVO, barrio);
-                    // Mensaje de operacion realizada satisfactoriamente
-                    JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                }
+                    //Beneficiario(String nombre,String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio)
+                    // Guardar la información
+                    // Capturar la fecha de nacimiento desde los JSpinner
+                    int dia = (int) spnDia.getValue();
+                    int mes = (int) spnMes.getValue();
+                    int anio = (int) spnAno.getValue();
+                    LocalDateTime fechaNacimiento = LocalDateTime.of(anio, mes, dia, 0, 0, 0);
 
+                    // Convertir el estado y barrio seleccionados a los correspondientes Enum
+                    EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
+                    EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
+
+                    // Agregar beneficirio con los datos obtenidos
+                    if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
+                        JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, EnumEstadoBeneficiario.ACTIVO, barrio);
+                        // Mensaje de operacion realizada satisfactoriamente
+                        JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
                 // Esperar un poco antes de cerrar el frame para dar tiempo a mostrar el mensaje de finalización
                 Thread.sleep(500);
 
@@ -300,11 +305,22 @@ public class Principal {
                 // Validar el email
                 validarEmail(txtEmail.getText());
 
-                // Guardar la información
-                fabrica.getIControlador().altaRepartidor(txtNombre.getText(), txtEmail.getText(), txtLicencia.getText());
+                if (fabrica.getIControlador().conGetCantRepartidores() >= 5) { // Si se alzanzo el limite de usuarios se manda mensaje de error
+                    JOptionPane.showMessageDialog(null, "Se ha alcanzado el limite de Repartidores", "Error", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
+                        JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        // Guardar la información
+                        if (!fabrica.getIControlador().existeLicencia(txtLicencia.getText())) {
+                            fabrica.getIControlador().altaRepartidor(txtNombre.getText(), txtEmail.getText(), txtLicencia.getText());
 
-                JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
+                            JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Ya existe un usario registrado con la licencia ingresada", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
                 // Cerrar el frame después de guardar
                 internalFrame.dispose();
             } catch (InvalidEmailException ema) {
@@ -780,7 +796,7 @@ public class Principal {
         } else {
             for (DTDistribucion distribucion : distribuciones) {
                 // Obtener la donación correspondiente a la distribución
-                DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getId());
+                DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getDonacionAsc());
 
                 // Declarar la variable descripcion
                 String descripcion;
