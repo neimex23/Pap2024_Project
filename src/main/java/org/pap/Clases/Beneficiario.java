@@ -1,16 +1,20 @@
 package org.pap.Clases;
+
 import org.pap.Enums.EnumBarrio;
 import org.pap.Enums.EnumEstadoBeneficiario;
 import org.pap.dtClasses.DTUsuario;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.pap.dtClasses.DTBeneficiario;
+import org.pap.dtClasses.DTDonacion;
 
 public class Beneficiario extends Usuario {
 
-	private String direccion;
-	private LocalDateTime fechaNacimiento;
-	private EnumEstadoBeneficiario estado;
-	private EnumBarrio barrio;
+    private String direccion;
+    private LocalDateTime fechaNacimiento;
+    private EnumEstadoBeneficiario estado;
+    private EnumBarrio barrio;
+    private List<DTDonacion> donaciones;  // Lista de donaciones del beneficiario
 
     public Beneficiario(String nombre, String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
         super(nombre, email);
@@ -60,10 +64,13 @@ public class Beneficiario extends Usuario {
         this.barrio = barrio;
     }
 
+    public void setDonacion(DTDonacion donacion) {
+        this.donaciones.add(donacion);
+    }
+
     @Override
-    public DTUsuario transformarADtUsuario(){;
+    public DTUsuario transformarADtUsuario() {;
         return new DTBeneficiario(this.getNombre(), this.getEmail(), this.getDireccion(), this.getFechaNacimiento(), this.getEstado(), this.getBarrio());
     }
-    
-	}
 
+}
