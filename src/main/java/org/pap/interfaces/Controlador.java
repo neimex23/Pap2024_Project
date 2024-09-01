@@ -30,6 +30,11 @@ public class Controlador implements IControlador {
     }
 
 
+    @Override
+    public void cargarBaseDatos() {
+
+    }
+
     //Operaciones de usario
 	
     @Override
@@ -241,7 +246,7 @@ public class Controlador implements IControlador {
         }
 
         return null; // Si no se encuentra el beneficiario, devuelve null.
-    }
+    }//Para Que se usa?
 
     @Override
     public DTDonacion obtenerDonacion(int id) {

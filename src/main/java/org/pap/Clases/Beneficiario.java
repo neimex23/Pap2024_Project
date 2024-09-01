@@ -16,7 +16,6 @@ import javax.persistence.DiscriminatorValue;
 public class Beneficiario extends Usuario {
 
     // Lista de donaciones del beneficiario
-    @Id
 	private String direccion;
 	private LocalDateTime fechaNacimiento;
 	private EnumEstadoBeneficiario estado;
