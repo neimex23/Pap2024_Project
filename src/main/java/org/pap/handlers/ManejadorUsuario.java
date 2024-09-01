@@ -29,18 +29,9 @@ public class ManejadorUsuario {
     // Nueva funcion para obtener todos los usuarios
 
     public List<Usuario> obtenerUsuarios() {
-        return new ArrayList<>(usuarios);
+        return this.usuarios;
     }
 
-    //obtener DTbeneficiario  de beneficiario x email
-    //public DTBeneficiario obtenerDTBeneficiario(String email) {
-    //    for (Usuario u : usuarios) {
-    //        if (u instanceof Beneficiario && u.getEmail().equals(email)) {
-    //            return ((Beneficiario) u).toDTBeneficiario();
-    //        }
-    //  }
-    //   return null; // Si no se encuentra el beneficiario, devuelve null.
-    //}
     public boolean existeUsuario(String email) {
         boolean Existe = false;
         int i = 0;
@@ -99,19 +90,6 @@ public class ManejadorUsuario {
             }
         }
         return cant;
-    }
-
-    public void asignarDonacion(DTBeneficiario benMatlock, DTAlimento alimento) {
-        // Buscar el beneficiario en la lista de usuarios
-        for (Usuario usuario : usuarios) {
-            if (usuario instanceof Beneficiario && usuario.getEmail().equals(benMatlock.getEmail())) {
-                Beneficiario beneficiario = (Beneficiario) usuario;
-                beneficiario.setDonacion((DTDonacion) alimento);
-            }
-        }
-
-        // Si el beneficiario no fue encontrado lanzar una excepción
-        throw new RuntimeException("Beneficiario no encontrado: " + benMatlock.getEmail());
     }
 
 }
