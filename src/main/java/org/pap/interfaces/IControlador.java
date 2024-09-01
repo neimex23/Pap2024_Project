@@ -15,9 +15,9 @@ public interface IControlador {
     int conGetCantRepartidores();
 
 
-    void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos, DTBeneficiario benMatlock);
+    void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos);
     void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones);
-    public DTDonacion obtenerDonacion(int id); //Se queda
+    DTDonacion obtenerDonacion(int id); //Se queda
     
     List<DTUsuario> ListarBeneficiario(); //CrearDTBeneficiario
     List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
@@ -25,7 +25,7 @@ public interface IControlador {
 
     void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf);
     void modificarDistribucion(DTDistribucion distribucion);
-    public void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
+    void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
     List<DTDistribucion>  listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado
 

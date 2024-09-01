@@ -60,19 +60,22 @@ public class Controlador implements IControlador {
         return manejadorUsuario.manGetCantRepartidores();
     }
 
+
     //Operaciones de Donacion
-    @Override
-    public void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos) {
-        //Tener en cuenta que Id es autoincremental
-        int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
-        manejadorDonacion.agregarDonacion(new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos));
-    }
 
     @Override
     public void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones));
+    }
+
+    @Override
+    public void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos) {
+        //Tener en cuenta que Id es autoincremental
+        int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
+        Alimento alimentoAgregar = new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos);
+        manejadorDonacion.agregarDonacion(alimentoAgregar);
     }
 
     @Override
@@ -94,29 +97,40 @@ public class Controlador implements IControlador {
     }
 
     @Override
+    public void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado){
+
+    }
+
+    @Override
     public void modificarDistribucion(DTDistribucion distribucion) {
     // Obtener la lista de distribuciones del manejador
     List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
     // Buscar la distribución a modificar por su ID
-for (int i = 0; i < distribuciones.size(); i++) {
-    if (distribuciones.get(i).getId() == distribucion.getId()) {
-        // Se encontró la distribución, actualiza sus datos
-        
-        Distribucion distribucionActualizada = new Distribucion(distribucion.getId(),distribucion.getFechaPreparacion(), distribucion.getFechaEntrega(), distribucion.getEstado(), distribucion.getDonacionAsc(), distribucion.getEmailBenefAsc());
-        distribuciones.set(i, distribucionActualizada);
-        break;
+    for (int i = 0; i < distribuciones.size(); i++) {
+        if (distribuciones.get(i).getId() == distribucion.getId()) {
+            // Se encontró la distribución, actualiza sus datos
+
+            Distribucion distribucionActualizada = new Distribucion(distribucion.getId(),distribucion.getFechaPreparacion(), distribucion.getFechaEntrega(), distribucion.getEstado(), distribucion.getDonacionAsc(), distribucion.getEmailBenefAsc());
+            distribuciones.set(i, distribucionActualizada);
+            break;
+        }
     }
-}
 
         // Dependiendo de cómo esté diseñado el sistema, podrías necesitar
         // persistir los cambios o notificar que la distribución fue actualizada.
     }
 
-    //nadie lo usa
+
+    //Lista Todas las Distribuciones indiscriminadamente
     @Override
     public List<DTDistribucion> listarDistribuciones() {
-        return null;
+        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
+        List<DTDistribucion> dTDistribuciones = new ArrayList<>();
+        for (Distribucion distribucion : distribuciones) {
+            dTDistribuciones.add(distribucion.transform());
+        }
+        return dTDistribuciones;
     }
 
     @Override

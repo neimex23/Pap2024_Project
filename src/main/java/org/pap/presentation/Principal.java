@@ -362,7 +362,7 @@ public class Principal {
                 LocalDateTime fechaHoy = obtenerFechaHora();
 
                 // Si la conversión es exitosa, guardar
-                fabrica.getIControlador().altaDonacionAlimento(fechaHoy, descripcion, cantidad, null);
+                fabrica.getIControlador().altaDonacionAlimento(fechaHoy, descripcion, cantidad);
 
                 // Mostrar mensaje de éxito
                 JOptionPane.showMessageDialog(internalFrame, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
