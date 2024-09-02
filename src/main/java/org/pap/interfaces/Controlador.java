@@ -114,8 +114,8 @@ public class Controlador implements IControlador {
         }
     }
 
-    @Override
-    public void modificarDistribucion(DTDistribucion distribucion) {
+
+    private void modificarDistribucion(DTDistribucion distribucion) {
     // Obtener la lista de distribuciones del manejador
     List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
@@ -177,9 +177,9 @@ public class Controlador implements IControlador {
     }
     //listar Beneficiarios por Zona
     @Override
-    public List<DTBeneficiario> ListarBeneficiarioZona(EnumBarrio barrio) {
+    public List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
-        List<DTBeneficiario> lista = new ArrayList<>();
+        List<DTUsuario> lista = new ArrayList<>();
     
         if (barrio != null) {
             for (Usuario usuario : usuarios) {
@@ -187,15 +187,7 @@ public class Controlador implements IControlador {
                     Beneficiario beneficiario = (Beneficiario) usuario;
                     if (beneficiario.getBarrio().equals(barrio)) {
                     // Creación manual del objeto DTBeneficiario
-                        DTBeneficiario dtBeneficiario = new DTBeneficiario(
-                            beneficiario.getNombre(), 
-                            beneficiario.getEmail(), 
-                            beneficiario.getDireccion(), 
-                            beneficiario.getFechaNacimiento(), 
-                            beneficiario.getEstado(), 
-                            beneficiario.getBarrio()
-                        );
-                        lista.add(dtBeneficiario);
+                        lista.add(beneficiario.transformarADtUsuario());
                     }
                 }
             }
