@@ -28,5 +28,5 @@ public interface IControlador {
     void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
     List<DTDistribucion>  listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado
-
+    List<DTBeneficiario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
 }
