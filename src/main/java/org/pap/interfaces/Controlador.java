@@ -114,8 +114,8 @@ public class Controlador implements IControlador {
         }
     }
 
-    @Override
-    public void modificarDistribucion(DTDistribucion distribucion) {
+
+    private void modificarDistribucion(DTDistribucion distribucion) {
     // Obtener la lista de distribuciones del manejador
     List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
@@ -166,7 +166,7 @@ public class Controlador implements IControlador {
     public List<DTUsuario> ListarBeneficiario() {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         List<DTUsuario> beneficiarios = new ArrayList<>();
-
+            
         for (Usuario usuario : usuarios) {
             if (usuario instanceof Beneficiario) {
                 beneficiarios.add(usuario.transformarADtUsuario());
@@ -175,7 +175,29 @@ public class Controlador implements IControlador {
 
         return beneficiarios;
     }
+    //listar Beneficiarios por Zona
+    @Override
+    public List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio) {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        List<DTUsuario> lista = new ArrayList<>();
+    
+        if (barrio != null) {
+            for (Usuario usuario : usuarios) {
+                if (usuario instanceof Beneficiario) {
+                    Beneficiario beneficiario = (Beneficiario) usuario;
+                    if (beneficiario.getBarrio().equals(barrio)) {
+                    // Creación manual del objeto DTBeneficiario
+                        lista.add(beneficiario.transformarADtUsuario());
+                    }
+                }
+            }
+        }
 
+    
+        return lista;
+    }
+
+  
     // Nueva funcion para obtener DTBeneficiario por email
     @Override
     public DTUsuario obtenerDTBeneficiario(String email) {
