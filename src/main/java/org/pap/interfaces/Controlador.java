@@ -32,6 +32,7 @@ public class Controlador implements IControlador {
 
     @Override
     public void cargarBaseDatos() {
+        emf = Persistence.createEntityManagerFactory("Conexion");x
 	    // Crear una instancia de EntityManager
 	    em = emf.createEntityManager();
 	    
