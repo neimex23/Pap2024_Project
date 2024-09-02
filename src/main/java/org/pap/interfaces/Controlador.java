@@ -1,4 +1,5 @@
 package org.pap.interfaces;
+
 import org.pap.Clases.*;
 import org.pap.dtClasses.*;
 import org.pap.handlers.*;
@@ -9,10 +10,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import java.time.LocalDateTime;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -35,29 +34,29 @@ public class Controlador implements IControlador {
         emf = Persistence.createEntityManagerFactory("Conexion");x
 	    // Crear una instancia de EntityManager
 	    em = emf.createEntityManager();
-	    
+
 	    try {
 	        // Comenzar la transacción
 	        em.getTransaction().begin();
-	
+
 	        // Cargar todos los usuarios y agregarlos al ManejadorUsuario
 	        List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
 	        for (Usuario usuario : usuarios) {
 	            manejadorUsuario.agregarUsuario(usuario);
 	        }
-	
+
 	        // Cargar todas las donaciones y agregarlas al ManejadorDonacion
 	        List<Donacion> donaciones = em.createQuery("SELECT d FROM Donacion d", Donacion.class).getResultList();
 	        for (Donacion donacion : donaciones) {
 	            manejadorDonacion.agregarDonacion(donacion);
 	        }
-	
+
 	        // Cargar todas las distribuciones y agregarlas al ManejadorDistribucion
 	        List<Distribucion> distribuciones = em.createQuery("SELECT d FROM Distribucion d", Distribucion.class).getResultList();
 	        for (Distribucion distribucion : distribuciones) {
 	            manejadorDistribucion.agregarDistribucion(distribucion);
 	        }
-	
+
 	        // Confirmar la transacción
 	        em.getTransaction().commit();
 	    } catch (Exception e) {
@@ -71,7 +70,6 @@ public class Controlador implements IControlador {
     }
 
     //Operaciones de usario
-	
     @Override
     public void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
             EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
@@ -207,8 +205,8 @@ public class Controlador implements IControlador {
         }
     }
 
-    @Override
-    public void modificarDistribucion(DTDistribucion distribucion) {
+
+    private void modificarDistribucion(DTDistribucion distribucion) {
     // Obtener la lista de distribuciones del manejador
     List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
@@ -268,7 +266,29 @@ public class Controlador implements IControlador {
 
         return beneficiarios;
     }
-    
+    //listar Beneficiarios por Zona
+    @Override
+    public List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio) {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        List<DTUsuario> lista = new ArrayList<>();
+
+        if (barrio != null) {
+            for (Usuario usuario : usuarios) {
+                if (usuario instanceof Beneficiario) {
+                    Beneficiario beneficiario = (Beneficiario) usuario;
+                    if (beneficiario.getBarrio().equals(barrio)) {
+                    // Creación manual del objeto DTBeneficiario
+                        lista.add(beneficiario.transformarADtUsuario());
+                    }
+                }
+            }
+        }
+
+
+        return lista;
+    }
+
+
     // Nueva funcion para obtener DTBeneficiario por email
     @Override
     public DTUsuario obtenerDTBeneficiario(String email) {
@@ -281,13 +301,11 @@ public class Controlador implements IControlador {
         }
 
         return null; // Si no se encuentra el beneficiario, devuelve null.
-    }//Para Que se usa?
+    }
 
     @Override
     public DTDonacion obtenerDonacion(int id) {
         DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
         return donacion;
     }
-
 }
-

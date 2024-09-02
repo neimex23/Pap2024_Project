@@ -148,6 +148,13 @@ public class Principal {
         });
         mnListar.add(mntmListDistribucion);
 
+        // Crear y añadir el elemento de menú "Listar Beneficiarios por Zona"
+        JMenuItem mntmListBeneficiariosZona = new JMenuItem("Listar Beneficiarios por Zona");
+        mntmListBeneficiariosZona.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarBeneficiarioZona("Listar Beneficiarios por Zona");
+        });
+        mnListar.add(mntmListBeneficiariosZona);
+        
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
@@ -899,6 +906,82 @@ public class Principal {
         // Añadir componentes al JInternalFrame
         internalFrame.add(panelSeleccion, BorderLayout.NORTH);
         internalFrame.add(panelDetalles, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+    
+    private static void mostrarFormularioListarBeneficiarioZona(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+        
+        // Panel para el Seleccion por Zona
+        JPanel panelBarrio = new JPanel();
+        JLabel lblBarrio = new JLabel("Seleccione Barrio:");
+        JComboBox<String> cbBarrio = new JComboBox<>();
+        String nullString = "";
+        cbBarrio.addItem(nullString);// Opción para todas las Zonas
+
+        panelBarrio.add(lblBarrio);
+        panelBarrio.add(cbBarrio);
+        for (EnumBarrio barrio : EnumBarrio.values()) {
+            cbBarrio.addItem(barrio.name());
+        }
+
+        // Crear el modelo de la tabla
+        String[] columnNames = {"Nombre", "Correo", "Dirección", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable tablaBeneficiarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
+
+        cbBarrio.addActionListener((ActionEvent e) -> {
+            cbBarrio.removeItem(nullString);
+            String barrioSeleccionado = (String) cbBarrio.getSelectedItem();
+
+            List<DTUsuario> listaBeneficiarios;
+            // Convertir el estado seleccionado a EnumEstadoDistribucion y obtener las distribuciones por estado
+            EnumBarrio barrioS = EnumBarrio.valueOf(barrioSeleccionado);
+            listaBeneficiarios = fabrica.getIControlador().ListarBeneficiarioZona(barrioS);
+
+            tableModel.setRowCount(0); // Limpiar tabla existente
+
+            if (listaBeneficiarios.isEmpty()) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios disponibles", "", "", ""});
+                return;
+            }
+
+            for (DTUsuario usuario : listaBeneficiarios) {
+                if (usuario instanceof DTBeneficiario) {
+                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
+                    String email = beneficiario.getEmail();
+                    String nombre = beneficiario.getNombre();
+                    String direccion = beneficiario.getDireccion();
+                    String estado = beneficiario.getEstado().toString();
+                    EnumBarrio barrio = beneficiario.getBarrio();
+
+                    tableModel.addRow(new Object[]{nombre, email, direccion, estado, barrio});
+                }
+            }
+
+            if (tableModel.getRowCount() == 0) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios para este Barrio", "", "", ""});
+            }
+        });
+
+        // Panel inferior con el botón Cancelar
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(panelBarrio, BorderLayout.NORTH);
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
         internalFrame.add(panelInferior, BorderLayout.SOUTH);
 
         // Añadir el JInternalFrame al JDesktopPane
