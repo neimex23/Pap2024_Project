@@ -32,7 +32,41 @@ public class Controlador implements IControlador {
 
     @Override
     public void cargarBaseDatos() {
-
+	    // Crear una instancia de EntityManager
+	    em = emf.createEntityManager();
+	    
+	    try {
+	        // Comenzar la transacción
+	        em.getTransaction().begin();
+	
+	        // Cargar todos los usuarios y agregarlos al ManejadorUsuario
+	        List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
+	        for (Usuario usuario : usuarios) {
+	            manejadorUsuario.agregarUsuario(usuario);
+	        }
+	
+	        // Cargar todas las donaciones y agregarlas al ManejadorDonacion
+	        List<Donacion> donaciones = em.createQuery("SELECT d FROM Donacion d", Donacion.class).getResultList();
+	        for (Donacion donacion : donaciones) {
+	            manejadorDonacion.agregarDonacion(donacion);
+	        }
+	
+	        // Cargar todas las distribuciones y agregarlas al ManejadorDistribucion
+	        List<Distribucion> distribuciones = em.createQuery("SELECT d FROM Distribucion d", Distribucion.class).getResultList();
+	        for (Distribucion distribucion : distribuciones) {
+	            manejadorDistribucion.agregarDistribucion(distribucion);
+	        }
+	
+	        // Confirmar la transacción
+	        em.getTransaction().commit();
+	    } catch (Exception e) {
+	        // En caso de error, revertir la transacción
+	        em.getTransaction().rollback();
+	        e.printStackTrace();
+	    } finally {
+	        // Cerrar el EntityManager
+	        em.close();
+	    }
     }
 
     //Operaciones de usario
