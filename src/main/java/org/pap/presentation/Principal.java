@@ -922,7 +922,8 @@ public class Principal {
         JPanel panelBarrio = new JPanel();
         JLabel lblBarrio = new JLabel("Seleccione Barrio:");
         JComboBox<String> cbBarrio = new JComboBox<>();
-        cbBarrio.addItem("Todos");  // Opción para todas las Zonas
+        String nullString = "";
+        cbBarrio.addItem(nullString);// Opción para todas las Zonas
 
         panelBarrio.add(lblBarrio);
         panelBarrio.add(cbBarrio);
@@ -936,15 +937,22 @@ public class Principal {
         JTable tablaBeneficiarios = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
 
-        // Obtener la lista de beneficiarios
-        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
+        cbBarrio.addActionListener((ActionEvent e) -> {
+            cbBarrio.removeItem(nullString);
+            String barrioSeleccionado = (String) cbBarrio.getSelectedItem();
 
-        // Limpiar tabla existente
-        tableModel.setRowCount(0);
+            List<DTUsuario> listaBeneficiarios;
+            // Convertir el estado seleccionado a EnumEstadoDistribucion y obtener las distribuciones por estado
+            EnumBarrio barrioS = EnumBarrio.valueOf(barrioSeleccionado);
+            listaBeneficiarios = fabrica.getIControlador().ListarBeneficiarioZona(barrioS);
 
-        if (listaBeneficiarios.isEmpty()) {
-            tableModel.addRow(new Object[]{"No hay beneficiarios registrados", "", "", "", ""});
-        } else {
+            tableModel.setRowCount(0); // Limpiar tabla existente
+
+            if (listaBeneficiarios.isEmpty()) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios disponibles", "", "", ""});
+                return;
+            }
+
             for (DTUsuario usuario : listaBeneficiarios) {
                 if (usuario instanceof DTBeneficiario) {
                     DTBeneficiario beneficiario = (DTBeneficiario) usuario;
@@ -957,7 +965,11 @@ public class Principal {
                     tableModel.addRow(new Object[]{nombre, email, direccion, estado, barrio});
                 }
             }
-        }
+
+            if (tableModel.getRowCount() == 0) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios para este Barrio", "", "", ""});
+            }
+        });
 
         // Panel inferior con el botón Cancelar
         JPanel panelInferior = new JPanel();
