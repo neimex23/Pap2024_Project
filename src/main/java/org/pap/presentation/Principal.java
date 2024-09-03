@@ -155,6 +155,13 @@ public class Principal {
         });
         mnListar.add(mntmListBeneficiariosZona);
         
+        // Crear y añadir el elemento de menú "Listar Beneficiarios por Estado"
+        JMenuItem mntmListBeneficiariosEstado = new JMenuItem("Listar Beneficiarios por Estado");
+        mntmListBeneficiariosEstado.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarBeneficiarioEstado("Listar Beneficiarios por Estado");
+        });
+        mnListar.add(mntmListBeneficiariosEstado);
+        
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
@@ -986,7 +993,82 @@ public class Principal {
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
+    private static void mostrarFormularioListarBeneficiarioEstado(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+        
+        // Panel para el Seleccion por Estado
+        JPanel panelEstado = new JPanel();
+        JLabel lblEstado = new JLabel("Seleccione Estado:");
+        JComboBox<String> cbEstado = new JComboBox<>();
+        String nullString = "";
+        cbEstado.addItem(nullString);// Opción para todos los estados
 
+        panelEstado.add(lblEstado);
+        panelEstado.add(cbEstado);
+        for (EnumEstadoBeneficiario estado : EnumEstadoBeneficiario.values()) {
+            cbEstado.addItem(estado.name());
+        }
+
+        // Crear el modelo de la tabla
+        String[] columnNames = {"Nombre", "Correo", "Dirección", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable tablaBeneficiarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
+
+        cbEstado.addActionListener((ActionEvent e) -> {
+            cbEstado.removeItem(nullString);
+            String estadoSeleccionado = (String) cbEstado.getSelectedItem();
+
+            List<DTBeneficiario> listaBeneficiarios;
+            
+            EnumEstadoBeneficiario estadoS = EnumEstadoBeneficiario.valueOf(estadoSeleccionado);
+            listaBeneficiarios = fabrica.getIControlador().ListarBeneficiarioEstado(estadoS);
+
+            tableModel.setRowCount(0); // Limpiar tabla existente
+
+            if (listaBeneficiarios.isEmpty()) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios disponibles", "", "", ""});
+                return;
+            }
+
+            for (DTBeneficiario beneficiario : listaBeneficiarios) {
+                
+                    
+                    String email = beneficiario.getEmail();
+                    String nombre = beneficiario.getNombre();
+                    String direccion = beneficiario.getDireccion();
+                    EnumEstadoBeneficiario estado = beneficiario.getEstado();
+                    String barrio = beneficiario.getBarrio().toString();
+
+                    tableModel.addRow(new Object[]{nombre, email, direccion, estado, barrio});
+                
+            }
+
+            if (tableModel.getRowCount() == 0) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios para este Estado", "", "", ""});
+            }
+        });
+
+        // Panel inferior con el botón Cancelar
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(panelEstado, BorderLayout.NORTH);
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+      
     private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
         Calendar calendario = Calendar.getInstance();
