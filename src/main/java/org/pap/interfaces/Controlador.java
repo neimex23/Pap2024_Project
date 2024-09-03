@@ -31,7 +31,57 @@ public class Controlador implements IControlador {
 
     @Override
     public void cargarBaseDatos() {
-        emf = Persistence.createEntityManagerFactory("Conexion");
+        // Solucion utilizando Hibernate ORM con CriteriaQuery:
+	// Crear una instancia de EntityManager
+	instanceEM = emf.createEntityManager();
+	
+	try {
+		// Comenzar la transacción
+		instanceEM.getTransaction().begin();
+		
+		// Cargar todos los usuarios usando CriteriaQuery
+		CriteriaBuilder criBuild = instanceEM.getCriteriaBuilder();
+		CriteriaQuery<Usuario> queryUsuario = criBuild.createQuery(Usuario.class);
+		Root<Usuario> rootUsuario = queryUsuario.from(Usuario.class);
+		queryUsuario.select(rootUsuario);
+		List<Usuario> usuarios = instanceEM.createQuery(queryUsuario).getResultList();
+		for (Usuario usuario : usuarios) {
+		    manejadorUsuario.agregarUsuario(usuario);
+		}
+		
+		// Cargar todas las donaciones usando CriteriaQuery
+		CriteriaQuery<Donacion> queryDonacion = criBuild.createQuery(Donacion.class);
+		Root<Donacion> rootDonacion = queryDonacion.from(Donacion.class);
+		queryDonacion.select(rootDonacion);
+		List<Donacion> donaciones = instanceEM.createQuery(queryDonacion).getResultList();
+		for (Donacion donacion : donaciones) {
+		    manejadorDonacion.agregarDonacion(donacion);
+		}
+		
+		// Cargar todas las distribuciones usando CriteriaQuery
+		CriteriaQuery<Distribucion> queryDistribucion = criBuild.createQuery(Distribucion.class);
+		Root<Distribucion> rootDistribucion = queryDistribucion.from(Distribucion.class);
+		queryDistribucion.select(rootDistribucion);
+		List<Distribucion> distribuciones = instanceEM.createQuery(queryDistribucion).getResultList();
+		for (Distribucion distribucion : distribuciones) {
+		    manejadorDistribucion.agregarDistribucion(distribucion);
+		}
+		
+		// Confirmar la transacción
+		instanceEM.getTransaction().commit();
+	} catch (Exception e) {
+		// En caso de error, revertir la transacción
+		instanceEM.getTransaction().rollback();
+		e.printStackTrace();
+	} finally {
+		// Cerrar el EntityManager
+		instanceEM.close();
+	}
+    }
+	    
+	    // Solucion anterior:
+	    /*
+     	    emf = Persistence.createEntityManagerFactory("Conexion");
 	    // Crear una instancia de EntityManager
 	    em = emf.createEntityManager();
 
@@ -66,8 +116,7 @@ public class Controlador implements IControlador {
 	    } finally {
 	        // Cerrar el EntityManager
 	        em.close();
-	    }
-    }
+	    }*/
 
     //Operaciones de usario
     @Override
