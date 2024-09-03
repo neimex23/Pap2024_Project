@@ -165,6 +165,8 @@ public class Principal {
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
+
+        Fabrica.getInstancia().getIControlador().cargarBaseDatos();
     }
 
     private static void mostrarFormularioBeneficiario(String titulo) {

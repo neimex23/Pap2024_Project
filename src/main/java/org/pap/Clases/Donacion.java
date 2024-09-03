@@ -2,10 +2,19 @@ package org.pap.Clases;
 import java.time.LocalDateTime;
 import org.pap.dtClasses.DTDonacion;
 
+import javax.persistence.*;
+
+@Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="TIPODONACION")
 public abstract class Donacion {
-	
+
+		@Id
 	    private int id;
 	    private LocalDateTime fechaIngresada;
+
+
+		public Donacion(){};
 
 		public Donacion(int id, LocalDateTime fechaIngresada) {
 	        this.id = id;

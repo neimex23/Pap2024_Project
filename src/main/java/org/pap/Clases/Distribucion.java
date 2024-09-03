@@ -3,8 +3,13 @@ import java.time.LocalDateTime;
 import org.pap.Enums.*;
 import org.pap.dtClasses.DTDistribucion;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Distribucion {
 
+    @Id
     private Integer id;
     private LocalDateTime fechaPreparacion;
     private LocalDateTime fechaEntrega;
@@ -12,6 +17,7 @@ public class Distribucion {
     private int idDonAsc;
     private String emailbenAsc;
 
+    public Distribucion(){}
 
     public Distribucion(int id, LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, int idDonAsc, String emailbenAsc) {
         this.id = id;
