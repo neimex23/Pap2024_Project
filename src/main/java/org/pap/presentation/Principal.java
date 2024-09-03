@@ -198,18 +198,18 @@ public class Principal {
 
         JLabel lblEstado = new JLabel("Estado:");
         //    JTextField txtEstado = new JTextField();
-        JComboBox<String> combo0 = new JComboBox<String>();
-        combo0.setBounds(5, 5, 5, 5);
-        combo0.addItem("Activo");
-        combo0.addItem("Suspendido");
+        JComboBox<String> cbEstado = new JComboBox<String>();
+        cbEstado.setBounds(5, 5, 5, 5);
+        cbEstado.addItem("Activo");
+        cbEstado.addItem("Suspendido");
 
-        JComboBox<String> combo1 = new JComboBox<String>();
-        combo1.setBounds(5, 5, 5, 5);
-        combo1.addItem("Centro");
-        combo1.addItem("Ciudad vieja");
-        combo1.addItem("Cordon");
-        combo1.addItem("Palermo");
-        combo1.addItem("Parque Rodo");
+        JComboBox<String> cbCiudad = new JComboBox<String>();
+        cbCiudad.setBounds(5, 5, 5, 5);
+        cbCiudad.addItem("Centro");
+        cbCiudad.addItem("Ciudad vieja");
+        cbCiudad.addItem("Cordon");
+        cbCiudad.addItem("Palermo");
+        cbCiudad.addItem("Parque Rodo");
 
         JLabel lblBarrio = new JLabel("Barrio:");
         JTextField txtBarrio = new JTextField();
@@ -235,14 +235,14 @@ public class Principal {
                     LocalDateTime fechaNacimiento = LocalDateTime.of(anio, mes, dia, 0, 0, 0);
 
                     // Convertir el estado y barrio seleccionados a los correspondientes Enum
-                    EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(combo0.getSelectedItem().toString().toUpperCase());
-                    EnumBarrio barrio = EnumBarrio.valueOf(combo1.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
+                    EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(cbEstado.getSelectedItem().toString().toUpperCase());
+                    EnumBarrio barrio = EnumBarrio.valueOf(cbCiudad.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
 
                     // Agregar beneficirio con los datos obtenidos
                     if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
                         JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, EnumEstadoBeneficiario.ACTIVO, barrio);
+                        fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
                         // Mensaje de operacion realizada satisfactoriamente
                         JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -282,11 +282,11 @@ public class Principal {
         internalFrame.add(new JLabel("Año:"));
         internalFrame.add(spnAno);
         internalFrame.add(lblEstado);
-        internalFrame.add(combo0);
+        internalFrame.add(cbEstado);
         internalFrame.add(lblDirecc);
         internalFrame.add(txtDirecc);
         internalFrame.add(lblBarrio);
-        internalFrame.add(combo1);
+        internalFrame.add(cbCiudad);
         internalFrame.add(btnGuardar);
         internalFrame.add(btnCancelar);
 
@@ -1023,7 +1023,7 @@ public class Principal {
             cbEstado.removeItem(nullString);
             String estadoSeleccionado = (String) cbEstado.getSelectedItem();
 
-            List<DTBeneficiario> listaBeneficiarios;
+            List<DTUsuario> listaBeneficiarios;
             
             EnumEstadoBeneficiario estadoS = EnumEstadoBeneficiario.valueOf(estadoSeleccionado);
             listaBeneficiarios = fabrica.getIControlador().ListarBeneficiarioEstado(estadoS);
@@ -1035,17 +1035,17 @@ public class Principal {
                 return;
             }
 
-            for (DTBeneficiario beneficiario : listaBeneficiarios) {
-                
-                    
-                    String email = beneficiario.getEmail();
-                    String nombre = beneficiario.getNombre();
-                    String direccion = beneficiario.getDireccion();
-                    EnumEstadoBeneficiario estado = beneficiario.getEstado();
-                    String barrio = beneficiario.getBarrio().toString();
+            for (DTUsuario beneficiario : listaBeneficiarios) {
+                if (beneficiario instanceof DTBeneficiario) {
+                    DTBeneficiario Dtbeneficiario = (DTBeneficiario) beneficiario;
+                    String email = Dtbeneficiario.getEmail();
+                    String nombre = Dtbeneficiario.getNombre();
+                    String direccion = Dtbeneficiario.getDireccion();
+                    String estado = Dtbeneficiario.getEstado().toString();
+                    EnumBarrio barrio = Dtbeneficiario.getBarrio();
 
                     tableModel.addRow(new Object[]{nombre, email, direccion, estado, barrio});
-                
+                }
             }
 
             if (tableModel.getRowCount() == 0) {

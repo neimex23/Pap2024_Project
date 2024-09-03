@@ -198,24 +198,16 @@ public class Controlador implements IControlador {
     }
     //listar Beneficiarios por Estado
     @Override  
-    public List<DTBeneficiario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado) {
+    public List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
-        List<DTBeneficiario> lista = new ArrayList<>();
+        List<DTUsuario> lista = new ArrayList<>();
         if (estado != null) {
             for (Usuario usuario : usuarios) {
                 if(usuario instanceof Beneficiario){
                     Beneficiario beneficiario = (Beneficiario) usuario;
                     if (beneficiario.getEstado().equals(estado)) {
                     // Creación manual del objeto DTBeneficiario
-                        DTBeneficiario dtBeneficiario = new DTBeneficiario(
-                            beneficiario.getNombre(), 
-                            beneficiario.getEmail(), 
-                            beneficiario.getDireccion(), 
-                            beneficiario.getFechaNacimiento(), 
-                            beneficiario.getEstado(), 
-                            beneficiario.getBarrio()
-                        );
-                        lista.add(dtBeneficiario);
+                        lista.add(beneficiario.transformarADtUsuario());
                     }
                 }    
             }
