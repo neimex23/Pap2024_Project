@@ -8,6 +8,9 @@ import org.pap.Enums.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,91 +35,92 @@ public class Controlador implements IControlador {
     @Override
     public void cargarBaseDatos() {
         // Solucion utilizando Hibernate ORM con CriteriaQuery:
-	// Crear una instancia de EntityManager
-	instanceEM = emf.createEntityManager();
-	
-	try {
-		// Comenzar la transacción
-		instanceEM.getTransaction().begin();
-		
-		// Cargar todos los usuarios usando CriteriaQuery
-		CriteriaBuilder criBuild = instanceEM.getCriteriaBuilder();
-		CriteriaQuery<Usuario> queryUsuario = criBuild.createQuery(Usuario.class);
-		Root<Usuario> rootUsuario = queryUsuario.from(Usuario.class);
-		queryUsuario.select(rootUsuario);
-		List<Usuario> usuarios = instanceEM.createQuery(queryUsuario).getResultList();
-		for (Usuario usuario : usuarios) {
-		    manejadorUsuario.agregarUsuario(usuario);
-		}
-		
-		// Cargar todas las donaciones usando CriteriaQuery
-		CriteriaQuery<Donacion> queryDonacion = criBuild.createQuery(Donacion.class);
-		Root<Donacion> rootDonacion = queryDonacion.from(Donacion.class);
-		queryDonacion.select(rootDonacion);
-		List<Donacion> donaciones = instanceEM.createQuery(queryDonacion).getResultList();
-		for (Donacion donacion : donaciones) {
-		    manejadorDonacion.agregarDonacion(donacion);
-		}
-		
-		// Cargar todas las distribuciones usando CriteriaQuery
-		CriteriaQuery<Distribucion> queryDistribucion = criBuild.createQuery(Distribucion.class);
-		Root<Distribucion> rootDistribucion = queryDistribucion.from(Distribucion.class);
-		queryDistribucion.select(rootDistribucion);
-		List<Distribucion> distribuciones = instanceEM.createQuery(queryDistribucion).getResultList();
-		for (Distribucion distribucion : distribuciones) {
-		    manejadorDistribucion.agregarDistribucion(distribucion);
-		}
-		
-		// Confirmar la transacción
-		instanceEM.getTransaction().commit();
-	} catch (Exception e) {
-		// En caso de error, revertir la transacción
-		instanceEM.getTransaction().rollback();
-		e.printStackTrace();
-	} finally {
-		// Cerrar el EntityManager
-		instanceEM.close();
-	}
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        // Crear una instancia de EntityManager
+        EntityManager instanceEM = emf.createEntityManager();
+
+        try {
+            // Comenzar la transacción
+            instanceEM.getTransaction().begin();
+
+            // Cargar todos los usuarios usando CriteriaQuery
+            CriteriaBuilder criBuild = instanceEM.getCriteriaBuilder();
+            CriteriaQuery<Usuario> queryUsuario = criBuild.createQuery(Usuario.class);
+            Root<Usuario> rootUsuario = queryUsuario.from(Usuario.class);
+            queryUsuario.select(rootUsuario);
+            List<Usuario> usuarios = instanceEM.createQuery(queryUsuario).getResultList();
+            for (Usuario usuario : usuarios) {
+                manejadorUsuario.agregarUsuario(usuario);
+            }
+
+            // Cargar todas las donaciones usando CriteriaQuery
+            CriteriaQuery<Donacion> queryDonacion = criBuild.createQuery(Donacion.class);
+            Root<Donacion> rootDonacion = queryDonacion.from(Donacion.class);
+            queryDonacion.select(rootDonacion);
+            List<Donacion> donaciones = instanceEM.createQuery(queryDonacion).getResultList();
+            for (Donacion donacion : donaciones) {
+                manejadorDonacion.agregarDonacion(donacion);
+            }
+
+            // Cargar todas las distribuciones usando CriteriaQuery
+            CriteriaQuery<Distribucion> queryDistribucion = criBuild.createQuery(Distribucion.class);
+            Root<Distribucion> rootDistribucion = queryDistribucion.from(Distribucion.class);
+            queryDistribucion.select(rootDistribucion);
+            List<Distribucion> distribuciones = instanceEM.createQuery(queryDistribucion).getResultList();
+            for (Distribucion distribucion : distribuciones) {
+                manejadorDistribucion.agregarDistribucion(distribucion);
+            }
+
+            // Confirmar la transacción
+            instanceEM.getTransaction().commit();
+        } catch (Exception e) {
+            // En caso de error, revertir la transacción
+            instanceEM.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            // Cerrar el EntityManager
+            instanceEM.close();
+        }
     }
-	    
-	    // Solucion anterior:
-	    /*
-     	    emf = Persistence.createEntityManagerFactory("Conexion");
-	    // Crear una instancia de EntityManager
-	    em = emf.createEntityManager();
 
-	    try {
-	        // Comenzar la transacción
-	        em.getTransaction().begin();
+        /* Solucion anterior:
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        // Crear una instancia de EntityManager
+        em = emf.createEntityManager();
 
-	        // Cargar todos los usuarios y agregarlos al ManejadorUsuario
-	        List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
-	        for (Usuario usuario : usuarios) {
-	            manejadorUsuario.agregarUsuario(usuario);
-	        }
+        try {
+            // Comenzar la transacción
+            em.getTransaction().begin();
 
-	        // Cargar todas las donaciones y agregarlas al ManejadorDonacion
-	        List<Donacion> donaciones = em.createQuery("SELECT d FROM Donacion d", Donacion.class).getResultList();
-	        for (Donacion donacion : donaciones) {
-	            manejadorDonacion.agregarDonacion(donacion);
-	        }
+            // Cargar todos los usuarios y agregarlos al ManejadorUsuario
+            List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
+            for (Usuario usuario : usuarios) {
+                manejadorUsuario.agregarUsuario(usuario);
+            }
 
-	        // Cargar todas las distribuciones y agregarlas al ManejadorDistribucion
-	        List<Distribucion> distribuciones = em.createQuery("SELECT d FROM Distribucion d", Distribucion.class).getResultList();
-	        for (Distribucion distribucion : distribuciones) {
-	            manejadorDistribucion.agregarDistribucion(distribucion);
-	        }
+            // Cargar todas las donaciones y agregarlas al ManejadorDonacion
+            List<Donacion> donaciones = em.createQuery("SELECT d FROM Donacion d", Donacion.class).getResultList();
+            for (Donacion donacion : donaciones) {
+                manejadorDonacion.agregarDonacion(donacion);
+            }
 
-	        // Confirmar la transacción
-	        em.getTransaction().commit();
-	    } catch (Exception e) {
-	        // En caso de error, revertir la transacción
-	        em.getTransaction().rollback();
-	        e.printStackTrace();
-	    } finally {
-	        // Cerrar el EntityManager
-	        em.close();
-	    }*/
+            // Cargar todas las distribuciones y agregarlas al ManejadorDistribucion
+            List<Distribucion> distribuciones = em.createQuery("SELECT d FROM Distribucion d", Distribucion.class).getResultList();
+            for (Distribucion distribucion : distribuciones) {
+                manejadorDistribucion.agregarDistribucion(distribucion);
+            }
+
+            // Confirmar la transacción
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            // En caso de error, revertir la transacción
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            // Cerrar el EntityManager
+            em.close();
+        }
+    }*/
 
     //Operaciones de usario
     @Override
