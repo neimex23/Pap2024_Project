@@ -259,23 +259,54 @@ public class Controlador implements IControlador {
     }
 
 
-    private void modificarDistribucion(DTDistribucion distribucion) {
+    private void modificarDistribucion(DTDistribucion dtoDistribucion) {
     // Obtener la lista de distribuciones del manejador
-    List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
+        List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
-    // Buscar la distribución a modificar por su ID
-    for (int i = 0; i < distribuciones.size(); i++) {
-        if (distribuciones.get(i).getId() == distribucion.getId()) {
-            // Se encontró la distribución, actualiza sus datos
+        // Buscar la distribución a modificar por su ID
+        int i = 0;
+        boolean encontrado = false;
 
-            Distribucion distribucionActualizada = new Distribucion(distribucion.getId(),distribucion.getFechaPreparacion(), distribucion.getFechaEntrega(), distribucion.getEstado(), distribucion.getDonacionAsc(), distribucion.getEmailBenefAsc());
-            distribuciones.set(i, distribucionActualizada);
-            break;
+        while (i < distribuciones.size() && !encontrado) {
+            if (distribuciones.get(i).getId() == dtoDistribucion.getId()) {
+                // Se encontró la distribución, actualiza sus datos
+                Distribucion distribucionActualizada = new Distribucion(dtoDistribucion.getId(),dtoDistribucion.getFechaPreparacion(), dtoDistribucion.getFechaEntrega(), dtoDistribucion.getEstado(), dtoDistribucion.getDonacionAsc(), dtoDistribucion.getEmailBenefAsc());
+                distribuciones.set(i, distribucionActualizada);
+                encontrado = true;
+            }
+            i++;
         }
-    }
 
-        // Dependiendo de cómo esté diseñado el sistema, podrías necesitar
-        // persistir los cambios o notificar que la distribución fue actualizada.
+        try {
+            emf = Persistence.createEntityManagerFactory("Conexion");
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            Distribucion distribucion = em.find(Distribucion.class, dtoDistribucion.getId());
+
+            if (distribucion != null) {
+                // Actualizar los campos de la distribución
+                distribucion.setFechaPreparacion(dtoDistribucion.getFechaPreparacion());
+                distribucion.setFechaEntrega(dtoDistribucion.getFechaEntrega());
+                distribucion.setEstado(dtoDistribucion.getEstado());
+                distribucion.setIdDonAsc(dtoDistribucion.getDonacionAsc());
+                distribucion.setEmailbenAsc(dtoDistribucion.getEmailBenefAsc());
+
+                // Guardar los cambios en la base de datos
+                em.merge(distribucion);
+            }
+
+            // Confirmar la transacción
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace(); // Manejar la excepción según corresponda
+        } finally {
+            em.close();
+        }
+
+
     }
 
 
