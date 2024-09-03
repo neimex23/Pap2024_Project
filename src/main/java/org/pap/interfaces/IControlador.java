@@ -31,4 +31,5 @@ public interface IControlador {
     void cargarBaseDatos();
 
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
+    List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
 }

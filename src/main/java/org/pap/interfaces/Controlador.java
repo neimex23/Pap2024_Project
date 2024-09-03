@@ -371,8 +371,25 @@ public class Controlador implements IControlador {
 
         return lista;
     }
-
-
+    //listar Beneficiarios por Estado
+    @Override
+    public List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado) {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        List<DTUsuario> lista = new ArrayList<>();
+        if (estado != null) {
+            for (Usuario usuario : usuarios) {
+                if(usuario instanceof Beneficiario){
+                    Beneficiario beneficiario = (Beneficiario) usuario;
+                    if (beneficiario.getEstado().equals(estado)) {
+                    // Creación manual del objeto DTBeneficiario
+                        lista.add(beneficiario.transformarADtUsuario());
+                    }
+                }
+            }
+        }
+        return lista;
+    }
+  
     // Nueva funcion para obtener DTBeneficiario por email
     @Override
     public DTUsuario obtenerDTBeneficiario(String email) {
