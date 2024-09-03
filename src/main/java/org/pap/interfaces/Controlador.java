@@ -245,16 +245,19 @@ public class Controlador implements IControlador {
         // Obtener la lista de distribuciones del manejador
         List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
 
+        int i = 0;
+        boolean encontrado = false;
         // Buscar la distribución a actualizar por su ID
-        for (int i = 0; i < distribuciones.size(); i++) {
+        while (i < distribuciones.size() && !encontrado) {
             Distribucion distribucionActual = distribuciones.get(i);
             if (distribucionActual.getId() == idDistribucion) {
                 // Se encontró la distribución, actualiza sus datos
                 distribucionActual.setFechaEntrega(fechaEntrega);
                 distribucionActual.setEstado(estado);
                 modificarDistribucion(distribucionActual.transform());
-                break;
+                encontrado = true;
             }
+            i++;
         }
     }
 
@@ -388,20 +391,6 @@ public class Controlador implements IControlador {
             }
         }
         return lista;
-    }
-  
-    // Nueva funcion para obtener DTBeneficiario por email
-    @Override
-    public DTUsuario obtenerDTBeneficiario(String email) {
-        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
-
-        for (Usuario usuario : usuarios) {
-            if (usuario instanceof Beneficiario && usuario.getEmail().equals(email)) {
-                return usuario.transformarADtUsuario();
-            }
-        }
-
-        return null; // Si no se encuentra el beneficiario, devuelve null.
     }
 
     @Override

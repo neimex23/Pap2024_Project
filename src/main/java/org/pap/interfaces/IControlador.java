@@ -21,7 +21,6 @@ public interface IControlador {
     
     List<DTUsuario> ListarBeneficiario(); //CrearDTBeneficiario
     List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
-    DTUsuario obtenerDTBeneficiario(String email);
 
     void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf);
     void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
