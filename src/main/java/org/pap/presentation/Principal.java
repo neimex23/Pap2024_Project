@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
@@ -48,11 +49,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
 public class Principal {
@@ -869,7 +868,7 @@ public class Principal {
 
             int year = fechaEntregaDate.getYear();
             int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
-            int day = fechaEntregaDate.getDayOfMonth(); // Utiliza getDayOfMonth() en lugar de getDayOfYear().
+            int day = fechaEntregaDate.getDayOfMonth();
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
@@ -1123,49 +1122,118 @@ public class Principal {
 
         // Panel para los detalles de la distribución seleccionada
         JPanel panelDetalles = new JPanel(new GridLayout(4, 2));
+        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+        JSpinner spinnerCantidadElementos =  new JSpinner(new SpinnerNumberModel());
+        JLabel lblDescripcion = new JLabel("Descripción:");
+        JTextField txtDescripcion = new JTextField();
+        JTextField txtPeso = new JTextField();
+        JTextField txtDimension = new JTextField();
 
         cbDonaciones.addActionListener((ActionEvent e) -> {
             cbDonaciones.removeItem(stringNull);
+            panelDetalles.removeAll();
+
+            //Se utiliza para resfrescar correctamente los paneles si se cambia entre comboboxs
+            internalFrame.revalidate();
+            internalFrame.repaint();
+
             DTDonacion donacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
+
+            JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
+            LocalDateTime fechaEntregaDate = donacionSeleccionada.getFechaIngresada();
+
+            int year = fechaEntregaDate.getYear();
+            int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
+            int day = fechaEntregaDate.getDayOfMonth();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
+            Date date = calendar.getTime();
+            spinnerFechaEntrega.setValue(date);
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
+            spinnerFechaEntrega.setEditor(dateEditor);
+
+            panelDetalles.add(lblFechaEntrega);
+            panelDetalles.add(spinnerFechaEntrega);
+
             if (donacionSeleccionada instanceof DTAlimento) {
-                JLabel lblDescripcion = new JLabel("Descripción:");
-                JTextField txtDescripcion = new JTextField(((DTAlimento) donacionSeleccionada).getDescProducto());
-                txtDescripcion.setColumns(20);  // Puedes ajustar el número de columnas según sea necesario
+                String desc = ((DTAlimento) donacionSeleccionada).getDescProducto();
+                txtDescripcion.setText(desc);
+                txtDescripcion.setColumns(20);
 
                 JLabel lblCantElementos = new JLabel("Cantidad de Elementos:");
                 int cantEleDon = ((DTAlimento) donacionSeleccionada).getCantElemntos();
-                JSpinner spinnerCantidadElementos = new JSpinner(new SpinnerNumberModel(cantEleDon, 0, Integer.MAX_VALUE, 1));
+                spinnerCantidadElementos.setValue(cantEleDon);
 
                 // Añadimos los componentes al panel
-                panelDetalles.add(lblDescripcion);
-                panelDetalles.add(txtDescripcion);
                 panelDetalles.add(lblCantElementos);
                 panelDetalles.add(spinnerCantidadElementos);
             }
 
             if (donacionSeleccionada instanceof DTArticulo) {
+                String desc = ((DTArticulo) donacionSeleccionada).getDescr();
+                txtDescripcion.setText(desc);
+                txtDescripcion.setColumns(20);
+
+                JLabel lblPeso = new JLabel("Peso:");
+                String peso = String.valueOf(((DTArticulo) donacionSeleccionada).getPeso());  // Convertir de Float a Double
+                txtPeso.setText(peso);
+
+                JLabel lblDimension = new JLabel("Dimensiones:");
+                String dimen =((DTArticulo) donacionSeleccionada).getDimensiones();
+                txtDimension.setText(dimen);
+                txtDimension.setColumns(20);
+
+
+                panelDetalles.add(lblPeso);
+                panelDetalles.add(txtPeso);
+                panelDetalles.add(lblDimension);
+                panelDetalles.add(txtDimension);
 
             }
+
+            panelDetalles.add(lblDescripcion);
+            panelDetalles.add(txtDescripcion);
         });
 
         JButton btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener(e -> {
-            /*String seleccion = (String) cbDistribuciones.getSelectedItem();
-            if (seleccion != null && !seleccion.equals("No hay distribuciones disponibles")) {
-                int idDistribucion = Integer.parseInt(seleccion.split(" - ")[0]);
-                LocalDateTime fechaEntrega = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                String estadoSeleccionado = (String) cbEstado.getSelectedItem();
-                EnumEstadoDistribucion estado = EnumEstadoDistribucion.valueOf(estadoSeleccionado);
+            String donacionSeleccionada = cbDonaciones.getSelectedItem().toString();
+            if (donacionSeleccionada != null && !donacionSeleccionada.equals("") && !donacionSeleccionada.equals("No hay Donaciones disponibles")) {
+                DTDonacion dtDonacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
 
-                // Actualizar la distribución
-                fabrica.getIControlador().modificarDistribucion(idDistribucion, fechaEntrega, estado);
+                DTDonacion donacionModificar = null;
+                LocalDateTime fechaIngreso = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                String desc = txtDescripcion.getText();
+
+
+                if (donaciones.get(cbDonaciones.getSelectedIndex()) instanceof DTAlimento) {
+                    try {
+                        int cantidad = Integer.parseInt(spinnerCantidadElementos.getValue().toString());
+                        donacionModificar = new DTAlimento(dtDonacionSeleccionada.getId(), fechaIngreso,desc, cantidad);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor de la Cantidad no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }else {
+                    try {
+                        float peso = Float.parseFloat(txtPeso.getText());
+                        donacionModificar = new DTArticulo(dtDonacionSeleccionada.getId(),fechaIngreso,desc, peso,  txtDimension.getText());
+
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor del peso no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
+                fabrica.getIControlador().modificarDonacion(donacionModificar);
 
                 // Mostrar mensaje de éxito
                 JOptionPane.showMessageDialog(internalFrame, "Modificación realizada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
                 // Cerrar el frame después de guardar
                 internalFrame.dispose();
-            }*/
+            }
         });
 
         // Botón para cancelar

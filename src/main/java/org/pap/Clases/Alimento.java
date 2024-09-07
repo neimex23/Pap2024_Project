@@ -49,4 +49,13 @@ public class Alimento extends Donacion {
         return new DTAlimento(this.getId(),this.getFechaIngresada(), this.getDescProducto(), this.getCantElemntos());
 
     }
+
+    @Override
+    public void actualizarDesdeDTO(DTDonacion dtoDonacion) {
+        if (dtoDonacion instanceof DTAlimento) {
+            DTAlimento alimentoDTO = (DTAlimento) dtoDonacion;
+            this.descProducto = alimentoDTO.getDescProducto();
+            this.cantElemntos = alimentoDTO.getCantElemntos();
+        }
+    }
 }
