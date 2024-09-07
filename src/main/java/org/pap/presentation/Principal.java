@@ -1258,19 +1258,19 @@ public class Principal {
 
 
     private static LocalDateTime obtenerFechaHora() {
-    // Obtener la fecha y hora actual usando Calendar
-    Calendar calendario = Calendar.getInstance();
+        // Obtener la fecha y hora actual usando Calendar
+        Calendar calendario = Calendar.getInstance();
 
-    // Extraer los componentes de la fecha y hora
-    int dia = calendario.get(Calendar.DAY_OF_MONTH);
-    int mes = calendario.get(Calendar.MONTH) + 1; // Los meses en Calendar son 0-indexados (enero es 0)
-    int anio = calendario.get(Calendar.YEAR);
-    int hora = calendario.get(Calendar.HOUR_OF_DAY);
-    int minutos = calendario.get(Calendar.MINUTE);
+        // Extraer los componentes de la fecha y hora
+        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+        int mes = calendario.get(Calendar.MONTH) + 1; // Los meses en Calendar son 0-indexados (enero es 0)
+        int anio = calendario.get(Calendar.YEAR);
+        int hora = calendario.get(Calendar.HOUR_OF_DAY);
+        int minutos = calendario.get(Calendar.MINUTE);
 
-    // Crear una instancia de LocalDateTime con la fecha actual
-    LocalDateTime fechaActual = LocalDateTime.of(anio, mes, dia, hora, minutos);
-    return fechaActual;
+        // Crear una instancia de LocalDateTime con la fecha actual
+        LocalDateTime fechaActual = LocalDateTime.of(anio, mes, dia, hora, minutos);
+        return fechaActual;
     }
 
     private static void validarEmail(String email) throws InvalidEmailException {
