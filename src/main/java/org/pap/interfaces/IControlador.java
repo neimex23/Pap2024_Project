@@ -21,14 +21,16 @@ public interface IControlador {
     
     List<DTUsuario> ListarBeneficiario(); //CrearDTBeneficiario
     List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
+    DTUsuario obtenerDTBeneficiario(String email);
 
     void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf);
     void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
     List<DTDistribucion>  listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado
-
-    void cargarBaseDatos();
-
+    //List<DTDistribucion> listarDistribucionesPorZona(EnumBarrio barrioS); //Para listar Distribuciones por Zona
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
+
+    
+    List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio);
 }
