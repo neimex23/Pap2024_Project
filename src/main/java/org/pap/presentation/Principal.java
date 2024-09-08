@@ -214,10 +214,10 @@ public class Principal {
         JComboBox<String> cbCiudad = new JComboBox<String>();
         cbCiudad.setBounds(5, 5, 5, 5);
         cbCiudad.addItem("Centro");
-        cbCiudad.addItem("Ciudad vieja");
+        cbCiudad.addItem("Ciudad_Vieja");
         cbCiudad.addItem("Cordon");
         cbCiudad.addItem("Palermo");
-        cbCiudad.addItem("Parque Rodo");
+        cbCiudad.addItem("Parque_Rodo");
 
         JLabel lblBarrio = new JLabel("Barrio:");
         JTextField txtBarrio = new JTextField();

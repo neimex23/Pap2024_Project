@@ -1,5 +1,5 @@
 package org.pap.Enums;
 
 public enum EnumBarrio {
-	    CIUDADVIEJA, CORDON, PARQUERODO, CENTRO, PALERMO
+	    CIUDAD_VIEJA, CORDON, PARQUE_RODO, CENTRO, PALERMO
 	}
