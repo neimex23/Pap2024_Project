@@ -24,11 +24,13 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
@@ -47,11 +49,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
 public class Principal {
@@ -119,6 +119,12 @@ public class Principal {
             mostrarFormularioArticulo("Agregar Artículo");
         });
         mnAgregarDonacion.add(mntmArticulo);
+
+        JMenuItem mntmModDonacion= new JMenuItem("Modificar Donacion");
+        mntmModDonacion.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioModDDonacion("Modificar Donacion");
+        });
+        mnAgregarDonacion.add(mntmModDonacion);
 
         // Crear y añadir el elemento de menú "Distribucion"
         JMenuItem mntmDistribucion = new JMenuItem("Alta distribucion");
@@ -814,6 +820,7 @@ public class Principal {
             cbDistribuciones.addItem("No hay distribuciones disponibles");
             cbDistribuciones.setEnabled(false);
         } else {
+            cbDistribuciones.addItem("");
             for (DTDistribucion distribucion : distribuciones) {
                 // Obtener la donación correspondiente a la distribución
                 DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getDonacionAsc());
@@ -840,30 +847,6 @@ public class Principal {
         panelSeleccion.add(lblSeleccion);
         panelSeleccion.add(cbDistribuciones);
 
-        // Panel para los detalles de la distribución seleccionada
-        JPanel panelDetalles = new JPanel(new GridLayout(4, 2));
-
-        // Fecha de Entrega
-        JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
-        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
-
-        int distIndex = cbDistribuciones.getSelectedIndex();
-        LocalDateTime fechaEntregaDate = distribuciones.get(distIndex).getFechaEntrega();
-
-        int year = fechaEntregaDate.getYear();
-        int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
-        int day = fechaEntregaDate.getDayOfMonth(); // Utiliza getDayOfMonth() en lugar de getDayOfYear().
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
-        Date date = calendar.getTime();
-        spinnerFechaEntrega.setValue(date);
-
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
-        spinnerFechaEntrega.setEditor(dateEditor);
-
-
-
         // Estado
         JLabel lblEstado = new JLabel("Estado:");
         JComboBox<String> cbEstado = new JComboBox<>();
@@ -871,8 +854,35 @@ public class Principal {
             cbEstado.addItem(estado.name());
         }
 
+        // Panel para los detalles de la distribución seleccionada
+        JPanel panelDetalles = new JPanel(new GridLayout(4, 2));
 
-        cbEstado.setSelectedItem(distribuciones.get(distIndex).getEstado().name());
+
+        // Fecha de Entrega
+        JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
+        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+
+        if (!distribuciones.isEmpty()) {
+            int distIndex = cbDistribuciones.getSelectedIndex();
+            LocalDateTime fechaEntregaDate = distribuciones.get(distIndex).getFechaEntrega();
+
+            int year = fechaEntregaDate.getYear();
+            int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
+            int day = fechaEntregaDate.getDayOfMonth();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
+            Date date = calendar.getTime();
+            spinnerFechaEntrega.setValue(date);
+
+            cbEstado.setSelectedItem(distribuciones.get(distIndex).getEstado().name());
+        }else {
+            spinnerFechaEntrega.setEnabled(false);
+            cbEstado.setEnabled(false);
+        }
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
+        spinnerFechaEntrega.setEditor(dateEditor);
+
 
         // Añadir componentes al panel de detalles
         panelDetalles.add(lblFechaEntrega);
@@ -884,9 +894,9 @@ public class Principal {
         JButton btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener(e -> {
             String seleccion = (String) cbDistribuciones.getSelectedItem();
-            if (seleccion != null && !seleccion.equals("No hay distribuciones disponibles")) {
+            if (!seleccion.equals("") && seleccion != null && !seleccion.equals("No hay distribuciones disponibles")) {
                 int idDistribucion = Integer.parseInt(seleccion.split(" - ")[0]);
-                LocalDateTime fechaEntrega = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime fechaEntrega = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 String estadoSeleccionado = (String) cbEstado.getSelectedItem();
                 EnumEstadoDistribucion estado = EnumEstadoDistribucion.valueOf(estadoSeleccionado);
 
@@ -1070,7 +1080,183 @@ public class Principal {
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
-      
+
+    private static void mostrarFormularioModDDonacion(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+
+        // Panel para seleccionar la distribución a modificar
+        JPanel panelSeleccion = new JPanel();
+        JLabel lblSeleccion = new JLabel("Seleccionar Donacion:");
+        JComboBox<String> cbDonaciones = new JComboBox<>();
+        String stringNull = "";
+
+        List<DTDonacion> donaciones = fabrica.getIControlador().ListarDonaciones();
+        if (donaciones.isEmpty()) {
+            cbDonaciones.addItem("No hay Donaciones disponibles");
+            cbDonaciones.setEnabled(false);
+        } else {
+            cbDonaciones.addItem(stringNull);
+            for (DTDonacion donacion : donaciones) {
+                // Declarar la variable descripcion
+                String descripcion;
+
+                // Determinar el tipo de donación y establecer la descripción
+                switch (donacion) {
+                    case DTAlimento dTAlimento -> descripcion = dTAlimento.getDescProducto();
+                    case DTArticulo dTArticulo -> descripcion = dTArticulo.getDescr();
+                    default -> descripcion = "Descripción no disponible";
+                }
+
+                // Agregar la descripción al JComboBox
+                cbDonaciones.addItem(donacion.getId() + " - " + descripcion);
+            }
+
+        }
+
+        panelSeleccion.add(lblSeleccion);
+        panelSeleccion.add(cbDonaciones);
+
+        // Panel para los detalles de la distribución seleccionada
+        JPanel panelDetalles = new JPanel(new GridLayout(4, 2));
+        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+        JSpinner spinnerCantidadElementos =  new JSpinner(new SpinnerNumberModel());
+        JLabel lblDescripcion = new JLabel("Descripción:");
+        JTextField txtDescripcion = new JTextField();
+        JTextField txtPeso = new JTextField();
+        JTextField txtDimension = new JTextField();
+
+        cbDonaciones.addActionListener((ActionEvent e) -> {
+            cbDonaciones.removeItem(stringNull);
+            panelDetalles.removeAll();
+
+            //Se utiliza para resfrescar correctamente los paneles si se cambia entre comboboxs
+            internalFrame.revalidate();
+            internalFrame.repaint();
+
+            DTDonacion donacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
+
+            JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
+            LocalDateTime fechaEntregaDate = donacionSeleccionada.getFechaIngresada();
+
+            int year = fechaEntregaDate.getYear();
+            int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
+            int day = fechaEntregaDate.getDayOfMonth();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
+            Date date = calendar.getTime();
+            spinnerFechaEntrega.setValue(date);
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
+            spinnerFechaEntrega.setEditor(dateEditor);
+
+            panelDetalles.add(lblFechaEntrega);
+            panelDetalles.add(spinnerFechaEntrega);
+
+            if (donacionSeleccionada instanceof DTAlimento) {
+                String desc = ((DTAlimento) donacionSeleccionada).getDescProducto();
+                txtDescripcion.setText(desc);
+                txtDescripcion.setColumns(20);
+
+                JLabel lblCantElementos = new JLabel("Cantidad de Elementos:");
+                int cantEleDon = ((DTAlimento) donacionSeleccionada).getCantElemntos();
+                spinnerCantidadElementos.setValue(cantEleDon);
+
+                // Añadimos los componentes al panel
+                panelDetalles.add(lblCantElementos);
+                panelDetalles.add(spinnerCantidadElementos);
+            }
+
+            if (donacionSeleccionada instanceof DTArticulo) {
+                String desc = ((DTArticulo) donacionSeleccionada).getDescr();
+                txtDescripcion.setText(desc);
+                txtDescripcion.setColumns(20);
+
+                JLabel lblPeso = new JLabel("Peso:");
+                String peso = String.valueOf(((DTArticulo) donacionSeleccionada).getPeso());  // Convertir de Float a Double
+                txtPeso.setText(peso);
+
+                JLabel lblDimension = new JLabel("Dimensiones:");
+                String dimen =((DTArticulo) donacionSeleccionada).getDimensiones();
+                txtDimension.setText(dimen);
+                txtDimension.setColumns(20);
+
+
+                panelDetalles.add(lblPeso);
+                panelDetalles.add(txtPeso);
+                panelDetalles.add(lblDimension);
+                panelDetalles.add(txtDimension);
+
+            }
+
+            panelDetalles.add(lblDescripcion);
+            panelDetalles.add(txtDescripcion);
+        });
+
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addActionListener(e -> {
+            String donacionSeleccionada = cbDonaciones.getSelectedItem().toString();
+            if (donacionSeleccionada != null && !donacionSeleccionada.equals("") && !donacionSeleccionada.equals("No hay Donaciones disponibles")) {
+                DTDonacion dtDonacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
+
+                DTDonacion donacionModificar = null;
+                LocalDateTime fechaIngreso = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                String desc = txtDescripcion.getText();
+
+
+                if (donaciones.get(cbDonaciones.getSelectedIndex()) instanceof DTAlimento) {
+                    try {
+                        int cantidad = Integer.parseInt(spinnerCantidadElementos.getValue().toString());
+                        donacionModificar = new DTAlimento(dtDonacionSeleccionada.getId(), fechaIngreso,desc, cantidad);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor de la Cantidad no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }else {
+                    try {
+                        float peso = Float.parseFloat(txtPeso.getText());
+                        donacionModificar = new DTArticulo(dtDonacionSeleccionada.getId(),fechaIngreso,desc, peso,  txtDimension.getText());
+
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor del peso no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
+                fabrica.getIControlador().modificarDonacion(donacionModificar);
+
+                // Mostrar mensaje de éxito
+                JOptionPane.showMessageDialog(internalFrame, "Modificación realizada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                // Cerrar el frame después de guardar
+                internalFrame.dispose();
+            }
+        });
+
+        // Botón para cancelar
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+
+        // Panel inferior con los botones Guardar y Cancelar
+        JPanel panelInferior = new JPanel();
+        panelInferior.add(btnGuardar);
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(panelSeleccion, BorderLayout.NORTH);
+        internalFrame.add(panelDetalles, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+
+    }
+
+
     private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
         Calendar calendario = Calendar.getInstance();
