@@ -4,22 +4,123 @@ import org.pap.Clases.*;
 import org.pap.dtClasses.*;
 import org.pap.handlers.*;
 import org.pap.Enums.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Controlador implements IControlador {
-
-    private ManejadorUsuario manejadorUsuario;
+	private ManejadorUsuario manejadorUsuario;
     private ManejadorDonacion manejadorDonacion;
     private ManejadorDistribucion manejadorDistribucion;
 
-    public Controlador() {
+    private static EntityManager em;
+    private static EntityManagerFactory emf;
+
+	public Controlador() {
         super();
         this.manejadorUsuario = ManejadorUsuario.getInstancia();
         this.manejadorDonacion = ManejadorDonacion.getInstancia();
         this.manejadorDistribucion = ManejadorDistribucion.getInstancia();
     }
+
+
+    @Override
+    public void cargarBaseDatos() {
+        // Solucion utilizando Hibernate ORM con CriteriaQuery:
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        // Crear una instancia de EntityManager
+        EntityManager instanceEM = emf.createEntityManager();
+
+        try {
+            // Comenzar la transacción
+            instanceEM.getTransaction().begin();
+
+            // Cargar todos los usuarios usando CriteriaQuery
+            CriteriaBuilder criBuild = instanceEM.getCriteriaBuilder();
+            CriteriaQuery<Usuario> queryUsuario = criBuild.createQuery(Usuario.class);
+            Root<Usuario> rootUsuario = queryUsuario.from(Usuario.class);
+            queryUsuario.select(rootUsuario);
+            List<Usuario> usuarios = instanceEM.createQuery(queryUsuario).getResultList();
+            for (Usuario usuario : usuarios) {
+                manejadorUsuario.agregarUsuario(usuario);
+            }
+
+            // Cargar todas las donaciones usando CriteriaQuery
+            CriteriaQuery<Donacion> queryDonacion = criBuild.createQuery(Donacion.class);
+            Root<Donacion> rootDonacion = queryDonacion.from(Donacion.class);
+            queryDonacion.select(rootDonacion);
+            List<Donacion> donaciones = instanceEM.createQuery(queryDonacion).getResultList();
+            for (Donacion donacion : donaciones) {
+                manejadorDonacion.agregarDonacion(donacion);
+            }
+
+            // Cargar todas las distribuciones usando CriteriaQuery
+            CriteriaQuery<Distribucion> queryDistribucion = criBuild.createQuery(Distribucion.class);
+            Root<Distribucion> rootDistribucion = queryDistribucion.from(Distribucion.class);
+            queryDistribucion.select(rootDistribucion);
+            List<Distribucion> distribuciones = instanceEM.createQuery(queryDistribucion).getResultList();
+            for (Distribucion distribucion : distribuciones) {
+                manejadorDistribucion.agregarDistribucion(distribucion);
+            }
+
+            // Confirmar la transacción
+            instanceEM.getTransaction().commit();
+        } catch (Exception e) {
+            // En caso de error, revertir la transacción
+            instanceEM.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            // Cerrar el EntityManager
+            instanceEM.close();
+        }
+    }
+
+        /* Solucion anterior:
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        // Crear una instancia de EntityManager
+        em = emf.createEntityManager();
+
+        try {
+            // Comenzar la transacción
+            em.getTransaction().begin();
+
+            // Cargar todos los usuarios y agregarlos al ManejadorUsuario
+            List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
+            for (Usuario usuario : usuarios) {
+                manejadorUsuario.agregarUsuario(usuario);
+            }
+
+            // Cargar todas las donaciones y agregarlas al ManejadorDonacion
+            List<Donacion> donaciones = em.createQuery("SELECT d FROM Donacion d", Donacion.class).getResultList();
+            for (Donacion donacion : donaciones) {
+                manejadorDonacion.agregarDonacion(donacion);
+            }
+
+            // Cargar todas las distribuciones y agregarlas al ManejadorDistribucion
+            List<Distribucion> distribuciones = em.createQuery("SELECT d FROM Distribucion d", Distribucion.class).getResultList();
+            for (Distribucion distribucion : distribuciones) {
+                manejadorDistribucion.agregarDistribucion(distribucion);
+            }
+
+            // Confirmar la transacción
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            // En caso de error, revertir la transacción
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            // Cerrar el EntityManager
+            em.close();
+        }
+    }*/
 
     //Operaciones de usario
     @Override
@@ -30,14 +131,37 @@ public class Controlador implements IControlador {
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
 
-    }
+        emf = Persistence.createEntityManagerFactory("Conexion");
 
+        //Generamos un EntityManager
+        em = emf.createEntityManager();
+
+        //Iniciamos una transacción
+        em.getTransaction().begin();
+
+        //Persistimos el objeto
+        em.persist(NuevoUsuario);
+
+        //Commmiteamos la transacción
+        em.getTransaction().commit();
+
+        //Cerramos el EntityManager
+        em.close();
+
+	}
     @Override
     public void altaRepartidor(String nombre, String email, String numeroLicencia) {
         // Se crea la instancia del nuevo usuario
         Usuario NuevoUsuario = new Repartidor(nombre, email, numeroLicencia);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(NuevoUsuario);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -60,14 +184,21 @@ public class Controlador implements IControlador {
         return manejadorUsuario.manGetCantRepartidores();
     }
 
-
     //Operaciones de Donacion
 
     @Override
     public void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones) {
         //Tener en cuenta que Id es autoincremental
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
-        manejadorDonacion.agregarDonacion(new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones));
+        Articulo artAgregar = new Articulo(ultimoID, FechaIng, descripcionArt, peso, dimensiones);
+        manejadorDonacion.agregarDonacion(artAgregar);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(artAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -76,6 +207,13 @@ public class Controlador implements IControlador {
         int ultimoID = manejadorDonacion.obtenerUltimoID() + 1;
         Alimento alimentoAgregar = new Alimento(ultimoID, FechaIng, descripcionProducto, cantElementos);
         manejadorDonacion.agregarDonacion(alimentoAgregar);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(alimentoAgregar);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -94,44 +232,84 @@ public class Controlador implements IControlador {
         int ultimoID = manejadorDistribucion.obtenerUltimoID() + 1;
         Distribucion distribucion = new Distribucion(ultimoID, fechaPreparacion, fechaEntrega, estado, donacionID, emailBenf);
         manejadorDistribucion.agregarDistribucion(distribucion);
+
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(distribucion);
+        em.getTransaction().commit();
+        em.close();
     }
 
-    @Override
     public void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado){
         // Obtener la lista de distribuciones del manejador
         List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
 
+        int i = 0;
+        boolean encontrado = false;
         // Buscar la distribución a actualizar por su ID
-        for (int i = 0; i < distribuciones.size(); i++) {
+        while (i < distribuciones.size() && !encontrado) {
             Distribucion distribucionActual = distribuciones.get(i);
             if (distribucionActual.getId() == idDistribucion) {
                 // Se encontró la distribución, actualiza sus datos
                 distribucionActual.setFechaEntrega(fechaEntrega);
                 distribucionActual.setEstado(estado);
                 modificarDistribucion(distribucionActual.transform());
-                break;
+                encontrado = true;
             }
+            i++;
         }
     }
 
 
-    private void modificarDistribucion(DTDistribucion distribucion) {
+    private void modificarDistribucion(DTDistribucion dtoDistribucion) {
     // Obtener la lista de distribuciones del manejador
-    List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
+        List<Distribucion> distribuciones = ManejadorDistribucion.getInstancia().getDistribuciones();
 
-    // Buscar la distribución a modificar por su ID
-    for (int i = 0; i < distribuciones.size(); i++) {
-        if (distribuciones.get(i).getId() == distribucion.getId()) {
-            // Se encontró la distribución, actualiza sus datos
+        // Buscar la distribución a modificar por su ID
+        int i = 0;
+        boolean encontrado = false;
 
-            Distribucion distribucionActualizada = new Distribucion(distribucion.getId(),distribucion.getFechaPreparacion(), distribucion.getFechaEntrega(), distribucion.getEstado(), distribucion.getDonacionAsc(), distribucion.getEmailBenefAsc());
-            distribuciones.set(i, distribucionActualizada);
-            break;
+        while (i < distribuciones.size() && !encontrado) {
+            if (distribuciones.get(i).getId() == dtoDistribucion.getId()) {
+                // Se encontró la distribución, actualiza sus datos
+                Distribucion distribucionActualizada = new Distribucion(dtoDistribucion.getId(),dtoDistribucion.getFechaPreparacion(), dtoDistribucion.getFechaEntrega(), dtoDistribucion.getEstado(), dtoDistribucion.getDonacionAsc(), dtoDistribucion.getEmailBenefAsc());
+                distribuciones.set(i, distribucionActualizada);
+                encontrado = true;
+            }
+            i++;
         }
-    }
 
-        // Dependiendo de cómo esté diseñado el sistema, podrías necesitar
-        // persistir los cambios o notificar que la distribución fue actualizada.
+        try {
+            emf = Persistence.createEntityManagerFactory("Conexion");
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            Distribucion distribucion = em.find(Distribucion.class, dtoDistribucion.getId());
+
+            if (distribucion != null) {
+                // Actualizar los campos de la distribución
+                distribucion.setFechaPreparacion(dtoDistribucion.getFechaPreparacion());
+                distribucion.setFechaEntrega(dtoDistribucion.getFechaEntrega());
+                distribucion.setEstado(dtoDistribucion.getEstado());
+                distribucion.setIdDonAsc(dtoDistribucion.getDonacionAsc());
+                distribucion.setEmailbenAsc(dtoDistribucion.getEmailBenefAsc());
+
+                // Guardar los cambios en la base de datos
+                em.merge(distribucion);
+            }
+
+            // Confirmar la transacción
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace(); // Manejar la excepción según corresponda
+        } finally {
+            em.close();
+        }
+
+
     }
 
 
@@ -160,39 +338,13 @@ public class Controlador implements IControlador {
         return lista;
     }
     
-    @Override
-    public List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio) {
-        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
-        List<DTDistribucion> lista = new ArrayList<>();
-
-        for (Distribucion distribucion : distribuciones) {
-            String emailbenAsc = distribucion.getEmailbenAsc();  // Obtén el email del beneficiario
-
-            // Verifica si el usuario con ese email existe
-            if (manejadorUsuario.existeUsuario(emailbenAsc)) {
-                // Ahora busca el usuario en la lista y verifica su barrio
-                for (Usuario usuario : manejadorUsuario.obtenerUsuarios()) {
-                    if (usuario instanceof Beneficiario) {
-                        Beneficiario beneficiario = (Beneficiario) usuario;
-                        if (beneficiario.getEmail().equals(emailbenAsc) && beneficiario.getBarrio().equals(barrio)) {
-                            lista.add(distribucion.transform());
-                        }
-                    }
-                }
-            }
-        }
-
-        return lista;
-    }
-    
-    
     // Operaciones Beneficiario
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
     @Override
     public List<DTUsuario> ListarBeneficiario() {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         List<DTUsuario> beneficiarios = new ArrayList<>();
-            
+
         for (Usuario usuario : usuarios) {
             if (usuario instanceof Beneficiario) {
                 beneficiarios.add(usuario.transformarADtUsuario());
@@ -206,7 +358,7 @@ public class Controlador implements IControlador {
     public List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         List<DTUsuario> lista = new ArrayList<>();
-    
+
         if (barrio != null) {
             for (Usuario usuario : usuarios) {
                 if (usuario instanceof Beneficiario) {
@@ -219,11 +371,11 @@ public class Controlador implements IControlador {
             }
         }
 
-    
+
         return lista;
     }
     //listar Beneficiarios por Estado
-    @Override  
+    @Override
     public List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado) {
         List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
         List<DTUsuario> lista = new ArrayList<>();
@@ -235,24 +387,10 @@ public class Controlador implements IControlador {
                     // Creación manual del objeto DTBeneficiario
                         lista.add(beneficiario.transformarADtUsuario());
                     }
-                }    
+                }
             }
         }
         return lista;
-    }
-  
-    // Nueva funcion para obtener DTBeneficiario por email
-    @Override
-    public DTUsuario obtenerDTBeneficiario(String email) {
-        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
-
-        for (Usuario usuario : usuarios) {
-            if (usuario instanceof Beneficiario && usuario.getEmail().equals(email)) {
-                return usuario.transformarADtUsuario();
-            }
-        }
-
-        return null; // Si no se encuentra el beneficiario, devuelve null.
     }
 
     @Override
@@ -260,9 +398,4 @@ public class Controlador implements IControlador {
         DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
         return donacion;
     }
-
-    //@Override
-  //  public List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio) {
-   //     throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-   // }
 }
