@@ -1,5 +1,6 @@
 package org.pap.interfaces;
 
+import java.time.LocalDate;
 import org.pap.dtClasses.*;
 import org.pap.Enums.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public interface IControlador {
     boolean existeLicencia(String licencia);
     int conGetCantBeneficiarios();
     int conGetCantRepartidores();
-
+    DTBeneficiario obtenerDTBeneficiario(String emailBeneficiario);
 
     void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos);
     void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones);
@@ -27,9 +28,11 @@ public interface IControlador {
     void modificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado);
     List<DTDistribucion>  listarDistribuciones(); //Se va a utilizar para listar las distribuciones y luego invocar modificarDistribucion
     List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado); //Para listar Distribuciones por Estado
-
+    List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio);
     void cargarBaseDatos();
 
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
+
+    public List<DTDistribucion> obtenerDistribucionesEnRango(LocalDate fechaInicio, LocalDate fechaFin);
 }
