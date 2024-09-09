@@ -337,7 +337,6 @@ public class Controlador implements IControlador {
         }
         return lista;
     }
-
     // Operaciones Beneficiario
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
     @Override

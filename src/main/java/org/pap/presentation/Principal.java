@@ -153,7 +153,6 @@ public class Principal {
             mostrarFormularioListarDistribucion("Listar Distribucion");
         });
         mnListar.add(mntmListDistribucion);
-
         // Crear y añadir el elemento de menú "Listar Beneficiarios por Zona"
         JMenuItem mntmListBeneficiariosZona = new JMenuItem("Listar Beneficiarios por Zona");
         mntmListBeneficiariosZona.addActionListener((ActionEvent arg0) -> {
