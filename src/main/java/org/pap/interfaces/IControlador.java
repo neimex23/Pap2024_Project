@@ -17,7 +17,6 @@ public interface IControlador {
 
     void altaDonacionAlimento(LocalDateTime FechaIng, String descripcionProducto, int cantElementos);
     void altaDonacionArticulo(LocalDateTime FechaIng, String descripcionArt, float peso, String dimensiones);
-    void modificarDonacion(DTDonacion donacion);
     DTDonacion obtenerDonacion(int id); //Se queda
     
     List<DTUsuario> ListarBeneficiario(); //CrearDTBeneficiario
