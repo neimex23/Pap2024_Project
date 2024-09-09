@@ -16,6 +16,7 @@ implementación de cambios en las reglas de negocio.
  */
 package org.pap.presentation;
 
+import com.toedter.calendar.JDateChooser;
 import org.pap.dtClasses.*;
 import org.pap.Enums.*;
 import org.pap.interfaces.Fabrica;
@@ -32,6 +33,14 @@ import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -91,6 +100,17 @@ public class Principal {
         // Crear el menú "Agregar Distribucion"
         JMenu mnListar = new JMenu("Listar");
         menuBar.add(mnListar);
+        
+        // Crear el menú "Reportes"
+        JMenu mnReportes = new JMenu("Reportes");
+        menuBar.add(mnReportes);
+        
+        // Crear y añadir el elemento de menú "Reporte zona con mayor Distribucion "
+        JMenuItem mntmRepZonaMasDistribucion = new JMenuItem("Reporte de Zonas con Mayor Distribucion");
+        mntmRepZonaMasDistribucion.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioReporteZonas("Reporte de Zonas con Mayor Distribucion");
+        });
+        mnReportes.add(mntmRepZonaMasDistribucion);
 
         // Crear y añadir el elemento de menú "Beneficiario"
         JMenuItem mntmBeneficiario = new JMenuItem("Beneficiario");
@@ -147,6 +167,14 @@ public class Principal {
             mostrarFormularioListarDistribucion("Listar Distribucion");
         });
         mnListar.add(mntmListDistribucion);
+        
+         // Crear y añadir el elemento de menú "Listar Distribucion por zona"
+        JMenuItem mntmListDistribucionZona = new JMenuItem("Listar distribuciones por Zona");
+        mntmListDistribucionZona.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarDistribucionZona("Listar Distribucion por Zona");
+        });
+        mnListar.add(mntmListDistribucionZona);
+        
         // Crear y añadir el elemento de menú "Listar Beneficiarios por Zona"
         JMenuItem mntmListBeneficiariosZona = new JMenuItem("Listar Beneficiarios por Zona");
         mntmListBeneficiariosZona.addActionListener((ActionEvent arg0) -> {
@@ -154,12 +182,7 @@ public class Principal {
         });
         mnListar.add(mntmListBeneficiariosZona);
 
-        // Crear y añadir el elemento de menú "Listar Beneficiarios por Zona"
-        JMenuItem mntmListBeneficiariosZona = new JMenuItem("Listar Beneficiarios por Zona");
-        mntmListBeneficiariosZona.addActionListener((ActionEvent arg0) -> {
-            mostrarFormularioListarBeneficiarioZona("Listar Beneficiarios por Zona");
-        });
-        mnListar.add(mntmListBeneficiariosZona);
+        
         
         // Crear y añadir el elemento de menú "Listar Beneficiarios por Estado"
         JMenuItem mntmListBeneficiariosEstado = new JMenuItem("Listar Beneficiarios por Estado");
@@ -1152,7 +1175,105 @@ public class Principal {
         // Añadir el JInternalFrame al JDesktopPane
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
-    }  
+    } 
+    private static void mostrarFormularioReporteZonas(String titulo) {
+    JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+    internalFrame.setSize(800, 600);
+    internalFrame.setLayout(new BorderLayout());
+    internalFrame.setLocation(50, 50);
+
+    // Panel para seleccionar el rango de fechas
+    JPanel panelFechas = new JPanel();
+    JLabel lblFechaInicio = new JLabel("Fecha Inicio:");
+    JLabel lblFechaFin = new JLabel("Fecha Fin:");
+    JSpinner spinnerFechaInicio = new JSpinner(new SpinnerDateModel());
+    JSpinner spinnerFechaFin = new JSpinner(new SpinnerDateModel());
+    JSpinner.DateEditor editorInicio = new JSpinner.DateEditor(spinnerFechaInicio, "dd/MM/yyyy");
+    JSpinner.DateEditor editorFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
+    spinnerFechaInicio.setEditor(editorInicio);
+    spinnerFechaFin.setEditor(editorFin);
+
+    panelFechas.add(lblFechaInicio);
+    panelFechas.add(spinnerFechaInicio);
+    panelFechas.add(lblFechaFin);
+    panelFechas.add(spinnerFechaFin);
+
+    JButton btnGenerar = new JButton("Generar Reporte");
+    panelFechas.add(btnGenerar);
+
+    // Crear el modelo de la tabla del reporte
+    String[] columnNames = {"Barrio", "Cantidad de Distribuciones", "Beneficiarios Atendidos"};
+    DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+    JTable tablaReporte = new JTable(tableModel);
+    JScrollPane scrollPane = new JScrollPane(tablaReporte);
+
+    btnGenerar.addActionListener(e -> {
+        // Obtener las fechas seleccionadas desde los JSpinner
+        LocalDate fechaInicio = ((Date) spinnerFechaInicio.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaFin = ((Date) spinnerFechaFin.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Verificar que ambas fechas no sean null (en caso de que la conversión falle)
+        if (fechaInicio == null || fechaFin == null) {
+            JOptionPane.showMessageDialog(internalFrame, "Por favor, seleccione ambas fechas.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        Map<EnumBarrio, Long> distribucionesPorZona = new HashMap<>();
+        Map<EnumBarrio, Set<String>> beneficiariosPorZona = new HashMap<>();
+
+        // Iterar sobre todos los barrios
+        for (EnumBarrio barrio : EnumBarrio.values()) {
+            List<DTDistribucion> distribucionesBarrio = fabrica.getIControlador().ListarDistribucionesPorZona(barrio);
+        
+        // Filtrar por rango de fechas
+        List<DTDistribucion> distribucionesFiltradas = distribucionesBarrio.stream()
+                .filter(d -> {
+                    LocalDate fechaEntrega = d.getFechaEntrega().toLocalDate();
+                       return !fechaEntrega.isBefore(fechaInicio) && !fechaEntrega.isAfter(fechaFin);
+                })
+                .collect(Collectors.toList());   
+            
+        long cantidadDistribuciones = distribucionesFiltradas.size();
+            Set<String> beneficiariosUnicos = distribucionesFiltradas.stream()
+                .map(DTDistribucion::getEmailBenefAsc)
+                .collect(Collectors.toSet());
+            
+            if (cantidadDistribuciones > 0) {
+                distribucionesPorZona.put(barrio, cantidadDistribuciones);
+                beneficiariosPorZona.put(barrio, beneficiariosUnicos);
+            }    
+        }
+        // Ordenar zonas por cantidad de distribuciones (descendente)
+        List<Map.Entry<EnumBarrio, Long>> zonasOrdenadas = distribucionesPorZona.entrySet()
+            .stream()
+            .sorted(Map.Entry.<EnumBarrio, Long>comparingByValue().reversed())
+            .collect(Collectors.toList());
+
+        // Actualizar la tabla
+        tableModel.setRowCount(0);
+        for (Map.Entry<EnumBarrio, Long> entry : zonasOrdenadas) {
+            EnumBarrio zona = entry.getKey();
+            Long cantidadDistribuciones = entry.getValue();
+            int beneficiariosAtendidos = beneficiariosPorZona.get(zona).size();
+            tableModel.addRow(new Object[]{zona, cantidadDistribuciones, beneficiariosAtendidos});
+        }
+    });
+
+    // Panel inferior con el botón Cancelar
+    JPanel panelInferior = new JPanel();
+    JButton btnCancelar = new JButton("Cerrar");
+    btnCancelar.addActionListener(e -> internalFrame.dispose());
+    panelInferior.add(btnCancelar);
+
+    // Añadir componentes al JInternalFrame
+    internalFrame.add(panelFechas, BorderLayout.NORTH);
+    internalFrame.add(scrollPane, BorderLayout.CENTER);
+    internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+    // Añadir el JInternalFrame al JDesktopPane
+    desktopPane.add(internalFrame);
+    internalFrame.setVisible(true);
+} 
     private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
         Calendar calendario = Calendar.getInstance();
