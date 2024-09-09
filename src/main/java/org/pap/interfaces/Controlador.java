@@ -16,6 +16,7 @@ import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Controlador implements IControlador {
 	private ManejadorUsuario manejadorUsuario;
@@ -237,6 +238,45 @@ public class Controlador implements IControlador {
         return dTDonaciones;
     }
 
+    @Override
+    public void modificarDonacion(DTDonacion dtoDonacion) {
+        // Si alguien tiene una mejor solución para esto sin utilizar DTDonacion, estaré encantado de escucharla.
+        // Me costó bastante implementarlo en el frontend y esta fue la única solución que se me ocurrió debido al manejo de herencias.
+        // Tengan en cuenta que, de cambiarse esta lógica, habría que modificar también el código de presentación.
+        // Tuve en cuenta polimorfismo para modificar en controlador, no obstante desde la presentacion esta con "intance of"
+        // Ya que aplicar polimorfismo a JFrame me parece una locura, y no se puede en los DTTypos directamente, pero se podria implementar con mucho trabajo y conocimiento.
+
+        List<Donacion> donaciones = manejadorDonacion.getListaDonacion();
+
+        Optional<Donacion> donacionOpt = donaciones.stream()
+                .filter(d -> d.getId() == dtoDonacion.getId())
+                .findFirst();
+
+        if (donacionOpt.isPresent()) {
+            Donacion donacionEncontrada = donacionOpt.get();
+            // Actualiza la donación con los datos del DTO usando el método polimórfico
+            donacionEncontrada.actualizarDesdeDTO(dtoDonacion);
+            donacionEncontrada.setFechaIngresada(dtoDonacion.getFechaIngresada()); //Al ser del padre no se setea en ningun hijo por lo cual se debe hacer como paso extra.
+
+            try {
+                emf = Persistence.createEntityManagerFactory("Conexion");
+                em = emf.createEntityManager();
+                em.getTransaction().begin();
+                // Sincronizar y actualizar en la base de datos
+                em.merge(donacionEncontrada);
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                e.printStackTrace(); // Manejar la excepción según corresponda
+            } finally {
+                em.close();
+            }
+        }
+
+    }
+
     //Operaciones de Distribucion
     @Override
     public void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf) {
@@ -297,7 +337,7 @@ public class Controlador implements IControlador {
             em.getTransaction().begin();
             Distribucion distribucion = em.find(Distribucion.class, dtoDistribucion.getId());
 
-            if (distribucion != null) {
+            if (distribucion != null && encontrado) {
                 // Actualizar los campos de la distribución
                 distribucion.setFechaPreparacion(dtoDistribucion.getFechaPreparacion());
                 distribucion.setFechaEntrega(dtoDistribucion.getFechaEntrega());

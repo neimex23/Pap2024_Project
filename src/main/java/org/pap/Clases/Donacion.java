@@ -29,6 +29,8 @@ public abstract class Donacion {
 	    }
 
 		public abstract DTDonacion transformarADtDonacion();
+
+		public abstract void actualizarDesdeDTO(DTDonacion dtoDonacion);
 }
 
 

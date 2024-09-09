@@ -54,4 +54,14 @@ public class Articulo extends Donacion {
 
     }
 
-	}
+    @Override
+    public void actualizarDesdeDTO(DTDonacion dtoDonacion) {
+        if (dtoDonacion instanceof DTArticulo) {
+            DTArticulo articuloDTO = (DTArticulo) dtoDonacion;
+            this.descr = articuloDTO.getDescr();
+            this.peso = articuloDTO.getPeso();
+            this.dimensiones = articuloDTO.getDimensiones();
+        }
+    }
+
+}
