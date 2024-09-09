@@ -1,12 +1,21 @@
 package org.pap.Clases;
+
 import org.pap.Enums.EnumBarrio;
 import org.pap.Enums.EnumEstadoBeneficiario;
 import org.pap.dtClasses.DTUsuario;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.pap.dtClasses.DTBeneficiario;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.DiscriminatorValue;
+
+@Entity
+@DiscriminatorValue("B")
 public class Beneficiario extends Usuario {
 
+    // Lista de donaciones del beneficiario
 	private String direccion;
 	private LocalDateTime fechaNacimiento;
 	private EnumEstadoBeneficiario estado;
@@ -19,6 +28,8 @@ public class Beneficiario extends Usuario {
         this.estado = estado;
         this.barrio = barrio;
     }
+
+    public Beneficiario(){};
 
     // Getter para direccion
     public String getDireccion() {
@@ -60,10 +71,10 @@ public class Beneficiario extends Usuario {
         this.barrio = barrio;
     }
 
+
     @Override
-    public DTUsuario transformarADtUsuario(){;
+    public DTUsuario transformarADtUsuario() {;
         return new DTBeneficiario(this.getNombre(), this.getEmail(), this.getDireccion(), this.getFechaNacimiento(), this.getEstado(), this.getBarrio());
     }
-    
-	}
 
+}

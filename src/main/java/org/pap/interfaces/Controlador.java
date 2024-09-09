@@ -1,6 +1,5 @@
 package org.pap.interfaces;
 
-import java.time.LocalDate;
 import org.pap.Clases.*;
 import org.pap.dtClasses.*;
 import org.pap.handlers.*;
@@ -32,17 +31,7 @@ public class Controlador implements IControlador {
         this.manejadorDonacion = ManejadorDonacion.getInstancia();
         this.manejadorDistribucion = ManejadorDistribucion.getInstancia();
     }
-    @Override
-    public DTBeneficiario obtenerDTBeneficiario(String emailBeneficiario) {
-        // Lógica para obtener el beneficiario por su email
-        // Ejemplo:
-        for (Usuario usuario : ManejadorUsuario.getInstancia().obtenerUsuarios()) {
-            if (usuario instanceof Beneficiario && usuario.getEmail().equals(emailBeneficiario)) {
-                return (DTBeneficiario) usuario.transformarADtUsuario();
-            }
-        }
-        return null; // o lanzar una excepción si no se encuentra el beneficiario
-    }    
+
 
     @Override
     public void cargarBaseDatos() {
@@ -388,47 +377,7 @@ public class Controlador implements IControlador {
         }
         return lista;
     }
-    @Override
-    public List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio) {
-        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
-        List<DTDistribucion> lista = new ArrayList<>();
 
-        for (Distribucion distribucion : distribuciones) {
-            String emailbenAsc = distribucion.getEmailbenAsc();  // Obtén el email del beneficiario
-
-            // Verifica si el usuario con ese email existe
-            if (manejadorUsuario.existeUsuario(emailbenAsc)) {
-                // Ahora busca el usuario en la lista y verifica su barrio
-                for (Usuario usuario : manejadorUsuario.obtenerUsuarios()) {
-                    if (usuario instanceof Beneficiario) {
-                        Beneficiario beneficiario = (Beneficiario) usuario;
-                        if (beneficiario.getEmail().equals(emailbenAsc) && beneficiario.getBarrio().equals(barrio)) {
-                            lista.add(distribucion.transform());
-                        }
-                    }
-                }
-            }
-        }
-
-        return lista;
-    }
-    @Override
-    public List<DTDistribucion> obtenerDistribucionesEnRango(LocalDate fechaInicio, LocalDate fechaFin) {
-          
-        // Obtener todas las distribuciones
-        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
-        List<DTDistribucion> distribucionesEnRango = new ArrayList<>();
-        // Filtrar las distribuciones que están dentro del rango de fechas
-        for (Distribucion distribucion : distribuciones) {
-            LocalDate fechaEntrega = distribucion.getFechaEntrega().toLocalDate();
-            if (!fechaEntrega.isBefore(fechaInicio) && !fechaEntrega.isAfter(fechaFin)) {
-                distribucionesEnRango.add(distribucion.transform());
-            }
-        }
-    
-        return distribucionesEnRango;
-    }
-    
     // Operaciones Beneficiario
     //ManejadorUsuario retorna una lista de usuarios,que luego se arma aca
     @Override
@@ -489,10 +438,4 @@ public class Controlador implements IControlador {
         DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
         return donacion;
     }
-
-    
-
-    
-
-    
 }
