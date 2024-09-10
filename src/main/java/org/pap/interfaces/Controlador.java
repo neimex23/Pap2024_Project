@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -431,11 +432,53 @@ public class Controlador implements IControlador {
             }
         }
         return lista;
-    }
+    } 
 
     @Override
     public DTDonacion obtenerDonacion(int id) {
         DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
         return donacion;
+    }
+
+    @Override
+    public List<DTDistribucion> obtenerDistribucionesEnRango(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        // Obtener todas las distribuciones
+        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
+        List<DTDistribucion> distribucionesEnRango = new ArrayList<>();
+        // Filtrar las distribuciones que están dentro del rango de fechas
+        for (Distribucion distribucion : distribuciones) {
+            LocalDate fechaEntrega = distribucion.getFechaEntrega().toLocalDate();
+            if (!fechaEntrega.isBefore(fechaInicio) && !fechaEntrega.isAfter(fechaFin)) {
+                distribucionesEnRango.add(distribucion.transform());
+            }
+        }
+
+        return distribucionesEnRango;
+    }
+
+    @Override
+    public List<DTDistribucion> ListarDistribucionesPorZona(EnumBarrio barrio) {
+        List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
+        List<DTDistribucion> lista = new ArrayList<>();
+
+        for (Distribucion distribucion : distribuciones) {
+            String emailbenAsc = distribucion.getEmailbenAsc();  // Obtén el email del beneficiario
+
+            // Verifica si el usuario con ese email existe
+            if (manejadorUsuario.existeUsuario(emailbenAsc)) {
+                // Ahora busca el usuario en la lista y verifica su barrio
+                for (Usuario usuario : manejadorUsuario.obtenerUsuarios()) {
+                    if (usuario instanceof Beneficiario) {
+                        Beneficiario beneficiario = (Beneficiario) usuario;
+                        if (beneficiario.getEmail().equals(emailbenAsc) && beneficiario.getBarrio().equals(barrio)) {
+                            lista.add(distribucion.transform());
+                        }
+                    }
+                }
+            }
+        }
+
+        return lista;
     }
 }
