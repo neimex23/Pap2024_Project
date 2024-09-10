@@ -33,6 +33,7 @@ public interface IControlador {
     public List<DTDistribucion> obtenerDistribucionesEnRango(LocalDate fechaInicio, LocalDate fechaFin);
     void cargarBaseDatos();
 
+    DTUsuario obtenerDTBeneficiario(String emailBeneficiario);
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
 }

@@ -481,4 +481,16 @@ public class Controlador implements IControlador {
 
         return lista;
     }
+
+    @Override
+    public DTUsuario obtenerDTBeneficiario(String emailBeneficiario) {
+        // Lógica para obtener el beneficiario por su email
+        // Ejemplo:
+        for (Usuario usuario : ManejadorUsuario.getInstancia().obtenerUsuarios()) {
+            if (usuario instanceof Beneficiario && usuario.getEmail().equals(emailBeneficiario)) {
+                return (DTBeneficiario) usuario.transformarADtUsuario();
+            }
+        }
+        return null; // o lanzar una excepción si no se encuentra el beneficiario
+    }
 }
