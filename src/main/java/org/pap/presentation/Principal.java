@@ -25,15 +25,14 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -91,6 +90,17 @@ public class Principal {
         // Crear el menú "Agregar Distribucion"
         JMenu mnListar = new JMenu("Listar");
         menuBar.add(mnListar);
+
+        // Crear el menú "Reportes"
+        JMenu mnReportes = new JMenu("Reportes");
+        menuBar.add(mnReportes);
+
+        // Crear y añadir el elemento de menú "Reporte zona con mayor Distribucion "
+        JMenuItem mntmRepZonaMasDistribucion = new JMenuItem("Reporte de Zonas con Mayor Distribucion");
+        mntmRepZonaMasDistribucion.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioReporteZonas("Reporte de Zonas con Mayor Distribucion");
+        });
+        mnReportes.add(mntmRepZonaMasDistribucion);
 
         // Crear y añadir el elemento de menú "Beneficiario"
         JMenuItem mntmBeneficiario = new JMenuItem("Beneficiario");
@@ -167,7 +177,14 @@ public class Principal {
             mostrarFormularioListarBeneficiarioEstado("Listar Beneficiarios por Estado");
         });
         mnListar.add(mntmListBeneficiariosEstado);
-        
+
+        // Crear y añadir el elemento de menú "Listar Distribucion por zona"
+        JMenuItem mntmListDistribucionZona = new JMenuItem("Listar distribuciones por Zona");
+        mntmListDistribucionZona.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioListarDistribucionZona("Listar Distribucion por Zona");
+        });
+        mnListar.add(mntmListDistribucionZona);
+
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
@@ -1256,6 +1273,105 @@ public class Principal {
 
     }
 
+    private static void mostrarFormularioReporteZonas(String titulo) {
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(800, 600);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(50, 50);
+
+        // Panel para seleccionar el rango de fechas
+        JPanel panelFechas = new JPanel();
+        JLabel lblFechaInicio = new JLabel("Fecha Inicio:");
+        JLabel lblFechaFin = new JLabel("Fecha Fin:");
+        JSpinner spinnerFechaInicio = new JSpinner(new SpinnerDateModel());
+        JSpinner spinnerFechaFin = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor editorInicio = new JSpinner.DateEditor(spinnerFechaInicio, "dd/MM/yyyy");
+        JSpinner.DateEditor editorFin = new JSpinner.DateEditor(spinnerFechaFin, "dd/MM/yyyy");
+        spinnerFechaInicio.setEditor(editorInicio);
+        spinnerFechaFin.setEditor(editorFin);
+
+        panelFechas.add(lblFechaInicio);
+        panelFechas.add(spinnerFechaInicio);
+        panelFechas.add(lblFechaFin);
+        panelFechas.add(spinnerFechaFin);
+
+        JButton btnGenerar = new JButton("Generar Reporte");
+        panelFechas.add(btnGenerar);
+
+        // Crear el modelo de la tabla del reporte
+        String[] columnNames = {"Barrio", "Cantidad de Distribuciones", "Beneficiarios Atendidos"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable tablaReporte = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaReporte);
+
+        btnGenerar.addActionListener(e -> {
+            // Obtener las fechas seleccionadas desde los JSpinner
+            LocalDate fechaInicio = ((Date) spinnerFechaInicio.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate fechaFin = ((Date) spinnerFechaFin.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            // Verificar que ambas fechas no sean null (en caso de que la conversión falle)
+            if (fechaInicio == null || fechaFin == null) {
+                JOptionPane.showMessageDialog(internalFrame, "Por favor, seleccione ambas fechas.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Map<EnumBarrio, Long> distribucionesPorZona = new HashMap<>();
+            Map<EnumBarrio, Set<String>> beneficiariosPorZona = new HashMap<>();
+
+            // Iterar sobre todos los barrios
+            for (EnumBarrio barrio : EnumBarrio.values()) {
+                List<DTDistribucion> distribucionesBarrio = fabrica.getIControlador().ListarDistribucionesPorZona(barrio);
+
+                // Filtrar por rango de fechas
+                List<DTDistribucion> distribucionesFiltradas = distribucionesBarrio.stream()
+                        .filter(d -> {
+                            LocalDate fechaEntrega = d.getFechaEntrega().toLocalDate();
+                            return !fechaEntrega.isBefore(fechaInicio) && !fechaEntrega.isAfter(fechaFin);
+                        })
+                        .collect(Collectors.toList());
+
+                long cantidadDistribuciones = distribucionesFiltradas.size();
+                Set<String> beneficiariosUnicos = distribucionesFiltradas.stream()
+                        .map(DTDistribucion::getEmailBenefAsc)
+                        .collect(Collectors.toSet());
+
+                if (cantidadDistribuciones > 0) {
+                    distribucionesPorZona.put(barrio, cantidadDistribuciones);
+                    beneficiariosPorZona.put(barrio, beneficiariosUnicos);
+                }
+            }
+            // Ordenar zonas por cantidad de distribuciones (descendente)
+            List<Map.Entry<EnumBarrio, Long>> zonasOrdenadas = distribucionesPorZona.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.<EnumBarrio, Long>comparingByValue().reversed())
+                    .collect(Collectors.toList());
+
+            // Actualizar la tabla
+            tableModel.setRowCount(0);
+            for (Map.Entry<EnumBarrio, Long> entry : zonasOrdenadas) {
+                EnumBarrio zona = entry.getKey();
+                Long cantidadDistribuciones = entry.getValue();
+                int beneficiariosAtendidos = beneficiariosPorZona.get(zona).size();
+                tableModel.addRow(new Object[]{zona, cantidadDistribuciones, beneficiariosAtendidos});
+            }
+        });
+
+        // Panel inferior con el botón Cancelar
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cerrar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(panelFechas, BorderLayout.NORTH);
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+
 
     private static LocalDateTime obtenerFechaHora() {
         // Obtener la fecha y hora actual usando Calendar
@@ -1271,6 +1387,84 @@ public class Principal {
         // Crear una instancia de LocalDateTime con la fecha actual
         LocalDateTime fechaActual = LocalDateTime.of(anio, mes, dia, hora, minutos);
         return fechaActual;
+    }
+
+    private static void mostrarFormularioListarDistribucionZona(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+
+        // Panel para seleccionar la distribución por zona
+        JPanel panelBarrio = new JPanel();
+        JLabel lblBarrio = new JLabel("Seleccionar Zona:");
+        JComboBox<String> cbBarrio = new JComboBox<>();
+
+
+        String nullString = "";
+        cbBarrio.addItem(nullString); // Opción para todas las Zonas
+        panelBarrio.add(lblBarrio);
+        panelBarrio.add(cbBarrio);
+        for (EnumBarrio barrio : EnumBarrio.values()) {
+            cbBarrio.addItem(barrio.name());
+        }
+
+
+        // Crear el modelo de la tabla Distribuciones
+        String[] columnNames = {"Nombre", "Correo", "Fecha Entrega", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable tablaDistribucionesZona = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaDistribucionesZona);
+
+        cbBarrio.addActionListener((ActionEvent e) -> {
+            cbBarrio.removeItem(nullString);
+            String barrioSeleccionado = (String) cbBarrio.getSelectedItem();
+            List<DTDistribucion> listaDistribuciones;
+            // Convertir el estado seleccionado a EnumEstadoDistribucion y obtener las distribuciones por estado
+            EnumBarrio barrioS = EnumBarrio.valueOf(barrioSeleccionado);
+            listaDistribuciones = fabrica.getIControlador().ListarDistribucionesPorZona(barrioS);
+            tableModel.setRowCount(0); // Limpiar tabla existente
+            if (listaDistribuciones.isEmpty()) {
+                tableModel.addRow(new Object[]{"No hay Distribuciones disponibles", "", "", ""});
+                return;
+            }
+
+            for (DTDistribucion distribucion : listaDistribuciones) {
+                // Obtener datos de la distribución y del beneficiario asociado
+                DTUsuario usuario = fabrica.getIControlador().obtenerDTBeneficiario(distribucion.getEmailBenefAsc());
+
+                if (usuario instanceof DTBeneficiario) {  // Aquí se usa DTBeneficiario en vez de DTUsuario
+                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
+                    String email = beneficiario.getEmail();
+                    String nombre = beneficiario.getNombre();
+
+                    EnumEstadoDistribucion estado = distribucion.getEstado(); // Estado de la distribución
+                    LocalDateTime fechaEntrega = distribucion.getFechaEntrega();
+                    EnumBarrio barrio = beneficiario.getBarrio();
+                    tableModel.addRow(new Object[]{nombre, email, fechaEntrega, estado, barrio});
+                }
+            }
+
+            if (tableModel.getRowCount() == 0) {
+                tableModel.addRow(new Object[]{"No hay Beneficiarios para este Barrio", "", "", ""});
+            }
+        });
+
+        // Panel inferior con el boton Cancelar
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(panelBarrio, BorderLayout.NORTH);
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
     }
 
     private static void validarEmail(String email) throws InvalidEmailException {
