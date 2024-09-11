@@ -28,7 +28,6 @@ import java.time.ZoneId;
 import java.util.*;
 
 import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
@@ -186,11 +185,20 @@ public class Principal {
         mnListar.add(mntmListDistribucionZona);
 
         // Crear y añadir el elemento de menú "Modificar Usuario"
-        JMenuItem mntmModificarUsuario = new JMenuItem("Modificar Usuario");
-        mntmModificarUsuario.addActionListener((ActionEvent arg0) -> {
-            mostrarFormulariomntmModificarUsuario("Modificar Usuario");
+        JMenu nmModificarUsuario = new JMenu("Modificar Usuario");
+        mnAgregarBeneficiario.add(nmModificarUsuario);
+
+        JMenuItem mntmModificarBeneficiario = new JMenuItem("Modificar Beneficiario");
+        mntmModificarBeneficiario.addActionListener((ActionEvent arg0) -> {
+            mostrarFormulariomntmModificarBeneficiario("Modificar Beneficiario");
         });
-        mnAgregarBeneficiario.add(mntmModificarUsuario);
+        nmModificarUsuario.add(mntmModificarBeneficiario);
+
+        JMenuItem mntmModificarRepartidor = new JMenuItem("Modificar Repartidor");
+        mntmModificarRepartidor.addActionListener((ActionEvent arg0) -> {
+            mostrarFormulariomntmModificarBeneficiario("Modificar Repartidor");
+        });
+        nmModificarUsuario.add(mntmModificarRepartidor);
 
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
@@ -1474,7 +1482,11 @@ public class Principal {
         internalFrame.setVisible(true);
     }
 
-    private static void mostrarFormulariomntmModificarUsuario(String titulo) {
+    private static void mostrarFormulariomntmModificarBeneficiario(String titulo) {
+
+    }
+
+    private static void mostrarFormulariomntmModificarRepartidor(String titulo) {
 
     }
 
