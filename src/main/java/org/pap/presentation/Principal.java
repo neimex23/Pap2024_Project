@@ -1037,6 +1037,7 @@ public class Principal {
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
+
     private static void mostrarFormularioListarBeneficiarioEstado(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
@@ -1483,6 +1484,102 @@ public class Principal {
     }
 
     private static void mostrarFormulariomntmModificarBeneficiario(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+
+        // Crear el modelo de la tabla con una columna para los checkbox
+        String[] columnNames = {"Seleccionar", "Nombre", "Correo", "Dirección", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Boolean.class : String.class; // La primera columna será para checkbox
+            }
+        };
+        JTable tablaBeneficiarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
+
+        // Obtener la lista de beneficiarios
+        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
+
+        // Limpiar tabla existente
+        tableModel.setRowCount(0);
+
+        if (listaBeneficiarios.isEmpty()) {
+            tableModel.addRow(new Object[]{false, "No hay beneficiarios registrados", "", "", "", ""});
+        } else {
+            for (DTUsuario usuario : listaBeneficiarios) {
+                if (usuario instanceof DTBeneficiario) {
+                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
+                    String email = beneficiario.getEmail();
+                    String nombre = beneficiario.getNombre();
+                    String direccion = beneficiario.getDireccion();
+                    String estado = beneficiario.getEstado().toString();
+                    EnumBarrio barrio = beneficiario.getBarrio();
+
+                    tableModel.addRow(new Object[]{false, nombre, email, direccion, estado, barrio});
+                }
+            }
+        }
+
+        // Añadir un listener para permitir solo un checkbox seleccionado a la vez
+        tablaBeneficiarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tablaBeneficiarios.rowAtPoint(evt.getPoint());
+                int column = tablaBeneficiarios.columnAtPoint(evt.getPoint());
+
+                if (column == 0) { // Si se hace clic en la columna de checkbox
+                    // Desmarcar todos los checkboxes excepto el clicado
+                    for (int i = 0; i < tablaBeneficiarios.getRowCount(); i++) {
+                        if (i != row) {
+                            tableModel.setValueAt(false, i, 0); // Desmarcar otras filas
+                        }
+                    }
+                }
+            }
+        });
+
+        // Panel inferior con los botones "Cancelar" y "Modificar"
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        JButton btnModificar = new JButton("Modificar");
+
+        // Acción al presionar el botón "Modificar"
+        btnModificar.addActionListener(e -> {
+            // Verificar si algún beneficiario ha sido seleccionado
+            Boolean beneficiarioSeleccionado = false;
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
+                if (isSelected != null && isSelected) {
+                    beneficiarioSeleccionado = true;
+                    String mailSeleccionado = (String) tableModel.getValueAt(i, 1);
+
+                    break;
+                }
+            }
+
+            // Mostrar mensaje si no se selecciona ningún beneficiario
+            if (!beneficiarioSeleccionado) {
+                JOptionPane.showMessageDialog(internalFrame, "No se ha seleccionado ningún Beneficiario", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnModificar);
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
 
     }
 
