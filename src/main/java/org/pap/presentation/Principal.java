@@ -185,6 +185,13 @@ public class Principal {
         });
         mnListar.add(mntmListDistribucionZona);
 
+        // Crear y añadir el elemento de menú "Modificar Usuario"
+        JMenuItem mntmModificarUsuario = new JMenuItem("Modificar Usuario");
+        mntmModificarUsuario.addActionListener((ActionEvent arg0) -> {
+            mostrarFormulariomntmModificarUsuario("Modificar Usuario");
+        });
+        mnAgregarBeneficiario.add(mntmModificarUsuario);
+
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
@@ -1466,6 +1473,11 @@ public class Principal {
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
+
+    private static void mostrarFormulariomntmModificarUsuario(String titulo) {
+
+    }
+
 
     private static void validarEmail(String email) throws InvalidEmailException {
         // Patrón de validación de email
