@@ -167,6 +167,46 @@ public class Controlador implements IControlador {
     }
 
     @Override
+    public void modificarBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
+                                      EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
+        // Buscar el beneficiario en el manejador de usuarios usando el email
+        Beneficiario beneficiario = null;
+
+        for (Usuario usuario : manejadorUsuario.obtenerUsuarios()) {
+            if (usuario instanceof Beneficiario && usuario.getEmail().equals(email)) {
+                beneficiario = (Beneficiario) usuario;
+                break;
+            }
+        }
+
+        // Precondición: el beneficiario siempre existe, por lo que no es necesario manejar un caso de no encontrado
+
+        // Actualizar los datos del beneficiario (excepto el email)
+        beneficiario.setNombre(nombre);
+        beneficiario.setDireccion(dir);
+        beneficiario.setFechaNacimiento(fNac);
+        beneficiario.setEstado(estBen);
+        beneficiario.setBarrio(barrio);
+
+        // Actualizar el beneficiario en la base de datos
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+
+        // Iniciar la transacción
+        em.getTransaction().begin();
+
+        // Fusionar el objeto actualizado con la base de datos
+        em.merge(beneficiario);
+
+        // Confirmar la transacción
+        em.getTransaction().commit();
+
+        // Cerrar el EntityManager
+        em.close();
+    }
+
+
+    @Override
     public boolean existeEmail(String email) {
         return manejadorUsuario.existeUsuario(email);
     }

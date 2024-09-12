@@ -11,6 +11,8 @@ import java.util.List;
 public interface IControlador {
     void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
     void altaRepartidor(String nombre, String email, String numeroLicencia);
+    void modificarBeneficiario(String nombre, String email, String dir, LocalDateTime fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
+
     boolean existeEmail(String email);
     boolean existeLicencia(String licencia);
     int conGetCantBeneficiarios();
