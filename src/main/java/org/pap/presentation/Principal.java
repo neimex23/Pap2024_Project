@@ -20,29 +20,31 @@ import org.pap.dtClasses.*;
 import org.pap.Enums.*;
 import org.pap.interfaces.Fabrica;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.net.HttpCookie;
-import java.time.ZoneId;
-import java.util.*;
 
-import java.time.LocalDate;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.*;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 import javax.swing.JInternalFrame;
+import javax.swing.JTextArea;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.Box;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,6 +54,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
+
 
 public class Principal {
 
@@ -94,6 +97,13 @@ public class Principal {
         // Crear el menú "Reportes"
         JMenu mnReportes = new JMenu("Reportes");
         menuBar.add(mnReportes);
+
+        // Crear y añadir el elemento de menú "About"
+        JMenuItem mntmAbout = new JMenuItem("About");
+        mntmAbout.addActionListener((ActionEvent arg0) -> {
+            mostrarFormularioAbout("About");  //ejecuta llamada a procedimeinto mostrarFormularioBeneficiario("Agregar Beneficiario")
+        });
+        menuBar.add(mntmAbout);
 
         // Crear y añadir el elemento de menú "Reporte zona con mayor Distribucion "
         JMenuItem mntmRepZonaMasDistribucion = new JMenuItem("Reporte de Zonas con Mayor Distribucion");
@@ -1156,7 +1166,7 @@ public class Principal {
 
         // Panel para los detalles de la distribución seleccionada
         JPanel panelDetalles = new JPanel(new GridLayout(4, 2));
-        JSpinner spinnerFechaEntrega = new JSpinner(new SpinnerDateModel());
+        JSpinner spinnerFechaIngreso = new JSpinner(new SpinnerDateModel());
         JSpinner spinnerCantidadElementos =  new JSpinner(new SpinnerNumberModel());
         JLabel lblDescripcion = new JLabel("Descripción:");
         JTextField txtDescripcion = new JTextField();
@@ -1173,22 +1183,23 @@ public class Principal {
 
             DTDonacion donacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
 
-            JLabel lblFechaEntrega = new JLabel("Fecha de Entrega:");
-            LocalDateTime fechaEntregaDate = donacionSeleccionada.getFechaIngresada();
+            JLabel lblFechaEntrega = new JLabel("Fecha de Ingreso:");
+            LocalDateTime fechaIngresoDate = donacionSeleccionada.getFechaIngresada();
 
-            int year = fechaEntregaDate.getYear();
-            int month = fechaEntregaDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
-            int day = fechaEntregaDate.getDayOfMonth();
+            int year = fechaIngresoDate.getYear();
+            int month = fechaIngresoDate.getMonthValue(); // El mes ya viene como 1-12, no hay que restar 1.
+            int day = fechaIngresoDate.getDayOfMonth();
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month - 1, day); // Aquí sí restamos 1 al mes, ya que Calendar usa 0-11 para los meses.
             Date date = calendar.getTime();
-            spinnerFechaEntrega.setValue(date);
-            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaEntrega, "dd-MM-yyyy");
-            spinnerFechaEntrega.setEditor(dateEditor);
+            spinnerFechaIngreso.setValue(date);
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFechaIngreso, "dd-MM-yyyy");
+            spinnerFechaIngreso.setEditor(dateEditor);
+            spinnerFechaIngreso.enable(false); //Spiner es solo para informacion visual
 
             panelDetalles.add(lblFechaEntrega);
-            panelDetalles.add(spinnerFechaEntrega);
+            panelDetalles.add(spinnerFechaIngreso);
 
             if (donacionSeleccionada instanceof DTAlimento) {
                 String desc = ((DTAlimento) donacionSeleccionada).getDescProducto();
@@ -1237,7 +1248,7 @@ public class Principal {
                 DTDonacion dtDonacionSeleccionada = donaciones.get(cbDonaciones.getSelectedIndex());
 
                 DTDonacion donacionModificar = null;
-                LocalDateTime fechaIngreso = ((Date) spinnerFechaEntrega.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime fechaIngreso = ((Date) spinnerFechaIngreso.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 String desc = txtDescripcion.getText();
 
 
@@ -1835,7 +1846,120 @@ public class Principal {
         internalFrame.setVisible(true);
     }
 
+    private static void mostrarFormularioAbout(String title) {
+        // Crear JFrame
+        JFrame frame;
+        JTabbedPane tabbedPane;
+        JPanel infoPanel;
+        JPanel licensesPanel;
 
+        frame = new JFrame(title);
+        frame.setSize(500, 400);
+        frame.setLocationRelativeTo(null); // Centrar en pantalla
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Crear pestañas
+        tabbedPane = new JTabbedPane();
+
+        // Crear panel de información
+        infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+
+        JLabel appLabel = new JLabel("Aplicación: Ayudemos");
+        appLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        JLabel dateLabel = new JLabel("Fecha de publicación: 12/09");
+        dateLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JLabel membersLabel = new JLabel("Integrantes:");
+        membersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JTextArea membersText = new JTextArea(
+                "Victoria Pilone, CI: 4.809.214-6\n" +
+                        "Ezequiel Medina, CI: 5.527.291-7\n" +
+                        "Damaso Tor, CI: 4.508.724-7\n" +
+                        "Maikol Brion, CI: 5.050.007-2\n" +
+                        "Eric Zachow, CI: 3.166.104-3"
+        );
+        membersText.setEditable(false);
+        membersText.setFont(new Font("Arial", Font.PLAIN, 13));
+        membersText.setBackground(infoPanel.getBackground());
+
+        infoPanel.add(appLabel);
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        infoPanel.add(dateLabel);
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        infoPanel.add(membersLabel);
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        infoPanel.add(membersText);
+
+        // Crear panel de licencias
+        licensesPanel = new JPanel();
+        licensesPanel.setLayout(new BoxLayout(licensesPanel, BoxLayout.Y_AXIS));
+
+        JLabel gnuLabel = new JLabel("Licencia: GNU 3.0");
+        gnuLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel mitLink = new JLabel("<html><a href=''>Licencia MIT</a></html>");
+        mitLink.setFont(new Font("Arial", Font.PLAIN, 13));
+        mitLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        mitLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new java.net.URI("https://opensource.org/licenses/MIT"));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        JLabel gnuLink = new JLabel("<html><a href=''>Licencia GNU 3.0</a></html>");
+        gnuLink.setFont(new Font("Arial", Font.PLAIN, 13));
+        gnuLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        gnuLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new java.net.URI("https://www.gnu.org/licenses/gpl-3.0.html"));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        JLabel mavenLabel = new JLabel("Licencias de terceros (Maven 21):");
+        mavenLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JTextArea thirdPartyLicenses = new JTextArea(
+                "JUnit 3.8.1\n" +
+                        "MySQL Connector/J 9.0.0 - Licencia: MIT\n" +
+                        "Hibernate Core 6.6.0.Final - Licencia: MIT\n" +
+                        "Hibernate EntityManager 5.6.15.Final - Licencia: MIT\n" +
+                        "javax.persistence 2.2.0 - Licencia: MIT\n"
+        );
+        thirdPartyLicenses.setEditable(false);
+        thirdPartyLicenses.setFont(new Font("Arial", Font.PLAIN, 13));
+        thirdPartyLicenses.setBackground(licensesPanel.getBackground());
+
+        licensesPanel.add(gnuLabel);
+        licensesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        licensesPanel.add(gnuLink);
+        licensesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        licensesPanel.add(mavenLabel);
+        licensesPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        licensesPanel.add(thirdPartyLicenses);
+        licensesPanel.add(mitLink);
+
+        // Añadir los paneles a las pestañas
+        tabbedPane.addTab("Información", infoPanel);
+        tabbedPane.addTab("Licencias", licensesPanel);
+
+        // Añadir el TabbedPane al JFrame
+        frame.add(tabbedPane);
+
+        // Hacer visible la ventana
+        frame.setVisible(true);
+    }
 
     private static void validarEmail(String email) throws InvalidEmailException {
         // Patrón de validación de email
