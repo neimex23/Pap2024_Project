@@ -1678,121 +1678,6 @@ public class Principal {
     }
 
 
-
-    /*private static void mostrarFormulariomntmModificarBeneficiario(String titulo) {
-        // Crear un JInternalFrame para el formulario
-        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(600, 400);
-        internalFrame.setLayout(new BorderLayout());
-        internalFrame.setLocation(100, 100);
-
-        // Crear el modelo de la tabla con una columna
-        // para los checkbox
-        String[] columnNames = {"Seleccionar", "Nombre", "Correo", "Dirección", "Estado", "Barrio"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 0 ? Boolean.class : String.class; // La primera columna será para checkbox
-            }
-        };
-        JTable tablaBeneficiarios = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
-
-        // Obtener la lista de beneficiarios
-        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
-
-        // Limpiar tabla existente
-        tableModel.setRowCount(0);
-
-        if (listaBeneficiarios.isEmpty()) {
-            tableModel.addRow(new Object[]{false, "No hay beneficiarios registrados", "", "", "", ""});
-        } else {
-            for (DTUsuario usuario : listaBeneficiarios) {
-                if (usuario instanceof DTBeneficiario) {
-                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
-                    String email = beneficiario.getEmail();
-                    String nombre = beneficiario.getNombre();
-                    String direccion = beneficiario.getDireccion();
-                    String estado = beneficiario.getEstado().toString();
-                    EnumBarrio barrio = beneficiario.getBarrio();
-
-                    tableModel.addRow(new Object[]{false, nombre, email, direccion, estado, barrio});
-                }
-            }
-        }
-
-        // Añadir un listener para permitir solo un checkbox seleccionado a la vez
-        tablaBeneficiarios.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = tablaBeneficiarios.rowAtPoint(evt.getPoint());
-                int column = tablaBeneficiarios.columnAtPoint(evt.getPoint());
-
-                if (column == 0) { // Si se hace clic en la columna de checkbox
-                    // Desmarcar todos los checkboxes excepto el clicado
-                    for (int i = 0; i < tablaBeneficiarios.getRowCount(); i++) {
-                        if (i != row) {
-                            tableModel.setValueAt(false, i, 0); // Desmarcar otras filas
-                        }
-                    }
-                }
-            }
-        });
-
-        // Panel inferior con los botones "Cancelar" y "Modificar"
-        JPanel panelInferior = new JPanel();
-        JButton btnCancelar = new JButton("Cancelar");
-        JButton btnModificar = new JButton("Modificar");
-
-        // Acción al presionar el botón "Modificar"
-        btnModificar.addActionListener(e -> {
-            // Verificar si algún beneficiario ha sido seleccionado
-            boolean beneficiarioSeleccionado = false;
-
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
-                if (isSelected != null && isSelected) {
-                    beneficiarioSeleccionado = true;
-                    String mailSeleccionado = (String) tableModel.getValueAt(i, 1);
-                    DTUsuario usuario = fabrica.getIControlador().obtenerDTBeneficiario(mailSeleccionado);
-
-                    if (usuario instanceof DTBeneficiario) {  // Aquí se usa DTBeneficiario en vez de DTUsuario
-                        DTBeneficiario benefSeleccionado = (DTBeneficiario) usuario;
-                        String email = benefSeleccionado.getEmail();
-                        String nombre = benefSeleccionado.getNombre();
-                        EnumBarrio barrio = benefSeleccionado.getBarrio();
-                        EnumEstadoBeneficiario estado = benefSeleccionado.getEstado();
-                        LocalDateTime fechaNacimiento = benefSeleccionado.getFechaNacimiento();
-
-
-
-                    }
-
-                    break;
-                }
-            }
-
-            // Mostrar mensaje si no se selecciona ningún beneficiario
-            if (!beneficiarioSeleccionado) {
-                JOptionPane.showMessageDialog(internalFrame, "No se ha seleccionado ningún Beneficiario", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-
-        btnCancelar.addActionListener(e -> internalFrame.dispose());
-        panelInferior.add(btnModificar);
-        panelInferior.add(btnCancelar);
-
-        // Añadir componentes al JInternalFrame
-        internalFrame.add(scrollPane, BorderLayout.CENTER);
-        internalFrame.add(panelInferior, BorderLayout.SOUTH);
-
-        // Añadir el JInternalFrame al JDesktopPane
-        desktopPane.add(internalFrame);
-        internalFrame.setVisible(true);
-
-    }*/
-
     private static void mostrarFormulariomntmModificarRepartidor(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
@@ -1858,25 +1743,29 @@ public class Principal {
 
         // Acción al presionar el botón "Modificar"
         btnModificar.addActionListener(e -> {
-            // Verificar si algún beneficiario ha sido seleccionado
-            Boolean repartidorSeleccionado = false;
+            // Verificar si algún repartidor ha sido seleccionado
+            boolean repartidorSeleccionado = false;
+            DTRepartidor repSeleccionado = null;
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
                 if (isSelected != null && isSelected) {
                     repartidorSeleccionado = true;
-                    String mailSeleccionado = (String) tableModel.getValueAt(i, 1);
-
-                    break;
+                    String mailSeleccionado = (String) tableModel.getValueAt(i, 2); // Columna 2 es el email
+                    repSeleccionado = (DTRepartidor) fabrica.getIControlador().obtenerDTRepartidor(mailSeleccionado);
+                    break; // Dejar de iterar después de encontrar el repartidor seleccionado
                 }
             }
 
-            // Mostrar mensaje si no se selecciona ningún beneficiario
+            // Mostrar mensaje si no se selecciona ningún repartidor
             if (!repartidorSeleccionado) {
                 JOptionPane.showMessageDialog(internalFrame, "No se ha seleccionado ningún Repartidor", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Mostrar el formulario con los datos del repartidor seleccionado
+                mostrarFormularioRepartidorConDatos("Modificar Repartidor", repSeleccionado);
+                internalFrame.dispose(); // Cerrar la ventana actual después de abrir el formulario de modificación
             }
         });
-
 
         btnCancelar.addActionListener(e -> internalFrame.dispose());
         panelInferior.add(btnModificar);
@@ -1891,6 +1780,61 @@ public class Principal {
         internalFrame.setVisible(true);
 
     }
+
+    private static void mostrarFormularioRepartidorConDatos(String titulo, DTRepartidor repartidor) {
+        // Reutiliza el formulario de alta, pero llenando los campos con los datos del repartidor
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(400, 200);
+        internalFrame.setLayout(new GridLayout(6, 2));
+        internalFrame.setLocation(50, 50);
+
+        // Etiquetas y campos de texto
+        JLabel lblNombre = new JLabel("Nombre:");
+        JTextField txtNombre = new JTextField(repartidor.getNombre());
+
+        JLabel lblEmail = new JLabel("Email:");
+        JTextField txtEmail = new JTextField(repartidor.getEmail());
+        txtEmail.setEditable(false); // No se puede editar el email
+
+        JLabel lblLicencia = new JLabel("Licencia:");
+        JTextField txtLicencia = new JTextField(repartidor.getNumeroLicencia());
+
+        // Botón para guardar los cambios
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addActionListener((ActionEvent e) -> {
+            String nuevaLicencia = txtLicencia.getText();
+
+            // Verificar si la licencia ya existe
+            if (fabrica.getIControlador().existeLicencia(nuevaLicencia)) {
+                // Mostrar mensaje de error si la licencia ya existe
+                JOptionPane.showMessageDialog(internalFrame, "El número de licencia ya existe. Por favor, elige otro.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Modificar repartidor con los datos obtenidos
+                fabrica.getIControlador().modificarRepartidor(txtNombre.getText(), txtEmail.getText(), nuevaLicencia);
+
+                // Mensaje de operación realizada satisfactoriamente
+                JOptionPane.showMessageDialog(internalFrame, "Repartidor modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                internalFrame.dispose();
+            }
+        });
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(lblNombre);
+        internalFrame.add(txtNombre);
+        internalFrame.add(lblEmail);
+        internalFrame.add(txtEmail);
+        internalFrame.add(lblLicencia);
+        internalFrame.add(txtLicencia);
+        internalFrame.add(btnGuardar);
+        internalFrame.add(btnCancelar);
+
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+
 
 
     private static void validarEmail(String email) throws InvalidEmailException {
