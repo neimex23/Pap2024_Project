@@ -196,7 +196,7 @@ public class Principal {
 
         JMenuItem mntmModificarRepartidor = new JMenuItem("Modificar Repartidor");
         mntmModificarRepartidor.addActionListener((ActionEvent arg0) -> {
-            mostrarFormulariomntmModificarBeneficiario("Modificar Repartidor");
+            mostrarFormulariomntmModificarRepartidor("Modificar Repartidor");
         });
         nmModificarUsuario.add(mntmModificarRepartidor);
 
@@ -1490,7 +1490,8 @@ public class Principal {
         internalFrame.setLayout(new BorderLayout());
         internalFrame.setLocation(100, 100);
 
-        // Crear el modelo de la tabla con una columna para los checkbox
+        // Crear el modelo de la tabla con una columna
+        // para los checkbox
         String[] columnNames = {"Seleccionar", "Nombre", "Correo", "Dirección", "Estado", "Barrio"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -1584,6 +1585,101 @@ public class Principal {
     }
 
     private static void mostrarFormulariomntmModificarRepartidor(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+
+        // Crear el modelo de la tabla con una columna
+        // para los checkbox
+        String[] columnNames = {"Seleccionar", "Nombre", "Email", "Licencia"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Boolean.class : String.class; // La primera columna será para checkbox
+            }
+        };
+        JTable tablaRepartidor = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaRepartidor);
+
+        // Obtener la lista de repartidores
+        List<DTUsuario> listaRepartidores = fabrica.getIControlador().ListarRepartidor();
+
+        // Limpiar tabla existente
+        tableModel.setRowCount(0);
+
+        if (listaRepartidores.isEmpty()) {
+            tableModel.addRow(new Object[]{false, "No hay repartidores registrados", "", ""});
+        } else {
+            for (DTUsuario usuario : listaRepartidores) {
+                if (usuario instanceof DTRepartidor) {
+                    DTRepartidor repartidor = (DTRepartidor) usuario;
+                    String email = repartidor.getEmail();
+                    String nombre = repartidor.getNombre();
+                    String numLicencia = repartidor.getNumeroLicencia();
+
+                    tableModel.addRow(new Object[]{false, nombre, email, numLicencia});
+                }
+            }
+        }
+
+        // Añadir un listener para permitir solo un checkbox seleccionado a la vez
+        tablaRepartidor.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tablaRepartidor.rowAtPoint(evt.getPoint());
+                int column = tablaRepartidor.columnAtPoint(evt.getPoint());
+
+                if (column == 0) { // Si se hace clic en la columna de checkbox
+                    // Desmarcar todos los checkboxes excepto el clicado
+                    for (int i = 0; i < tablaRepartidor.getRowCount(); i++) {
+                        if (i != row) {
+                            tableModel.setValueAt(false, i, 0); // Desmarcar otras filas
+                        }
+                    }
+                }
+            }
+        });
+
+        // Panel inferior con los botones "Cancelar" y "Modificar"
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        JButton btnModificar = new JButton("Modificar");
+
+        // Acción al presionar el botón "Modificar"
+        btnModificar.addActionListener(e -> {
+            // Verificar si algún beneficiario ha sido seleccionado
+            Boolean repartidorSeleccionado = false;
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
+                if (isSelected != null && isSelected) {
+                    repartidorSeleccionado = true;
+                    String mailSeleccionado = (String) tableModel.getValueAt(i, 1);
+
+                    break;
+                }
+            }
+
+            // Mostrar mensaje si no se selecciona ningún beneficiario
+            if (!repartidorSeleccionado) {
+                JOptionPane.showMessageDialog(internalFrame, "No se ha seleccionado ningún Repartidor", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnModificar);
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
 
     }
 
