@@ -12,6 +12,7 @@ public interface IControlador {
     void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
     void altaRepartidor(String nombre, String email, String numeroLicencia);
     void modificarBeneficiario(String nombre, String email, String dir, LocalDateTime fNac, EnumEstadoBeneficiario estBen, EnumBarrio barrio);
+    void modificarRepartidor(String nombre, String email, String numeroLicencia);
 
     boolean existeEmail(String email);
     boolean existeLicencia(String licencia);
@@ -37,6 +38,7 @@ public interface IControlador {
     void cargarBaseDatos();
 
     DTUsuario obtenerDTBeneficiario(String emailBeneficiario);
+    DTUsuario obtenerDTRepartidor(String emailBeneficiario);
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
 }

@@ -168,7 +168,7 @@ public class Controlador implements IControlador {
 
     @Override
     public void modificarBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
-                                      EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
+            EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
         // Buscar el beneficiario en el manejador de usuarios usando el email
         Beneficiario beneficiario = null;
 
@@ -205,6 +205,40 @@ public class Controlador implements IControlador {
         em.close();
     }
 
+    @Override
+    public void modificarRepartidor(String nombre, String email, String numeroLicencia) {
+        // Buscar el repartidor en el manejador de usuarios usando el email
+        Repartidor repartidor = null;
+
+        for (Usuario usuario : manejadorUsuario.obtenerUsuarios()) {
+            if (usuario instanceof Repartidor && usuario.getEmail().equals(email)) {
+                repartidor = (Repartidor) usuario;
+                break;
+            }
+        }
+
+        // Precondición: el repartidor siempre existe, por lo que no es necesario manejar un caso de no encontrado
+
+        // Actualizar los datos del repartidor (excepto el email)
+        repartidor.setNombre(nombre);
+        repartidor.setNumeroLicencia(numeroLicencia);
+
+        // Actualizar el repartidor en la base de datos
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+
+        // Iniciar la transacción
+        em.getTransaction().begin();
+
+        // Fusionar el objeto actualizado con la base de datos
+        em.merge(repartidor);
+
+        // Confirmar la transacción
+        em.getTransaction().commit();
+
+        // Cerrar el EntityManager
+        em.close();
+    }
 
     @Override
     public boolean existeEmail(String email) {
@@ -547,5 +581,17 @@ public class Controlador implements IControlador {
             }
         }
         return null; // o lanzar una excepción si no se encuentra el beneficiario
+    }
+
+    @Override
+    public DTUsuario obtenerDTRepartidor(String emailBeneficiario) {
+        // Lógica para obtener el repartidor por su email
+        // Ejemplo:
+        for (Usuario usuario : ManejadorUsuario.getInstancia().obtenerUsuarios()) {
+            if (usuario instanceof Repartidor && usuario.getEmail().equals(emailBeneficiario)) {
+                return (DTRepartidor) usuario.transformarADtUsuario();
+            }
+        }
+        return null; // o lanzar una excepción si no se encuentra el repartidor
     }
 }
