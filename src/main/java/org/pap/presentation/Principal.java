@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.net.HttpCookie;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -263,7 +264,7 @@ public class Principal {
 
                 int cantBeneficiario = 0;
                 cantBeneficiario=fabrica.getIControlador().conGetCantBeneficiarios(); // Obtengo la cantidad de Beneficiaros registrados
-                if(cantBeneficiario>=50) { // Si se alzanzo el limite de usuarios se manda mensaje de error
+                if(cantBeneficiario>=50) { // Si se alcanzo el limite de usuarios se manda mensaje de error
                     JOptionPane.showMessageDialog(null, "Se ha alcanzado el limite de Beneficiarios", "Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     //Beneficiario(String nombre,String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio)
@@ -1490,6 +1491,201 @@ public class Principal {
         internalFrame.setLayout(new BorderLayout());
         internalFrame.setLocation(100, 100);
 
+        // Crear el modelo de la tabla con una columna para los checkbox
+        String[] columnNames = {"Seleccionar", "Nombre", "Correo", "Dirección", "Estado", "Barrio"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Boolean.class : String.class; // La primera columna será para checkbox
+            }
+        };
+        JTable tablaBeneficiarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tablaBeneficiarios);
+
+        // Obtener la lista de beneficiarios
+        List<DTUsuario> listaBeneficiarios = fabrica.getIControlador().ListarBeneficiario();
+
+        // Limpiar tabla existente
+        tableModel.setRowCount(0);
+
+        if (listaBeneficiarios.isEmpty()) {
+            tableModel.addRow(new Object[]{false, "No hay beneficiarios registrados", "", "", "", ""});
+        } else {
+            for (DTUsuario usuario : listaBeneficiarios) {
+                if (usuario instanceof DTBeneficiario) {
+                    DTBeneficiario beneficiario = (DTBeneficiario) usuario;
+                    String email = beneficiario.getEmail();
+                    String nombre = beneficiario.getNombre();
+                    String direccion = beneficiario.getDireccion();
+                    String estado = beneficiario.getEstado().toString();
+                    EnumBarrio barrio = beneficiario.getBarrio();
+
+                    tableModel.addRow(new Object[]{false, nombre, email, direccion, estado, barrio});
+                }
+            }
+        }
+
+        // Añadir un listener para permitir solo un checkbox seleccionado a la vez
+        tablaBeneficiarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tablaBeneficiarios.rowAtPoint(evt.getPoint());
+                int column = tablaBeneficiarios.columnAtPoint(evt.getPoint());
+
+                if (column == 0) { // Si se hace clic en la columna de checkbox
+                    // Desmarcar todos los checkboxes excepto el clicado
+                    for (int i = 0; i < tablaBeneficiarios.getRowCount(); i++) {
+                        if (i != row) {
+                            tableModel.setValueAt(false, i, 0); // Desmarcar otras filas
+                        }
+                    }
+                }
+            }
+        });
+
+        // Panel inferior con los botones "Cancelar" y "Modificar"
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        JButton btnModificar = new JButton("Modificar");
+
+        // Acción al presionar el botón "Modificar"
+        btnModificar.addActionListener(e -> {
+            // Verificar si algún beneficiario ha sido seleccionado
+            boolean beneficiarioSeleccionado = false;
+            DTBeneficiario benefSeleccionado = null;
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
+                if (isSelected != null && isSelected) {
+                    beneficiarioSeleccionado = true;
+                    String mailSeleccionado = (String) tableModel.getValueAt(i, 2); // Columna 2 es el email
+                    benefSeleccionado = (DTBeneficiario) fabrica.getIControlador().obtenerDTBeneficiario(mailSeleccionado);
+                    break; // Dejar de iterar después de encontrar el beneficiario seleccionado
+                }
+            }
+
+            // Mostrar mensaje si no se selecciona ningún beneficiario
+            if (!beneficiarioSeleccionado) {
+                JOptionPane.showMessageDialog(internalFrame, "No se ha seleccionado ningún Beneficiario", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Mostrar el formulario con los datos del beneficiario seleccionado
+                mostrarFormularioBeneficiarioConDatos("Modificar Beneficiario", benefSeleccionado);
+                internalFrame.dispose(); // Cerrar la ventana actual después de abrir el formulario de modificación
+            }
+        });
+
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnModificar);
+        panelInferior.add(btnCancelar);
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(scrollPane, BorderLayout.CENTER);
+        internalFrame.add(panelInferior, BorderLayout.SOUTH);
+
+        // Añadir el JInternalFrame al JDesktopPane
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+
+    // Metodo para mostrar el formulario con los datos del beneficiario seleccionado
+    private static void mostrarFormularioBeneficiarioConDatos(String titulo, DTBeneficiario beneficiario) {
+        // Reutiliza el formulario de alta, pero llenando los campos con los datos del beneficiario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(400, 300);
+        internalFrame.setLayout(new GridLayout(10, 2));
+        internalFrame.setLocation(50, 50);
+
+        // Etiquetas y campos de texto
+        JLabel lblNombre = new JLabel("Nombre:");
+        JTextField txtNombre = new JTextField(beneficiario.getNombre());
+
+        JLabel lblEmail = new JLabel("Email:");
+        JTextField txtEmail = new JTextField(beneficiario.getEmail());
+        txtEmail.setEditable(false); // No se puede editar el email
+
+        JLabel lblDirecc = new JLabel("Dirección:");
+        JTextField txtDirecc = new JTextField(beneficiario.getDireccion());
+
+        // Estado
+        JLabel lblEstado = new JLabel("Estado:");
+        JComboBox<String> cbEstado = new JComboBox<>();
+        cbEstado.addItem("Activo");
+        cbEstado.addItem("Suspendido");
+
+        // Seleccionar el estado actual del beneficiario como valor predeterminado
+        cbEstado.setSelectedItem(beneficiario.getEstado().toString());
+
+        // Barrio
+        JLabel lblBarrio = new JLabel("Barrio:");
+        JComboBox<String> cbBarrio = new JComboBox<>();
+        cbBarrio.addItem("Centro");
+        cbBarrio.addItem("Ciudad_Vieja");
+        cbBarrio.addItem("Cordon");
+        cbBarrio.addItem("Palermo");
+        cbBarrio.addItem("Parque_Rodo");
+
+        // Seleccionar el barrio actual del beneficiario como valor predeterminado
+        cbBarrio.setSelectedItem(beneficiario.getBarrio().toString());
+
+        // Configuración del JSpinner para seleccionar el día, mes y año
+        Calendar calendar = Calendar.getInstance();
+        JSpinner spnDia = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.DAY_OF_MONTH), 1, 31, 1));
+        JSpinner spnMes = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.MONTH) + 1, 1, 12, 1));
+        JSpinner spnAno = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2100, 1));
+
+        // Botón para guardar los cambios
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addActionListener((ActionEvent e) -> {
+            // Lógica para guardar las modificaciones del beneficiario
+            // Guardar la información
+            // Capturar la fecha de nacimiento desde los JSpinner
+            int dia = (int) spnDia.getValue();
+            int mes = (int) spnMes.getValue();
+            int anio = (int) spnAno.getValue();
+            LocalDateTime fechaNacimiento = LocalDateTime.of(anio, mes, dia, 0, 0, 0);
+
+            // Convertir el estado y barrio seleccionados a los correspondientes Enum
+            EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(cbEstado.getSelectedItem().toString().toUpperCase());
+            EnumBarrio barrio = EnumBarrio.valueOf(cbBarrio.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
+
+            // Modificar Beneficirio con los datos obtenidos
+            fabrica.getIControlador().modificarBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
+
+            // Mensaje de operacion realizada satisfactoriamente
+            JOptionPane.showMessageDialog(internalFrame, "Beneficiario modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            internalFrame.dispose();
+        });
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+
+        // Añadir componentes al JInternalFrame
+        internalFrame.add(lblNombre);
+        internalFrame.add(txtNombre);
+        internalFrame.add(lblEmail);
+        internalFrame.add(txtEmail);
+        internalFrame.add(lblDirecc);
+        internalFrame.add(txtDirecc);
+        internalFrame.add(lblEstado);
+        internalFrame.add(cbEstado);
+        internalFrame.add(lblBarrio);
+        internalFrame.add(cbBarrio);
+        internalFrame.add(btnGuardar);
+        internalFrame.add(btnCancelar);
+
+        desktopPane.add(internalFrame);
+        internalFrame.setVisible(true);
+    }
+
+
+
+    /*private static void mostrarFormulariomntmModificarBeneficiario(String titulo) {
+        // Crear un JInternalFrame para el formulario
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+
         // Crear el modelo de la tabla con una columna
         // para los checkbox
         String[] columnNames = {"Seleccionar", "Nombre", "Correo", "Dirección", "Estado", "Barrio"};
@@ -1551,13 +1747,26 @@ public class Principal {
         // Acción al presionar el botón "Modificar"
         btnModificar.addActionListener(e -> {
             // Verificar si algún beneficiario ha sido seleccionado
-            Boolean beneficiarioSeleccionado = false;
+            boolean beneficiarioSeleccionado = false;
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0); // Verificar el checkbox
                 if (isSelected != null && isSelected) {
                     beneficiarioSeleccionado = true;
                     String mailSeleccionado = (String) tableModel.getValueAt(i, 1);
+                    DTUsuario usuario = fabrica.getIControlador().obtenerDTBeneficiario(mailSeleccionado);
+
+                    if (usuario instanceof DTBeneficiario) {  // Aquí se usa DTBeneficiario en vez de DTUsuario
+                        DTBeneficiario benefSeleccionado = (DTBeneficiario) usuario;
+                        String email = benefSeleccionado.getEmail();
+                        String nombre = benefSeleccionado.getNombre();
+                        EnumBarrio barrio = benefSeleccionado.getBarrio();
+                        EnumEstadoBeneficiario estado = benefSeleccionado.getEstado();
+                        LocalDateTime fechaNacimiento = benefSeleccionado.getFechaNacimiento();
+
+
+
+                    }
 
                     break;
                 }
@@ -1582,7 +1791,7 @@ public class Principal {
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
 
-    }
+    }*/
 
     private static void mostrarFormulariomntmModificarRepartidor(String titulo) {
         // Crear un JInternalFrame para el formulario
