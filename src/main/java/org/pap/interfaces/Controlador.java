@@ -394,6 +394,21 @@ public class Controlador implements IControlador {
 
         return beneficiarios;
     }
+
+    @Override
+    public List<DTUsuario> ListarRepartidor() {
+        List<Usuario> usuarios = manejadorUsuario.obtenerUsuarios();
+        List<DTUsuario> repartidores = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            if (usuario instanceof Repartidor) {
+                repartidores.add(usuario.transformarADtUsuario());
+            }
+        }
+
+        return repartidores;
+    }
+
     //listar Beneficiarios por Zona
     @Override
     public List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio) {

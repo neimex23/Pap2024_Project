@@ -23,6 +23,7 @@ public interface IControlador {
     DTDonacion obtenerDonacion(int id); //Se queda
     
     List<DTUsuario> ListarBeneficiario(); //CrearDTBeneficiario
+    List<DTUsuario> ListarRepartidor(); //CrearDTRepartidor
     List<DTDonacion> ListarDonaciones(); //CrearDTDonaciones
 
     void agregarDistribucion(LocalDateTime fechaPreparacion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estado, int donacionID, String emailBenf);
