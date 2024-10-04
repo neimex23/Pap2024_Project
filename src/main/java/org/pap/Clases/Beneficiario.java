@@ -4,11 +4,10 @@ import org.pap.Enums.EnumBarrio;
 import org.pap.Enums.EnumEstadoBeneficiario;
 import org.pap.dtClasses.DTUsuario;
 import java.time.LocalDateTime;
-import java.util.List;
+
 import org.pap.dtClasses.DTBeneficiario;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.DiscriminatorValue;
 
 @Entity
@@ -21,8 +20,8 @@ public class Beneficiario extends Usuario {
 	private EnumEstadoBeneficiario estado;
 	private EnumBarrio barrio;
 
-    public Beneficiario(String nombre, String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
-        super(nombre, email);
+    public Beneficiario(String nombre, String email, String password, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
+        super(nombre, email, password);
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
         this.estado = estado;
@@ -74,7 +73,7 @@ public class Beneficiario extends Usuario {
 
     @Override
     public DTUsuario transformarADtUsuario() {;
-        return new DTBeneficiario(this.getNombre(), this.getEmail(), this.getDireccion(), this.getFechaNacimiento(), this.getEstado(), this.getBarrio());
+        return new DTBeneficiario(this.getNombre(), this.getEmail(), this.getPassword(), this.getDireccion(), this.getFechaNacimiento(), this.getEstado(), this.getBarrio());
     }
 
 }

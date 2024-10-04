@@ -7,8 +7,8 @@ public class DTRepartidor extends DTUsuario{
     private String numeroLicencia;
 
     // Constructor
-    public DTRepartidor(String nombre, String email, String numeroLicencia) {
-        super(nombre, email);
+    public DTRepartidor(String nombre, String email, String password, String numeroLicencia) {
+        super(nombre, email, password);
         this.numeroLicencia = numeroLicencia;
     }
 

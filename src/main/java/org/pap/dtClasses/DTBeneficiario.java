@@ -10,8 +10,8 @@ public class DTBeneficiario extends DTUsuario{
     private EnumBarrio barrio;
 
     //constructor
-    public DTBeneficiario(String nombre, String email, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
-        super(nombre, email);
+    public DTBeneficiario(String nombre, String email, String password, String direccion, LocalDateTime fechaNacimiento, EnumEstadoBeneficiario estado, EnumBarrio barrio) {
+        super(nombre, email, password);
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
         this.estado = estado;

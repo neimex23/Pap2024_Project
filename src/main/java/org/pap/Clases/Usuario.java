@@ -12,11 +12,13 @@ public abstract class Usuario {
 
     @Id
 	private String email;
+    private String password;
     private String nombre;
 
-    public Usuario(String nombre, String email) {
+    public Usuario(String nombre, String email, String password) {
         this.nombre = nombre;
         this.email = email;
+        this.password = password;
     }
 
     public Usuario(){};
@@ -42,5 +44,12 @@ public abstract class Usuario {
     }
 
     public abstract DTUsuario transformarADtUsuario();
-	
-	}
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}

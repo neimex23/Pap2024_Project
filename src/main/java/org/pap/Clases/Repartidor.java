@@ -4,7 +4,6 @@ import org.pap.dtClasses.DTRepartidor;
 import org.pap.dtClasses.DTUsuario;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.DiscriminatorValue;
 
 
@@ -15,8 +14,8 @@ public class Repartidor extends Usuario {
 
 	    private String numeroLicencia;
 
-	    public Repartidor(String nombre, String email, String numeroLicencia) {
-	        super(nombre, email);
+	    public Repartidor(String nombre, String email, String password, String numeroLicencia) {
+	        super(nombre, email, password);
 	        this.numeroLicencia = numeroLicencia;
 	    }
 
@@ -34,6 +33,6 @@ public class Repartidor extends Usuario {
 
 	@Override
 	public DTUsuario transformarADtUsuario() {
-		return new DTRepartidor(this.getNombre(), this.getEmail(), this.getNumeroLicencia());
+		return new DTRepartidor(this.getNombre(), this.getEmail(), this.getPassword(), this.getNumeroLicencia());
 	}
 }

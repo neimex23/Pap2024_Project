@@ -54,6 +54,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JPasswordField;
 
 
 public class Principal {
@@ -222,7 +223,7 @@ public class Principal {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
         internalFrame.setSize(400, 300);
-        internalFrame.setLayout(new GridLayout(10, 2));
+        internalFrame.setLayout(new GridLayout(15, 2));
         internalFrame.setLocation(50, 50);
 
         // Etiquetas y campos de texto
@@ -231,6 +232,21 @@ public class Principal {
 
         JLabel lblEmail = new JLabel("Email:");
         JTextField txtEmail = new JTextField();
+
+        JLabel lblPasswd = new JLabel("Password:");
+        JPasswordField txtPassword = new JPasswordField();
+
+        // Botón para mostrar/ocultar la contraseña
+        JButton btnMostrarPassword = new JButton("Mostrar");
+        btnMostrarPassword.addActionListener((ActionEvent e) -> {
+            if (txtPassword.getEchoChar() != '\u0000') {
+                txtPassword.setEchoChar('\u0000'); // Mostrar la contraseña
+                btnMostrarPassword.setText("Ocultar");
+            } else {
+                txtPassword.setEchoChar('*'); // Ocultar la contraseña
+                btnMostrarPassword.setText("Mostrar");
+            }
+        });
 
         JLabel lblDirecc = new JLabel("Dirección:");
         JTextField txtDirecc = new JTextField();
@@ -293,7 +309,8 @@ public class Principal {
                     if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
                         JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
+                        String password = txtPassword.getPassword().toString();
+                        fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), password, txtDirecc.getText(), fechaNacimiento, estado, barrio);
                         // Mensaje de operacion realizada satisfactoriamente
                         JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -324,6 +341,10 @@ public class Principal {
         internalFrame.add(txtNombre);
         internalFrame.add(lblEmail);
         internalFrame.add(txtEmail);
+        internalFrame.add(lblPasswd);
+        internalFrame.add(txtPassword);
+        internalFrame.add(new JLabel());
+        internalFrame.add(btnMostrarPassword);
         internalFrame.add(lblTitulo);
         internalFrame.add(lblEspaciador);
         internalFrame.add(lblFechaNa);
@@ -338,6 +359,7 @@ public class Principal {
         internalFrame.add(txtDirecc);
         internalFrame.add(lblBarrio);
         internalFrame.add(cbCiudad);
+
         internalFrame.add(btnGuardar);
         internalFrame.add(btnCancelar);
 
@@ -349,8 +371,8 @@ public class Principal {
     private static void mostrarFormularioRepartidor(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(300, 140);
-        internalFrame.setLayout(new GridLayout(4, 2));
+        internalFrame.setSize(300, 160);
+        internalFrame.setLayout(new GridLayout(6, 3));
         internalFrame.setLocation(100, 100);
 
         // Etiquetas y campos de texto
@@ -360,8 +382,22 @@ public class Principal {
         JLabel lblEmail = new JLabel("Email:");
         JTextField txtEmail = new JTextField();
 
+        JLabel lblPasswd = new JLabel("Password:");
+        JPasswordField txtPassword = new JPasswordField();
+
         JLabel lblLicencia = new JLabel("Licencia:");
         JTextField txtLicencia = new JTextField();
+
+        JButton btnMostrarPassword = new JButton("Mostrar");
+        btnMostrarPassword.addActionListener((ActionEvent e) -> {
+            if (txtPassword.getEchoChar() != '\u0000') {
+                txtPassword.setEchoChar('\u0000'); // Mostrar la contraseña
+                btnMostrarPassword.setText("Ocultar");
+            } else {
+                txtPassword.setEchoChar('*'); // Ocultar la contraseña
+                btnMostrarPassword.setText("Mostrar");
+            }
+        });
 
         // Botón para guardar
         JButton btnGuardar = new JButton("Guardar");
@@ -378,7 +414,8 @@ public class Principal {
                     } else {
                         // Guardar la información
                         if (!fabrica.getIControlador().existeLicencia(txtLicencia.getText())) {
-                            fabrica.getIControlador().altaRepartidor(txtNombre.getText(), txtEmail.getText(), txtLicencia.getText());
+                            String password = txtPassword.getPassword().toString();
+                            fabrica.getIControlador().altaRepartidor(txtNombre.getText(), txtEmail.getText(), password, txtLicencia.getText());
 
                             JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         }else{
@@ -406,6 +443,10 @@ public class Principal {
         internalFrame.add(txtEmail);
         internalFrame.add(lblLicencia);
         internalFrame.add(txtLicencia);
+        internalFrame.add(lblPasswd);
+        internalFrame.add(txtPassword);
+        internalFrame.add(new JLabel()); // For empty space
+        internalFrame.add(btnMostrarPassword);
         internalFrame.add(btnGuardar);
         internalFrame.add(btnCancelar);
 
@@ -1644,6 +1685,21 @@ public class Principal {
         JSpinner spnMes = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.MONTH) + 1, 1, 12, 1));
         JSpinner spnAno = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2100, 1));
 
+        JLabel lblPasswd = new JLabel("Password:");
+        JPasswordField txtPassword = new JPasswordField(beneficiario.getPassword());
+
+        // Botón para mostrar/ocultar la contraseña
+        JButton btnMostrarPassword = new JButton("Mostrar");
+        btnMostrarPassword.addActionListener((ActionEvent e) -> {
+            if (txtPassword.getEchoChar() != '\u0000') {
+                txtPassword.setEchoChar('\u0000'); // Mostrar la contraseña
+                btnMostrarPassword.setText("Ocultar");
+            } else {
+                txtPassword.setEchoChar('*'); // Ocultar la contraseña
+                btnMostrarPassword.setText("Mostrar");
+            }
+        });
+
         // Botón para guardar los cambios
         JButton btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener((ActionEvent e) -> {
@@ -1659,8 +1715,9 @@ public class Principal {
             EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(cbEstado.getSelectedItem().toString().toUpperCase());
             EnumBarrio barrio = EnumBarrio.valueOf(cbBarrio.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
 
+            String password = txtPassword.getPassword().toString();
             // Modificar Beneficirio con los datos obtenidos
-            fabrica.getIControlador().modificarBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), fechaNacimiento, estado, barrio);
+            fabrica.getIControlador().modificarBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), password, fechaNacimiento, estado, barrio);
 
             // Mensaje de operacion realizada satisfactoriamente
             JOptionPane.showMessageDialog(internalFrame, "Beneficiario modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -1675,6 +1732,10 @@ public class Principal {
         internalFrame.add(txtNombre);
         internalFrame.add(lblEmail);
         internalFrame.add(txtEmail);
+        internalFrame.add(lblPasswd);
+        internalFrame.add(txtPassword);
+        internalFrame.add(new JLabel());
+        internalFrame.add(btnMostrarPassword);
         internalFrame.add(lblDirecc);
         internalFrame.add(txtDirecc);
         internalFrame.add(lblEstado);
@@ -1810,6 +1871,21 @@ public class Principal {
         JLabel lblLicencia = new JLabel("Licencia:");
         JTextField txtLicencia = new JTextField(repartidor.getNumeroLicencia());
 
+        JLabel lblPasswd = new JLabel("Password:");
+        JPasswordField txtPassword = new JPasswordField(repartidor.getPassword());
+
+        // Botón para mostrar/ocultar la contraseña
+        JButton btnMostrarPassword = new JButton("Mostrar");
+        btnMostrarPassword.addActionListener((ActionEvent e) -> {
+            if (txtPassword.getEchoChar() != '\u0000') {
+                txtPassword.setEchoChar('\u0000'); // Mostrar la contraseña
+                btnMostrarPassword.setText("Ocultar");
+            } else {
+                txtPassword.setEchoChar('*'); // Ocultar la contraseña
+                btnMostrarPassword.setText("Mostrar");
+            }
+        });
+
         // Botón para guardar los cambios
         JButton btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener((ActionEvent e) -> {
@@ -1820,8 +1896,9 @@ public class Principal {
                 // Mostrar mensaje de error si la licencia ya existe
                 JOptionPane.showMessageDialog(internalFrame, "El número de licencia ya existe. Por favor, elige otro.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
+                String password = txtPassword.getText().toString();
                 // Modificar repartidor con los datos obtenidos
-                fabrica.getIControlador().modificarRepartidor(txtNombre.getText(), txtEmail.getText(), nuevaLicencia);
+                fabrica.getIControlador().modificarRepartidor(txtNombre.getText(), txtEmail.getText(), password, nuevaLicencia);
 
                 // Mensaje de operación realizada satisfactoriamente
                 JOptionPane.showMessageDialog(internalFrame, "Repartidor modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -1837,6 +1914,10 @@ public class Principal {
         internalFrame.add(txtNombre);
         internalFrame.add(lblEmail);
         internalFrame.add(txtEmail);
+        internalFrame.add(lblPasswd);
+        internalFrame.add(txtPassword);
+        internalFrame.add(new JLabel());
+        internalFrame.add(btnMostrarPassword);
         internalFrame.add(lblLicencia);
         internalFrame.add(txtLicencia);
         internalFrame.add(btnGuardar);

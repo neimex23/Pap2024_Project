@@ -126,10 +126,10 @@ public class Controlador implements IControlador {
 
     //Operaciones de usario
     @Override
-    public void altaBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
+    public void altaBeneficiario(String nombre, String email, String password, String dir, LocalDateTime fNac,
             EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
         // Se crea la instancia del nuevo usuario
-        Usuario NuevoUsuario = new Beneficiario(nombre, email, dir, fNac, estBen, barrio);
+        Usuario NuevoUsuario = new Beneficiario(nombre, email, password, dir, fNac, estBen, barrio);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
 
@@ -152,9 +152,9 @@ public class Controlador implements IControlador {
 
 	}
     @Override
-    public void altaRepartidor(String nombre, String email, String numeroLicencia) {
+    public void altaRepartidor(String nombre, String email, String password, String numeroLicencia) {
         // Se crea la instancia del nuevo usuario
-        Usuario NuevoUsuario = new Repartidor(nombre, email, numeroLicencia);
+        Usuario NuevoUsuario = new Repartidor(nombre, email, password, numeroLicencia);
         // Se agrega la instancia a la coleccion
         manejadorUsuario.agregarUsuario(NuevoUsuario);
 
@@ -167,7 +167,7 @@ public class Controlador implements IControlador {
     }
 
     @Override
-    public void modificarBeneficiario(String nombre, String email, String dir, LocalDateTime fNac,
+    public void modificarBeneficiario(String nombre, String email, String password, String dir, LocalDateTime fNac,
             EnumEstadoBeneficiario estBen, EnumBarrio barrio) {
         // Buscar el beneficiario en el manejador de usuarios usando el email
         Beneficiario beneficiario = null;
@@ -183,6 +183,7 @@ public class Controlador implements IControlador {
 
         // Actualizar los datos del beneficiario (excepto el email)
         beneficiario.setNombre(nombre);
+        beneficiario.setPassword(password);
         beneficiario.setDireccion(dir);
         beneficiario.setFechaNacimiento(fNac);
         beneficiario.setEstado(estBen);
@@ -206,7 +207,7 @@ public class Controlador implements IControlador {
     }
 
     @Override
-    public void modificarRepartidor(String nombre, String email, String numeroLicencia) {
+    public void modificarRepartidor(String nombre, String email, String password, String numeroLicencia) {
         // Buscar el repartidor en el manejador de usuarios usando el email
         Repartidor repartidor = null;
 
@@ -221,6 +222,7 @@ public class Controlador implements IControlador {
 
         // Actualizar los datos del repartidor (excepto el email)
         repartidor.setNombre(nombre);
+        repartidor.setPassword(password);
         repartidor.setNumeroLicencia(numeroLicencia);
 
         // Actualizar el repartidor en la base de datos
