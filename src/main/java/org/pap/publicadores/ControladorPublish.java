@@ -11,6 +11,8 @@ import jakarta.jws.soap.SOAPBinding.ParameterStyle;
 import jakarta.jws.soap.SOAPBinding.Style;
 import javax.xml.ws.Endpoint;
 
+@WebService
+@SOAPBinding(style = Style.RPC, parameterStyle = ParameterStyle.WRAPPED)
 public class ControladorPublish {
     private Fabrica fabrica;
     private IControlador icon;
