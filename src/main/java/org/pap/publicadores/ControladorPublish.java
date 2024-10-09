@@ -10,7 +10,7 @@ import jakarta.jws.WebService;
 import jakarta.jws.soap.SOAPBinding;
 import jakarta.jws.soap.SOAPBinding.ParameterStyle;
 import jakarta.jws.soap.SOAPBinding.Style;
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +34,7 @@ public class ControladorPublish {
 
     @WebMethod(exclude = true)
     public void publicar() {
-        endpoint = Endpoint.publish("http://" + configuracion.getConfigOf("#WS_IP") + ":" + configuracion.getConfigOf("#WS_PORT") + "/controlador", this);
-        System.out.println("http://" + configuracion.getConfigOf("#WS_IP") + ":" + configuracion.getConfigOf("#WS_PORT") + "/controlador");
+        endpoint = Endpoint.publish("http://localhost:3002/controlador", this);
     }
 
     @WebMethod(exclude = true)
@@ -49,8 +48,9 @@ public class ControladorPublish {
     }
 
     @WebMethod
-    public List<DTDistribucion> listarDistribuciones(){
-        return icon.listarDistribucionesBD();
+    public DTDistribucion[] listarDistribuciones(){
+    	 List<DTDistribucion> distribuciones = icon.listarDistribucionesBD();
+    	    return distribuciones.toArray(new DTDistribucion[0]);
     }
 
     @WebMethod
