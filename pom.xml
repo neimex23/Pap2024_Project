@@ -35,6 +35,11 @@
             <version>3.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.3</version>
+        </dependency>
 
         <!-- Dependencias para Servlet si es necesario -->
         <dependency>
