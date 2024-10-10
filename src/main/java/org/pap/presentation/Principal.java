@@ -19,6 +19,7 @@ package org.pap.presentation;
 import org.pap.dtClasses.*;
 import org.pap.Enums.*;
 import org.pap.interfaces.Fabrica;
+import org.pap.publicadores.ControladorPublish;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -217,6 +218,8 @@ public class Principal {
         ventanaP.setVisible(true);
 
         Fabrica.getInstancia().getIControlador().cargarBaseDatos();
+        ControladorPublish cp = new ControladorPublish();
+        cp.publicar();
     }
 
     private static void mostrarFormularioBeneficiario(String titulo) {

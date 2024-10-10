@@ -16,6 +16,7 @@ public interface IControlador {
 
     boolean existeEmail(String email);
     boolean existeLicencia(String licencia);
+    DTUsuario autenticarUsuario(String email, String password);
     int conGetCantBeneficiarios();
     int conGetCantRepartidores();
 
@@ -41,4 +42,6 @@ public interface IControlador {
     DTUsuario obtenerDTRepartidor(String emailBeneficiario);
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
+
+    List<DTDistribucion> listarDistribucionesBD();
 }

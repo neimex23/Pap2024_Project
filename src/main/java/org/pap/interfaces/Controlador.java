@@ -262,6 +262,31 @@ public class Controlador implements IControlador {
         return manejadorUsuario.manGetCantRepartidores();
     }
 
+    public DTUsuario autenticarUsuario(String email, String password) {
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+
+        // Iniciar la transacción
+        em.getTransaction().begin();
+        try {
+            // HQL query para buscar al usuario por email y password
+            Usuario usuario = em.createQuery(
+                            "FROM Usuario u WHERE u.email = :email AND u.password = :password", Usuario.class)
+                    .setParameter("email", email)
+                    .setParameter("password", password)
+                    .getSingleResult();  // getSingleResult lanza una excepción si no encuentra un resultado
+
+            // Transforma el usuario a DTO si fue encontrado
+            return usuario.transformarADtUsuario();
+        } catch (Exception e) {
+            // Retorna null si no existe el usuario
+            return null;
+        } finally {
+            em.close(); // Cierra el EntityManager después de usarlo
+        }
+    }
+
+
     //Operaciones de Donacion
 
     @Override
@@ -440,6 +465,31 @@ public class Controlador implements IControlador {
         }
         return dTDistribuciones;
     }
+
+    @Override
+    public List<DTDistribucion> listarDistribucionesBD() {
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        List<DTDistribucion> dTDistribuciones = new ArrayList<>();
+
+        try {
+            // HQL para obtener todas las distribuciones
+            List<Distribucion> distribuciones = em.createQuery("FROM Distribucion", Distribucion.class)
+                    .getResultList();
+
+            // Transformar cada entidad Distribucion a DTDistribucion
+            distribuciones.forEach(distribucion ->
+                    dTDistribuciones.add(distribucion.transform())
+            );
+
+            return dTDistribuciones;
+        } finally {
+            em.close(); // Cierra el EntityManager después de usarlo
+        }
+    }
+
 
     @Override
     public List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado) {
