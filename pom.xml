@@ -5,10 +5,15 @@
     <groupId>org.example</groupId>
     <artifactId>Pap2024_Project</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Pap2024_Project</name>
     <url>http://maven.apache.org</url>
+    <modules>
+        <module>web</module>
+        <module>application</module>
+        <module>web</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,7 +41,6 @@
 		    <type>pom</type>
 		</dependency>
 
-        
         <!-- Dependencias para Servlet si es necesario -->
         <dependency>
             <groupId>javax.servlet</groupId>

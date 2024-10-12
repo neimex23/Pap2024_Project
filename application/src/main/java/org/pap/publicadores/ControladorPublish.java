@@ -1,9 +1,8 @@
 package org.pap.publicadores;
 
-import org.pap.Enums.EnumEstadoDistribucion;
+import org.pap.Enums.*;
 import org.pap.interfaces.*;
 import org.pap.dtClasses.*;
-import org.pap.configuraciones.*;
 
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
@@ -19,17 +18,11 @@ import java.util.List;
 public class ControladorPublish {
     private Fabrica fabrica;
     private IControlador icon;
-    private WebServiceConfiguracion configuracion;
     private Endpoint endpoint;
 
     public ControladorPublish() {
         fabrica = Fabrica.getInstancia();
         icon = fabrica.getIControlador();
-        try {
-            configuracion = new WebServiceConfiguracion();
-        } catch (Exception ex) {
-
-        }
     }
 
     @WebMethod(exclude = true)

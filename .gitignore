@@ -41,6 +41,8 @@ replay_pid*
 
 # Directorios de construcción de Maven y Gradle
 target/
+web/target
+application/target
 build/
 effective-pom.xml
 
