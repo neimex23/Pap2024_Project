@@ -26,10 +26,6 @@ hs_err_pid*
 replay_pid*
 /bin/
 
-#Eclipse IDE
-.project
-.classpath
-
 #Intelij IDE
 .idea
 .settings
