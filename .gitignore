@@ -28,7 +28,6 @@ replay_pid*
 
 #Intelij IDE
 .idea
-.settings
 *.iml
 
 #Visual IDE
