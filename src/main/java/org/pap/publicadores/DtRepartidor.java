@@ -1,5 +1,5 @@
 /**
- * LocalDateTime.java
+ * DtRepartidor.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4.1-SNAPSHOT Nov 07, 2023 (07:57:58 UTC) WSDL2Java emitter.
@@ -7,21 +7,21 @@
 
 package org.pap.publicadores;
 
-public class LocalDateTime  implements java.io.Serializable {
-    public LocalDateTime() {
+public class DtRepartidor  extends org.pap.publicadores.DtUsuario  implements java.io.Serializable {
+    public DtRepartidor() {
     }
 
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof LocalDateTime)) return false;
-        LocalDateTime other = (LocalDateTime) obj;
+        if (!(obj instanceof DtRepartidor)) return false;
+        DtRepartidor other = (DtRepartidor) obj;
         if (this == obj) return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true;
+        _equals = super.equals(obj);
         __equalsCalc = null;
         return _equals;
     }
@@ -32,17 +32,17 @@ public class LocalDateTime  implements java.io.Serializable {
             return 0;
         }
         __hashCodeCalc = true;
-        int _hashCode = 1;
+        int _hashCode = super.hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(LocalDateTime.class, true);
+        new org.apache.axis.description.TypeDesc(DtRepartidor.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "localDateTime"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "dtRepartidor"));
     }
 
     /**
