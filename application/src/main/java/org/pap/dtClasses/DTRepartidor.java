@@ -1,7 +1,9 @@
 package org.pap.dtClasses;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 
 
+@XmlRootElement
 public class DTRepartidor extends DTUsuario{
 
     private String numeroLicencia;
@@ -12,6 +14,7 @@ public class DTRepartidor extends DTUsuario{
         this.numeroLicencia = numeroLicencia;
     }
 
+    public DTRepartidor(){}
 
     // Getter para numeroLicencia
     public String getNumeroLicencia() {

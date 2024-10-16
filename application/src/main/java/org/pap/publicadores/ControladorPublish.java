@@ -9,8 +9,11 @@ import jakarta.jws.WebService;
 import jakarta.jws.soap.SOAPBinding;
 import jakarta.jws.soap.SOAPBinding.ParameterStyle;
 import jakarta.jws.soap.SOAPBinding.Style;
+
 import jakarta.xml.ws.Endpoint;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @WebService
@@ -55,11 +58,36 @@ public class ControladorPublish {
     }
 
     @WebMethod
-    public void ModificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, String estadoDistribucion){
-        EnumEstadoDistribucion dist = EnumEstadoDistribucion.valueOf(estadoDistribucion);
-        icon.modificarDistribucion(idDistribucion, fechaEntrega, dist);
+    public DTDistribucion[] listarDistribucionesPorEstado(String estado){
+        EnumEstadoDistribucion enumDist= EnumEstadoDistribucion.valueOf(estado);
+        List<DTDistribucion> distribuciones = icon.listarDistribucionesPorEstado(enumDist);
+        return distribuciones.toArray(new DTDistribucion[0]);
     }
 
+    @WebMethod
+    public DTDistribucion[] ListarDistribucionesPorZona(String barrio){
+        EnumBarrio enumBarrio= EnumBarrio.valueOf(barrio);
+        List<DTDistribucion> distribuciones = icon.ListarDistribucionesPorZona(enumBarrio);
+        return distribuciones.toArray(new DTDistribucion[0]);
+    }
 
+    @WebMethod
+    public void ModificarDistribucion(int idDistribucion, Date fechaEntrega, String estadoDistribucion){
+        EnumEstadoDistribucion dist = EnumEstadoDistribucion.valueOf(estadoDistribucion);
+        LocalDateTime fechaEnt = LocalDateTime.ofInstant(fechaEntrega.toInstant(), ZoneId.systemDefault());
+        icon.modificarDistribucion(idDistribucion, fechaEnt, dist);
+    }
 
+    @WebMethod
+    public void modificarRepartidor(String nombre, String email, String password, String numeroLicencia){
+        icon.modificarRepartidor(nombre, email, password, numeroLicencia);
+    }
+
+    @WebMethod
+    public void modificarBeneficiario(String nombre, String email, String password, String dir, Date fNac, String estBen, String barrio){
+        LocalDateTime fechaNac = LocalDateTime.ofInstant(fNac.toInstant(), ZoneId.systemDefault());
+        EnumEstadoBeneficiario eBen = EnumEstadoBeneficiario.valueOf(estBen);
+        EnumBarrio eBarrio = EnumBarrio.valueOf(barrio);
+        icon.modificarBeneficiario(nombre,email,password,dir,fechaNac,eBen,eBarrio);
+    }
 }

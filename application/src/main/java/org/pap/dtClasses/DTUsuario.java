@@ -1,5 +1,9 @@
 package org.pap.dtClasses;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
+@XmlSeeAlso({DTBeneficiario.class, DTRepartidor.class})
 public abstract class DTUsuario {
     private String nombre;
     private String password;
@@ -20,6 +24,8 @@ public abstract class DTUsuario {
         this.password = password;
         this.email = email;
     }
+
+    public DTUsuario(){} //para jakarta que requiere constructores vacios
 
     public String getPassword() {
         return password;

@@ -1,7 +1,9 @@
 package org.pap.dtClasses;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.pap.Enums.*;
 import java.time.LocalDateTime;
 
+@XmlRootElement
 public class DTBeneficiario extends DTUsuario{
 
     private String direccion;
@@ -17,6 +19,8 @@ public class DTBeneficiario extends DTUsuario{
         this.estado = estado;
         this.barrio = barrio;
     }
+
+    public  DTBeneficiario(){}
 
     // Getters
 
