@@ -16,7 +16,8 @@ public interface IControlador {
 
     boolean existeEmail(String email);
     boolean existeLicencia(String licencia);
-    DTUsuario autenticarUsuario(String email, String password);
+    boolean autenticarUsuario(String email, String password);
+    DTUsuario obtenerUsuario(String email);
     int conGetCantBeneficiarios();
     int conGetCantRepartidores();
 

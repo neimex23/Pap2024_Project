@@ -36,19 +36,28 @@ public class ControladorPublish {
     }
 
     @WebMethod
-    public DTUsuario InicioSecion (String email, String password){ // Retorna un DTusuario con los datos proporcionadoes, si retorna null es que el usuario o la contrasenia no son correctas
-        return icon.autenticarUsuario(email, password); //Puede ser null
+    public boolean InicioSecion (String email, String password){
+        return icon.autenticarUsuario(email, password);
+    }
+
+    @WebMethod
+    public DTUsuario obtenerUsuario(String email){
+        return icon.obtenerUsuario(email);
     }
 
     @WebMethod
     public DTDistribucion[] listarDistribuciones(){
-    	 List<DTDistribucion> distribuciones = icon.listarDistribucionesBD();
-    	    return distribuciones.toArray(new DTDistribucion[0]);
+        List<DTDistribucion> distribuciones = icon.listarDistribucionesBD();
+        if (distribuciones == null) {
+            return new DTDistribucion[0]; // Devolver un array vacío en lugar de null
+        }
+        return distribuciones.toArray(new DTDistribucion[0]);
     }
 
     @WebMethod
-    public void ModificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, EnumEstadoDistribucion estadoDistribucion){
-        icon.modificarDistribucion(idDistribucion, fechaEntrega, estadoDistribucion);
+    public void ModificarDistribucion(int idDistribucion, LocalDateTime fechaEntrega, String estadoDistribucion){
+        EnumEstadoDistribucion dist = EnumEstadoDistribucion.valueOf(estadoDistribucion);
+        icon.modificarDistribucion(idDistribucion, fechaEntrega, dist);
     }
 
 

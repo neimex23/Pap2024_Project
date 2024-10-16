@@ -262,7 +262,7 @@ public class Controlador implements IControlador {
         return manejadorUsuario.manGetCantRepartidores();
     }
 
-    public DTUsuario autenticarUsuario(String email, String password) {
+    public boolean autenticarUsuario(String email, String password) {
         emf = Persistence.createEntityManagerFactory("Conexion");
         em = emf.createEntityManager();
 
@@ -277,6 +277,29 @@ public class Controlador implements IControlador {
                     .getSingleResult();  // getSingleResult lanza una excepción si no encuentra un resultado
 
             // Transforma el usuario a DTO si fue encontrado
+            return usuario != null;
+        } catch (Exception e) {
+            // Retorna null si no existe el usuario
+            return false;
+        } finally {
+            em.close(); // Cierra el EntityManager después de usarlo
+        }
+    }
+
+    public DTUsuario obtenerUsuario(String email) {
+        emf = Persistence.createEntityManagerFactory("Conexion");
+        em = emf.createEntityManager();
+
+        // Iniciar la transacción
+        em.getTransaction().begin();
+        try {
+            // HQL query para buscar al usuario por email y password
+            Usuario usuario = em.createQuery(
+                            "FROM Usuario u WHERE u.email = :email", Usuario.class)
+                    .setParameter("email", email)
+                    .getSingleResult();  // getSingleResult lanza una excepción si no encuentra un resultado
+
+            // Transforma el usuario a DTO si fue encontrado
             return usuario.transformarADtUsuario();
         } catch (Exception e) {
             // Retorna null si no existe el usuario
@@ -285,7 +308,6 @@ public class Controlador implements IControlador {
             em.close(); // Cierra el EntityManager después de usarlo
         }
     }
-
 
     //Operaciones de Donacion
 

@@ -312,7 +312,8 @@ public class Principal {
                     if (fabrica.getIControlador().existeEmail(txtEmail.getText())) {
                         JOptionPane.showMessageDialog(null, "El beneficiario ya existe.", "Érror", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        String password = txtPassword.getPassword().toString();
+                        char[] passwordArray = txtPassword.getPassword();
+                        String password = new String(passwordArray);
                         fabrica.getIControlador().altaBeneficiario(txtNombre.getText(), txtEmail.getText(), password, txtDirecc.getText(), fechaNacimiento, estado, barrio);
                         // Mensaje de operacion realizada satisfactoriamente
                         JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -417,7 +418,8 @@ public class Principal {
                     } else {
                         // Guardar la información
                         if (!fabrica.getIControlador().existeLicencia(txtLicencia.getText())) {
-                            String password = txtPassword.getPassword().toString();
+                            char[] passwordArray = txtPassword.getPassword();
+                            String password = new String(passwordArray);
                             fabrica.getIControlador().altaRepartidor(txtNombre.getText(), txtEmail.getText(), password, txtLicencia.getText());
 
                             JOptionPane.showMessageDialog(null, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -1718,7 +1720,8 @@ public class Principal {
             EnumEstadoBeneficiario estado = EnumEstadoBeneficiario.valueOf(cbEstado.getSelectedItem().toString().toUpperCase());
             EnumBarrio barrio = EnumBarrio.valueOf(cbBarrio.getSelectedItem().toString().toUpperCase().replace(" ", "_"));
 
-            String password = txtPassword.getPassword().toString();
+            char[] passwordArray = txtPassword.getPassword();
+            String password = new String(passwordArray);
             // Modificar Beneficirio con los datos obtenidos
             fabrica.getIControlador().modificarBeneficiario(txtNombre.getText(), txtEmail.getText(), txtDirecc.getText(), password, fechaNacimiento, estado, barrio);
 
@@ -1899,7 +1902,8 @@ public class Principal {
                 // Mostrar mensaje de error si la licencia ya existe
                 JOptionPane.showMessageDialog(internalFrame, "El número de licencia ya existe. Por favor, elige otro.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                String password = txtPassword.getText().toString();
+                char[] passwordArray = txtPassword.getPassword();
+                String password = new String(passwordArray);
                 // Modificar repartidor con los datos obtenidos
                 fabrica.getIControlador().modificarRepartidor(txtNombre.getText(), txtEmail.getText(), password, nuevaLicencia);
 
