@@ -43,3 +43,7 @@ effective-pom.xml
 # Archivos de sistema
 *.DS_Store
 Thumbs.db
+/nbproject/private/
+/dist/
+nbproject/
+conf/
