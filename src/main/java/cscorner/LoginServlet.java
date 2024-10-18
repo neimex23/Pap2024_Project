@@ -34,7 +34,8 @@ public class LoginServlet extends HttpServlet {
         try {
 
             if (controlador.inicioSecion(email, password) == true) {
-                // Login exitoso
+                UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
+                usuarioLogin.setUsuario(controlador.obtenerUsuario(email));                   
                 request.getSession().setAttribute("usuario", email);
                 response.sendRedirect("home.jsp");
             } else {
