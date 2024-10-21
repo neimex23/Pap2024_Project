@@ -8,6 +8,7 @@
 </head>
 <body>
 	<h1>Login Sussess</h1>
-        <a href="/filtrarDistribucionesPorZona.jsp">Filtrar Distribuciones Por Zona</a>
+        <a href="/verDistribuciones.jsp">Ver Distribuciones</a>
+        <a href="/filtrarDistribucionesPorZona.jsp"> Filtrar Distribuciones Por Zona</a>
 </body>
 </html>

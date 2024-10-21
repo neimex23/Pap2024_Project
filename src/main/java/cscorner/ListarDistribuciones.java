@@ -5,13 +5,13 @@
 package cscorner;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import static java.time.InstantSource.system;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
-import org.pap.publicadores.ControladorPublishServiceLocator;
+import org.pap.publicadores.*;
 
 /**
  *
@@ -32,10 +32,26 @@ public class ListarDistribuciones extends HttpServlet {
     }
     
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
+   protected void doPost(HttpServletRequest request, HttpServletResponse response)
+           throws ServletException, IOException {
+
+    DtDistribucion[] distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
+
+    // Valida que no sea null o vacío antes de proceder
+    if (distribuciones != null && distribuciones.length > 0) {
+        request.setAttribute("distribuciones", distribuciones);
+    } else {
+        // En caso de no encontrar distribuciones, puedes enviar un mensaje informativo
+        request.setAttribute("mensaje", "No hay distribuciones pendientes.");
     }
+
+    // Redirige a la JSP
+    request.getRequestDispatcher("verDistribuciones.jsp").forward(request, response);
+
+    // Imprime el log en el servidor
+    System.out.println("Botón Listar presionado.");
+}
+
 
 
 }
