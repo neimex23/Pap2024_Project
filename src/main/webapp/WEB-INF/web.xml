@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
-  <display-name>webPap2024</display-name>
-  <welcome-file-list>
-    <welcome-file>login.jsp</welcome-file>
-  </welcome-file-list>
+<web-app id="WebApp_ID" version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <display-name>webPap2024</display-name>
+    <servlet>
+        <servlet-name>ListarDistribuciones</servlet-name>
+        <servlet-class>cscorner.ListarDistribuciones</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListarDistribuciones</servlet-name>
+        <url-pattern>/ListarDistribuciones</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

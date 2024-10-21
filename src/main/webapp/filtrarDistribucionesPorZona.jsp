@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,7 +8,7 @@
 </head>
 <body>
     <h1>Filtrar Distribuciones por Zona</h1>
-    <form action="/FiltrarDistribucionesPorZonaServlet" method="post">
+    <form action="FiltrarDistribucionesPorZonaServlet" method="post">
         <label for="barrio">Seleccione un barrio:</label>
         <select name="barrio" id="barrio">
             <option value="CENTRO">Centro</option>

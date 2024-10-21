@@ -5,9 +5,9 @@
 package cscorner;
 import org.pap.publicadores.*;
 
-enum LoginL {NoLogin, Beneficiario, Repartidor}
 
 public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobre el usuario logeado en el sistema
+    public enum LoginL {NoLogin, Beneficiario, Repartidor}
     private static UsuarioLogin instancia = null;
     private UsuarioLogin() {}
     public static UsuarioLogin GetInstancia() {
