@@ -50,22 +50,22 @@ public class ControladorPublishProxy implements org.pap.publicadores.Controlador
     return controladorPublish.obtenerUsuario(arg0);
   }
   
-  public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException{
-    if (controladorPublish == null)
-      _initControladorPublishProxy();
-    return controladorPublish.listarDistribucionesPorZona(arg0);
-  }
-  
   public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorEstado(java.lang.String arg0) throws java.rmi.RemoteException{
     if (controladorPublish == null)
       _initControladorPublishProxy();
     return controladorPublish.listarDistribucionesPorEstado(arg0);
   }
   
-  public void modificarRepartidor(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3) throws java.rmi.RemoteException{
+  public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException{
     if (controladorPublish == null)
       _initControladorPublishProxy();
-    controladorPublish.modificarRepartidor(arg0, arg1, arg2, arg3);
+    return controladorPublish.listarDistribucionesPorZona(arg0);
+  }
+  
+  public void modificarBeneficiario(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.util.Calendar arg4, java.lang.String arg5, java.lang.String arg6) throws java.rmi.RemoteException{
+    if (controladorPublish == null)
+      _initControladorPublishProxy();
+    controladorPublish.modificarBeneficiario(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
   }
   
   public org.pap.publicadores.DtDistribucion[] listarDistribuciones() throws java.rmi.RemoteException{
@@ -74,10 +74,10 @@ public class ControladorPublishProxy implements org.pap.publicadores.Controlador
     return controladorPublish.listarDistribuciones();
   }
   
-  public void modificarBeneficiario(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.util.Calendar arg4, java.lang.String arg5, java.lang.String arg6) throws java.rmi.RemoteException{
+  public void modificarRepartidor(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3) throws java.rmi.RemoteException{
     if (controladorPublish == null)
       _initControladorPublishProxy();
-    controladorPublish.modificarBeneficiario(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    controladorPublish.modificarRepartidor(arg0, arg1, arg2, arg3);
   }
   
   public boolean inicioSecion(java.lang.String arg0, java.lang.String arg1) throws java.rmi.RemoteException{

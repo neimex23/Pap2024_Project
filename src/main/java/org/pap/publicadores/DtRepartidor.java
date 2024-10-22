@@ -8,7 +8,41 @@
 package org.pap.publicadores;
 
 public class DtRepartidor  extends org.pap.publicadores.DtUsuario  implements java.io.Serializable {
+    private java.lang.String numeroLicencia;
+
     public DtRepartidor() {
+    }
+
+    public DtRepartidor(
+           java.lang.String nombre,
+           java.lang.String password,
+           java.lang.String email,
+           java.lang.String numeroLicencia) {
+        super(
+            nombre,
+            password,
+            email);
+        this.numeroLicencia = numeroLicencia;
+    }
+
+
+    /**
+     * Gets the numeroLicencia value for this DtRepartidor.
+     * 
+     * @return numeroLicencia
+     */
+    public java.lang.String getNumeroLicencia() {
+        return numeroLicencia;
+    }
+
+
+    /**
+     * Sets the numeroLicencia value for this DtRepartidor.
+     * 
+     * @param numeroLicencia
+     */
+    public void setNumeroLicencia(java.lang.String numeroLicencia) {
+        this.numeroLicencia = numeroLicencia;
     }
 
     private java.lang.Object __equalsCalc = null;
@@ -21,7 +55,10 @@ public class DtRepartidor  extends org.pap.publicadores.DtUsuario  implements ja
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = super.equals(obj);
+        _equals = super.equals(obj) && 
+            ((this.numeroLicencia==null && other.getNumeroLicencia()==null) || 
+             (this.numeroLicencia!=null &&
+              this.numeroLicencia.equals(other.getNumeroLicencia())));
         __equalsCalc = null;
         return _equals;
     }
@@ -33,6 +70,9 @@ public class DtRepartidor  extends org.pap.publicadores.DtUsuario  implements ja
         }
         __hashCodeCalc = true;
         int _hashCode = super.hashCode();
+        if (getNumeroLicencia() != null) {
+            _hashCode += getNumeroLicencia().hashCode();
+        }
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -43,6 +83,13 @@ public class DtRepartidor  extends org.pap.publicadores.DtUsuario  implements ja
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "dtRepartidor"));
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("numeroLicencia");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "numeroLicencia"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
     }
 
     /**
