@@ -10,9 +10,9 @@ package org.pap.publicadores;
 public class DtDistribucion  implements java.io.Serializable {
     private int id;
 
-    private org.pap.publicadores.LocalDateTime fechaPreparacion;
+    private java.lang.String fechaPreparacion;
 
-    private org.pap.publicadores.LocalDateTime fechaEntrega;
+    private java.lang.String fechaEntrega;
 
     private org.pap.publicadores.EnumEstadoDistribucion estado;
 
@@ -25,8 +25,8 @@ public class DtDistribucion  implements java.io.Serializable {
 
     public DtDistribucion(
            int id,
-           org.pap.publicadores.LocalDateTime fechaPreparacion,
-           org.pap.publicadores.LocalDateTime fechaEntrega,
+           java.lang.String fechaPreparacion,
+           java.lang.String fechaEntrega,
            org.pap.publicadores.EnumEstadoDistribucion estado,
            int donacionAsc,
            java.lang.String emailBenefAsc) {
@@ -64,7 +64,7 @@ public class DtDistribucion  implements java.io.Serializable {
      * 
      * @return fechaPreparacion
      */
-    public org.pap.publicadores.LocalDateTime getFechaPreparacion() {
+    public java.lang.String getFechaPreparacion() {
         return fechaPreparacion;
     }
 
@@ -74,7 +74,7 @@ public class DtDistribucion  implements java.io.Serializable {
      * 
      * @param fechaPreparacion
      */
-    public void setFechaPreparacion(org.pap.publicadores.LocalDateTime fechaPreparacion) {
+    public void setFechaPreparacion(java.lang.String fechaPreparacion) {
         this.fechaPreparacion = fechaPreparacion;
     }
 
@@ -84,7 +84,7 @@ public class DtDistribucion  implements java.io.Serializable {
      * 
      * @return fechaEntrega
      */
-    public org.pap.publicadores.LocalDateTime getFechaEntrega() {
+    public java.lang.String getFechaEntrega() {
         return fechaEntrega;
     }
 
@@ -94,7 +94,7 @@ public class DtDistribucion  implements java.io.Serializable {
      * 
      * @param fechaEntrega
      */
-    public void setFechaEntrega(org.pap.publicadores.LocalDateTime fechaEntrega) {
+    public void setFechaEntrega(java.lang.String fechaEntrega) {
         this.fechaEntrega = fechaEntrega;
     }
 
@@ -227,14 +227,14 @@ public class DtDistribucion  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("fechaPreparacion");
         elemField.setXmlName(new javax.xml.namespace.QName("", "fechaPreparacion"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "localDateTime"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("fechaEntrega");
         elemField.setXmlName(new javax.xml.namespace.QName("", "fechaEntrega"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "localDateTime"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
