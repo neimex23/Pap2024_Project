@@ -10,16 +10,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.xml.rpc.ServiceException;
 import org.pap.publicadores.*;
 
-
-@WebServlet("/FiltrarDistribucionesPorZonaServlet")
-public class FiltrarDistribucionesPorZonaServlet extends HttpServlet {
+@WebServlet("/filtrarDistribucionesPorZonaServlet")
+public class filtrarDistribucionesPorZonaServlet extends HttpServlet {
  
-    private org.pap.publicadores.ControladorPublish controlador;
+    private ControladorPublishService cps = new ControladorPublishServiceLocator();
+    private ControladorPublish controlador;
 
-    public FiltrarDistribucionesPorZonaServlet() {
+    public filtrarDistribucionesPorZonaServlet() {
         super();
         try {
-            controlador = new ControladorPublishServiceLocator().getControladorPublishPort();
+            controlador = cps.getControladorPublishPort();
         } catch (ServiceException e) {
             e.printStackTrace();
         }

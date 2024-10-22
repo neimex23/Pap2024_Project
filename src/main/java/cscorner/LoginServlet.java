@@ -9,19 +9,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
+import org.pap.publicadores.ControladorPublish;
 
 import org.pap.publicadores.ControladorPublishPortBindingStub;
+import org.pap.publicadores.ControladorPublishService;
 import org.pap.publicadores.ControladorPublishServiceLocator;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private org.pap.publicadores.ControladorPublish controlador;
+    private ControladorPublishService cps = new ControladorPublishServiceLocator();
+    private ControladorPublish controlador;
+
 
     public LoginServlet() {
         super();
         try {
-            controlador = new ControladorPublishServiceLocator().getControladorPublishPort();
+            controlador = cps.getControladorPublishPort();
         } catch (ServiceException e) {
             e.printStackTrace();
         }

@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Filtrar Distribuciones por Zona</h1>
-    <form action="FiltrarDistribucionesPorZonaServlet" method="post">
+    <form action="filtrarDistribucionesPorZonaServlet" method="post">
         <label for="barrio">Seleccione un barrio:</label>
         <select name="barrio" id="barrio">
             <option value="CENTRO">Centro</option>
