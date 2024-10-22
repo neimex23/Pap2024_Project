@@ -1,16 +1,35 @@
 package org.pap.dtClasses;
 import java.time.LocalDateTime;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.pap.Enums.EnumEstadoDistribucion;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DTDistribucion {
+    @XmlElement(name = "id")
     private int Id;
+
+    @XmlElement(name = "fechaPreparacion")
     private LocalDateTime fechaPreparacion;
+
+    @XmlElement(name = "fechaEntrega")
     private LocalDateTime fechaEntrega;
+
+    @XmlElement(name = "estado")
     private EnumEstadoDistribucion estado;
+
+    @XmlElement(name = "donacionAsc")
     private int donacionAsc;
+
+    @XmlElement(name = "emailBenefAsc")
     private String emailBenefAsc;
 
+    public DTDistribucion() {super();}
     public DTDistribucion(int Id, LocalDateTime FechaPreparacion, LocalDateTime FechaEntrega, EnumEstadoDistribucion estado, int idDonacionAsc, String emailBenefAsc) {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;

@@ -1,10 +1,22 @@
 package org.pap.dtClasses;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.time.LocalDateTime;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DTArticulo extends DTDonacion {
 
+    @XmlElement(name = "descr")
 	private String descr;
+
+    @XmlElement(name = "peso")
 	private float peso;
+
+    @XmlElement(name = "dimensiones")
 	private String dimensiones;
 	
 	// Getter para descr
@@ -28,5 +40,7 @@ public class DTArticulo extends DTDonacion {
         this.peso = peso;
         this.dimensiones = dimensiones;
     }
-    
+
+    public DTArticulo() {super();}
+
     }

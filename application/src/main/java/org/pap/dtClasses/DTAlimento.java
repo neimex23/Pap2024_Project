@@ -1,9 +1,19 @@
 package org.pap.dtClasses;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.time.LocalDateTime;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DTAlimento extends DTDonacion{
-	    
+
+    @XmlElement(name = "descProducto")
 	private String descProducto;
+
+    @XmlElement(name = "cantElemntos")
 	private int cantElemntos;
 	
 	 // Getter para descProducto
@@ -21,5 +31,5 @@ public class DTAlimento extends DTDonacion{
         this.descProducto = descProducto;
         this.cantElemntos = cantElemntos;
     }
-
+    public DTAlimento() {super();}
 }
