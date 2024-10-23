@@ -45,6 +45,5 @@ effective-pom.xml
 Thumbs.db
 /nbproject/private/
 /dist/
-nbproject/
 conf/
-/nbbuild/
+
