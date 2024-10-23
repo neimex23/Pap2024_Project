@@ -47,6 +47,16 @@ public class verDistribucionesServlet extends HttpServlet {
         
         DtDistribucion[] distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
         List<DtDistribucion> lstDistribuciones = Arrays.asList(distribuciones);
+        for (DtDistribucion distribucion : lstDistribuciones) {
+            System.out.println("ID: " + distribucion.getId());
+            System.out.println("Fecha de Preparación: " + distribucion.getFechaPreparacion());
+            System.out.println("Fecha de Entrega: " + distribucion.getFechaEntrega());
+            System.out.println("Estado: " + distribucion.getEstado());
+            System.out.println("Donación ASC: " + distribucion.getDonacionAsc());
+            System.out.println("Email Beneficiario ASC: " + distribucion.getEmailBenefAsc());
+            System.out.println("-------------------------------");
+        }
+        
         
         if (!lstDistribuciones.isEmpty()) {
             request.setAttribute("distribuciones", lstDistribuciones);
