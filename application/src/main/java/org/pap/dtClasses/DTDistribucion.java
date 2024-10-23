@@ -7,6 +7,7 @@ import org.pap.Enums.EnumEstadoDistribucion;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,9 +16,11 @@ public class DTDistribucion {
     private int Id;
 
     @XmlElement(name = "fechaPreparacion")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime fechaPreparacion;
 
     @XmlElement(name = "fechaEntrega")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime fechaEntrega;
 
     @XmlElement(name = "estado")

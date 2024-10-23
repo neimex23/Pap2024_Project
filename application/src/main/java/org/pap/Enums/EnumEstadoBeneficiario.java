@@ -1,6 +1,11 @@
 package org.pap.Enums;
 
+import jakarta.xml.bind.annotation.XmlEnumValue;
+
 public enum EnumEstadoBeneficiario {
-	    ACTIVO, SUSPENDIDO
+		@XmlEnumValue("ACTIVO")
+		ACTIVO,
+		@XmlEnumValue("SUSPENDIDO")
+		SUSPENDIDO
 	}
 	

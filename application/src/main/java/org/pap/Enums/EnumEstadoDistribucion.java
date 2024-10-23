@@ -1,5 +1,12 @@
 package org.pap.Enums;
 
+import jakarta.xml.bind.annotation.XmlEnumValue;
+
 public enum EnumEstadoDistribucion {
-	    PENDIENTE, ENCAMINO, ENTREGADO
+		@XmlEnumValue("PENDIENTE")
+	    PENDIENTE,
+		@XmlEnumValue("ENCAMINO")
+		ENCAMINO,
+		@XmlEnumValue("ENTREGADO")
+		ENTREGADO
 	}
