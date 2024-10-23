@@ -47,6 +47,14 @@ public class verDistribucionesServlet extends HttpServlet {
         
         DtDistribucion[] distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
         List<DtDistribucion> lstDistribuciones = Arrays.asList(distribuciones);
+        UsuarioLogin userControler = UsuarioLogin.GetInstancia();
+        if (userControler.getTipo() == UsuarioLogin.LoginL.Beneficiario) {
+           String email = userControler.getUsuario().getEmail();
+           lstDistribuciones.removeIf(x -> x.getEmailBenefAsc() == email);
+        }
+
+
+        
         for (DtDistribucion distribucion : lstDistribuciones) {
             System.out.println("ID: " + distribucion.getId());
             System.out.println("Fecha de Preparación: " + distribucion.getFechaPreparacion());
@@ -55,6 +63,8 @@ public class verDistribucionesServlet extends HttpServlet {
             System.out.println("Donación ASC: " + distribucion.getDonacionAsc());
             System.out.println("Email Beneficiario ASC: " + distribucion.getEmailBenefAsc());
             System.out.println("-------------------------------");
+            
+            if (distribucion)
         }
         
         

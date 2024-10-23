@@ -9,11 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
-import org.pap.publicadores.ControladorPublish;
-
-import org.pap.publicadores.ControladorPublishPortBindingStub;
-import org.pap.publicadores.ControladorPublishService;
-import org.pap.publicadores.ControladorPublishServiceLocator;
+import org.pap.publicadores.*;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -39,7 +35,16 @@ public class LoginServlet extends HttpServlet {
 
             if (controlador.inicioSecion(email, password) == true) {
                 UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
-                usuarioLogin.setUsuario(controlador.obtenerUsuario(email));                   
+                DtUsuario usuarioObtenido = controlador.obtenerUsuario(email);
+                if (usuarioObtenido instanceof DtBeneficiario beneficiarioObtenido) {
+                    EnumEstadoBeneficiario estadoBeneficiario = beneficiarioObtenido.getEstado();
+
+                    if (estadoBeneficiario == EnumEstadoBeneficiario.SUSPENDIDO) {
+                        request.setAttribute("error", "Beneficiario Suspendido");
+                        request.getRequestDispatcher("login.jsp").forward(request, response);
+                    }
+                }
+                usuarioLogin.setUsuario(usuarioObtenido);                   
                 request.getSession().setAttribute("usuario", email);
                 response.sendRedirect("home.jsp");
             } else {
