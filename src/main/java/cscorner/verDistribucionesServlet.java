@@ -50,7 +50,7 @@ public class verDistribucionesServlet extends HttpServlet {
         UsuarioLogin userControler = UsuarioLogin.GetInstancia();
         if (userControler.getTipo() == UsuarioLogin.LoginL.Beneficiario) {
            String email = userControler.getUsuario().getEmail();
-           lstDistribuciones.removeIf(x -> x.getEmailBenefAsc() == email);
+           lstDistribuciones.removeIf(x -> x.getEmailBenefAsc() != email);
         }
 
 
@@ -63,8 +63,6 @@ public class verDistribucionesServlet extends HttpServlet {
             System.out.println("Donación ASC: " + distribucion.getDonacionAsc());
             System.out.println("Email Beneficiario ASC: " + distribucion.getEmailBenefAsc());
             System.out.println("-------------------------------");
-            
-            if (distribucion)
         }
         
         
