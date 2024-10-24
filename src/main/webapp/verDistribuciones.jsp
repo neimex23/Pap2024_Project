@@ -21,8 +21,8 @@
 </head>
 <body>
     <h1>Listar Distribuciones</h1>
-    <form action="verDistribucionesServlet" method="post">
-    <button type="submit">Listar</button>
+    <form id="autoSubmitForm" action="verDistribucionesServlet" method="post"">
+        <button type="submit">Listar</button>
     </form>
     <table>
         <thead>

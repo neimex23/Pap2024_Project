@@ -5,6 +5,7 @@
 package cscorner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -22,7 +23,7 @@ import org.pap.publicadores.*;
 
 @WebServlet("/verDistribucionesServlet")
 public class verDistribucionesServlet extends HttpServlet {
-
+    
     private ControladorPublishService cps = new ControladorPublishServiceLocator();
     private ControladorPublish controlador;
 
@@ -32,48 +33,57 @@ public class verDistribucionesServlet extends HttpServlet {
             controlador = cps.getControladorPublishPort();
         } catch (ServiceException e) {
             e.printStackTrace();
-            // Aquí podrías redirigir a una página de error o enviar un mensaje
+            // Manejo de error aquí
         }
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (controlador == null) {
-            request.setAttribute("mensaje", "Error al inicializar el controlador.");
-            request.getRequestDispatcher("verDistribuciones.jsp").forward(request, response);
+        
+        DtDistribucion[] distribuciones;
+
+        try {
+            distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Error al obtener las distribuciones.");
             return;
         }
-        
-        DtDistribucion[] distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
+
         List<DtDistribucion> lstDistribuciones = Arrays.asList(distribuciones);
         UsuarioLogin userControler = UsuarioLogin.GetInstancia();
+
+        if (lstDistribuciones.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.getWriter().write("No hay distribuciones pendientes.");
+            return;
+        }
+
+        List<DtDistribucion> lstDistribucionesFilter = new ArrayList<>();
+
         if (userControler.getTipo() == UsuarioLogin.LoginL.Beneficiario) {
-           String email = userControler.getUsuario().getEmail();
-           lstDistribuciones.removeIf(x -> x.getEmailBenefAsc() != email);
-        }
-
-
-        
-        for (DtDistribucion distribucion : lstDistribuciones) {
-            System.out.println("ID: " + distribucion.getId());
-            System.out.println("Fecha de Preparación: " + distribucion.getFechaPreparacion());
-            System.out.println("Fecha de Entrega: " + distribucion.getFechaEntrega());
-            System.out.println("Estado: " + distribucion.getEstado());
-            System.out.println("Donación ASC: " + distribucion.getDonacionAsc());
-            System.out.println("Email Beneficiario ASC: " + distribucion.getEmailBenefAsc());
-            System.out.println("-------------------------------");
-        }
-        
-        
-        if (!lstDistribuciones.isEmpty()) {
-            request.setAttribute("distribuciones", lstDistribuciones);
+            String email = userControler.getUsuario().getEmail();
+            for (DtDistribucion distribucion : lstDistribuciones) {
+                if (distribucion.getEmailBenefAsc().equals(email)) {
+                    lstDistribucionesFilter.add(distribucion);
+                }
+            }
+            if (lstDistribucionesFilter.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                response.getWriter().write("No hay distribuciones pendientes para tu cuenta.");
+                return;
+            } else {
+                request.setAttribute("distribuciones", lstDistribucionesFilter);
+            }
         } else {
-            request.setAttribute("mensaje", "No hay distribuciones pendientes.");
+            request.setAttribute("distribuciones", lstDistribuciones);
         }
-        
+
+        // En lugar de hacer un forward, puedes retornar un JSON o una respuesta HTML
         request.getRequestDispatcher("verDistribuciones.jsp").forward(request, response);
-        
-        
     }
 }
+
+
+
