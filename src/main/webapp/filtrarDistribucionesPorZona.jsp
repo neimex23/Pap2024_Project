@@ -1,5 +1,6 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,101 +24,52 @@
 </head>
 <body>
     <h1>Filtrar Distribuciones por Zona</h1>
-    <form action="filtrarDistribucionesPorZonaServlet" method="post" onsubmit="return validateForm()">
+    <form id="filterForm" onsubmit="return false;">
         <label for="barrio">Seleccione un barrio:</label>
-        <select name="barrio" id="barrio" onchange="removeDefaultOption()">
-            <option value="" selected disabled> </option>
+        <select name="barrio" id="barrio" onchange="fetchDistribuciones(event)">
+            <option value="" selected disabled></option>
             <option value="CENTRO">Centro</option>
             <option value="CIUDAD_VIEJA">Ciudad Vieja</option>
-            <option value="CORDON">Cordon</option>
-            <option value="PARQUE_RODO">Parque Rodo</option>            
+            <option value="CORDON">Cordón</option>
+            <option value="PARQUE_RODO">Parque Rodó</option>
             <option value="PALERMO">Palermo</option>
         </select>
-
-        <script>
-            function removeDefaultOption() {
-                const select = document.getElementById('barrio');
-                if (select.options[0].value === "") {
-                    select.options[0].style.display = 'none'; // Oculta la opción por defecto
-                }
-            }
-
-            function validateForm() {
-                const select = document.getElementById('barrio');
-                if (select.value === "") {
-                    alert("Por favor, seleccione un barrio."); // Mensaje de advertencia
-                    return false; // Evita el envío del formulario
-                }
-                return true; // Permite el envío del formulario
-            }
-        </script>
-
-        <button type="submit">Filtrar</button>
     </form>
-<%
-String barrioSeleccionado = request.getParameter("barrio");
 
-if (barrioSeleccionado == null) { // Primera vez que se entra a la pagina web
-%>
-    <h2>No se ha seleccionado ningún barrio</h2>
-<%
-    } else { // Luego de seleccionar algun barrio especifico
-%>
-    <c:choose>
-        <c:when test="${param.barrio == 'CENTRO'}">
-            <h2>Distribuciones en Centro</h2>
-        </c:when>
-        <c:when test="${param.barrio == 'CIUDAD_VIEJA'}">
-            <h2>Distribuciones en Ciudad Vieja</h2>
-        </c:when>
-        <c:when test="${param.barrio == 'CORDON'}">
-            <h2>Distribuciones en Cordón</h2>
-        </c:when>
-        <c:when test="${param.barrio == 'PARQUE_RODO'}">
-            <h2>Distribuciones en Parque Rodó</h2>
-        </c:when>
-        <c:when test="${param.barrio == 'PALERMO'}">
-            <h2>Distribuciones en Palermo</h2>
-        </c:when>     
-        <c:otherwise>
-            <h2>No se ha seleccionado ningún barrio</h2>
-        </c:otherwise>
-    </c:choose>
+    <div id="result"></div> <!-- aca se muestra la tabla -->
 
-    <c:choose>
-        <c:when test="${not empty distribuciones}">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email Beneficiario</th>
-                        <th>Estado</th>
-                        <th>Fecha Entrega</th>
-                        <th>Fecha Preparación</th>
-                        <th>ID Donación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="distribucion" items="${distribuciones}">
-                        <tr>
-                            <td>${distribucion.id}</td>
-                            <td>${distribucion.emailBenefAsc}</td>
-                            <td>${distribucion.estado}</td>
-                            <td>${distribucion.fechaEntrega}</td>
-                            <td>${distribucion.fechaPreparacion}</td>
-                            <td>${distribucion.donacionAsc}</td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:when>
-        <c:otherwise>
-            <h2>No hay distribuciones pendientes</h2>
-        </c:otherwise>
-    </c:choose>
-<%
-} // Cierra el else 
-%>
+    <script>
+        async function fetchDistribuciones(event) {
+            event.preventDefault(); // Evita el comportamiento predeterminado del formulario
+            const select = document.getElementById('barrio');
+            const barrio = select.value;
+
+            if (barrio === "") {
+                alert("Por favor, seleccione un barrio.");
+                return;
+            }
+
+            try {
+                const response = await fetch('filtrarDistribucionesPorZonaServlet', {
+                    method: 'POST',
+                    headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: 'barrio=' + encodeURIComponent(barrio)
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    document.getElementById('result').innerHTML = data; // Muestra el resultado en el div
+                } else {
+                    alert('Error al obtener distribuciones.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al comunicarse con el servidor.');
+            }
+        }
+    </script>
 </body>
 </html>
-
