@@ -23,16 +23,35 @@
 </head>
 <body>
     <h1>Filtrar Distribuciones por Zona</h1>
-    <form action="filtrarDistribucionesPorZonaServlet" method="post">
+    <form action="filtrarDistribucionesPorZonaServlet" method="post" onsubmit="return validateForm()">
         <label for="barrio">Seleccione un barrio:</label>
-        <select name="barrio" id="barrio">
-            <option value="TODAS">Todas</option>
+        <select name="barrio" id="barrio" onchange="removeDefaultOption()">
+            <option value="" selected disabled> </option>
             <option value="CENTRO">Centro</option>
             <option value="CIUDAD_VIEJA">Ciudad Vieja</option>
             <option value="CORDON">Cordon</option>
             <option value="PARQUE_RODO">Parque Rodo</option>            
             <option value="PALERMO">Palermo</option>
         </select>
+
+        <script>
+            function removeDefaultOption() {
+                const select = document.getElementById('barrio');
+                if (select.options[0].value === "") {
+                    select.options[0].style.display = 'none'; // Oculta la opción por defecto
+                }
+            }
+
+            function validateForm() {
+                const select = document.getElementById('barrio');
+                if (select.value === "") {
+                    alert("Por favor, seleccione un barrio."); // Mensaje de advertencia
+                    return false; // Evita el envío del formulario
+                }
+                return true; // Permite el envío del formulario
+            }
+        </script>
+
         <button type="submit">Filtrar</button>
     </form>
 <%
@@ -42,12 +61,9 @@ if (barrioSeleccionado == null) { // Primera vez que se entra a la pagina web
 %>
     <h2>No se ha seleccionado ningún barrio</h2>
 <%
-    } else { // Luego de seleccionar algun barrio
+    } else { // Luego de seleccionar algun barrio especifico
 %>
     <c:choose>
-        <c:when test="${param.barrio == 'TODAS'}">
-            <h2>Distribuciones en las Zonas</h2>
-        </c:when>
         <c:when test="${param.barrio == 'CENTRO'}">
             <h2>Distribuciones en Centro</h2>
         </c:when>
