@@ -38,7 +38,7 @@ public class filtrarDistribucionesPorZonaServlet extends HttpServlet {
         request.setAttribute("distribuciones", distribuciones);
         
         // Redirigir a una página de resultados (HTML o JSP)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/resultadosDistribuciones.html");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/filtrarDistribucionesPorZona.jsp");
         dispatcher.forward(request, response);
     }
 }
