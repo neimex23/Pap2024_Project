@@ -52,17 +52,22 @@ public class verPerfilServlet extends HttpServlet {
                 DtBeneficiario beneficiario = (DtBeneficiario) usuario;
                 request.setAttribute("tipoUsuario", "Beneficiario");
                 request.setAttribute("direccion", beneficiario.getDireccion());
-
+                
+                // Impresiones para ver los resultados obtenidos
+                System.out.println("Nombre: " + beneficiario.getNombre());
+                System.out.println("Email: " + beneficiario.getEmail());
+                System.out.println("Fecha de Nacimiento: " + beneficiario.getFechaNacimiento());
+                
                 // Obtener y formatear la fecha de nacimiento
                 org.pap.publicadores.LocalDateTime fechaNacSOAP = beneficiario.getFechaNacimiento();
+                //org.pap.publicadores.LocalDateTime fechaNacSOAP = new LocalDateTime(1997, 11, 19, 00, 00, 00);
+                // La linea de arriba es para probar
+                // Si le cargo los datos a mano con "new LocalDateTime(1997, 11, 19, 00, 00, 00)" funciona correctamente, por lo tanto
+                // la funcion transforma la fecha a string. El problema es al obtener la fecha cuando se genera el DtBeneficiario
                 if (fechaNacSOAP != null) {
                     try {
                         // Formatear la fecha simple YYYY-MM-DD
-                        String fechaNacStr = String.format("%04d-%02d-%02d",
-                            fechaNacSOAP.getYear(),
-                            fechaNacSOAP.getMonth(),
-                            fechaNacSOAP.getDay());
-                        
+                        String fechaNacStr = fechaNacSOAP.getFechaString();
                         request.setAttribute("fechaNacimiento", fechaNacStr);
                         System.out.println("Fecha formateada: " + fechaNacStr);
                     } catch (Exception e) {
