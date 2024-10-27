@@ -8,7 +8,35 @@
 package org.pap.publicadores;
 
 public class LocalDateTime  implements java.io.Serializable {
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int minute;
+    private int second;
+
+    // Constructor por defecto
     public LocalDateTime() {
+    }
+
+    // Constructor que recibe año, mes, día, hora, minuto y segundo
+    public LocalDateTime(int year, int month, int day, int hour, int minute, int second) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
+    }
+
+    // Método para obtener la fecha como String (formato yyyy-MM-dd)
+    public String getFechaString() {
+        return String.format("%04d-%02d-%02d", year, month, day);
+    }
+
+    // Método para obtener la fecha y hora como String (formato yyyy-MM-dd HH:mm:ss)
+    public String getFechaYHoraString() {
+        return String.format("%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
     }
 
     private java.lang.Object __equalsCalc = null;
