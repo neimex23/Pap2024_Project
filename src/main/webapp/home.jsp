@@ -62,12 +62,12 @@
         %>
             <a href="/verDistribuciones.jsp"><i class="fas fa-eye"></i> Ver Distribuciones</a>   
             <a href="/filtrarDistribucionesPorZona.jsp"><i class="fas fa-filter"></i> Filtrar Distribuciones Por Zona</a>
-            <a href="/verPerfil.jsp"><i class="fas fa-user"></i> Ver mi perfil</a> 
+            <a href="/verPerfil.jsp"><i class="fas fa-user"></i> Mi Perfil</a> 
         <% 
             } else { // Si es Beneficiario
         %>
-            <a href="/verDistribuciones.jsp"><i class="fas fa-eye"></i> Ver Distribuciones</a>   
-            <a href="/verPerfil.jsp"><i class="fas fa-user"></i> Ver mi perfil</a> 
+            <a href="/verDistribuciones.jsp"><i class="fas fa-eye"></i> Mis Distribuciones</a>  
+            <a href="/verPerfil.jsp"><i class="fas fa-user"></i> Mi Perfil</a> 
         <%
             }
         %>
