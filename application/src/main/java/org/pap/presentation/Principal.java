@@ -33,29 +33,8 @@ import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JTextArea;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.Box;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JPasswordField;
 
 
 public class Principal {
@@ -793,104 +772,134 @@ public class Principal {
     }
 
     private static void mostrarFormularioListarDistribucion(String titulo) {
-        // Crear un JInternalFrame para el formulario
-        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(600, 400);
-        internalFrame.setLayout(new BorderLayout());
-        internalFrame.setLocation(100, 100);
+        // Crear y configurar el JInternalFrame
+        JInternalFrame internalFrame = crearInternalFrame(titulo);
 
-        // Panel para el estado de distribución
-        JPanel panelEstado = new JPanel();
-        JLabel lblEstado = new JLabel("Estado de Distribución:");
-        JComboBox<String> cbEstado = new JComboBox<>();
-        String nullString = "";
-        cbEstado.addItem(nullString);
-        cbEstado.addItem("Todas");  // Opción para todas las distribuciones
+        // Crear y configurar el JComboBox para el estado de distribución
+        JPanel panelEstado = crearPanelEstadoDistribucion(internalFrame);
 
-        panelEstado.add(lblEstado);
-        panelEstado.add(cbEstado);
-        for (EnumEstadoDistribucion estado : EnumEstadoDistribucion.values()) {
-            cbEstado.addItem(estado.name());
-        }
-        // Tabla para mostrar las distribuciones
-        String[] columnNames = {"Fecha Preparación", "Fecha Entrega", "Tipo", "Descripción"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        // Crear y configurar la tabla de distribuciones
+        DefaultTableModel tableModel = crearTableModel();
         JTable tablaDistribuciones = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tablaDistribuciones);
 
-        // Actualizar la tabla según el estado seleccionado
-        cbEstado.addActionListener((ActionEvent e) -> {
-            cbEstado.removeItem(nullString);
-            String estadoSeleccionado = (String) cbEstado.getSelectedItem();
+        // Evento para actualizar la tabla según el estado seleccionado
+        JComboBox<String> cbEstado = (JComboBox<String>) panelEstado.getComponent(1);
+        cbEstado.addActionListener(e -> actualizarTablaDistribuciones(cbEstado, tableModel));
 
-            List<DTDistribucion> distribuciones;
-            if ("Todas".equals(estadoSeleccionado)) {
-                // Obtener todas las distribuciones si se selecciona "Todas"
-                distribuciones = fabrica.getIControlador().listarDistribuciones();
-            } else {
-                // Convertir el estado seleccionado a EnumEstadoDistribucion y obtener las distribuciones por estado
-                EnumEstadoDistribucion estado = EnumEstadoDistribucion.valueOf(estadoSeleccionado);
-                distribuciones = fabrica.getIControlador().listarDistribucionesPorEstado(estado);
-            }
-
-            tableModel.setRowCount(0); // Limpiar tabla existente
-
-            if (distribuciones.isEmpty()) {
-                tableModel.addRow(new Object[]{"No hay distribuciones disponibles", "", "", ""});
-                return;
-            }
-
-            distribuciones.forEach((DTDistribucion distribucion) -> {
-                DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getId());
-
-                String tipo;
-                if (donacion instanceof DTAlimento) {
-                    tipo = "Alimento";
-                } else if (donacion instanceof DTArticulo) {
-                    tipo = "Artículo";
-                } else {
-                    tipo = "Desconocido";
-                }
-
-                String descripcion;
-                switch (donacion) {
-                    case DTAlimento dTAlimento ->
-                        descripcion = dTAlimento.getDescProducto();
-                    case DTArticulo dTArticulo ->
-                        descripcion = dTArticulo.getDescr();
-                    default ->
-                        descripcion = "N/A";
-                }
-
-                tableModel.addRow(new Object[]{
-                    distribucion.getFechaPreparacion().toString(),
-                    distribucion.getFechaEntrega().toString(),
-                    tipo,
-                    descripcion
-                });
-            });
-
-            if (tableModel.getRowCount() == 0) {
-                tableModel.addRow(new Object[]{"No hay distribuciones para este estado", "", "", ""});
-            }
-        });
-
-        // Panel inferior con el botón Cancelar
-        JPanel panelInferior = new JPanel();
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> internalFrame.dispose());
-        panelInferior.add(btnCancelar);
+        // Crear panel inferior con el botón Cancelar
+        JPanel panelInferior = crearPanelInferior(internalFrame);
 
         // Añadir componentes al JInternalFrame
         internalFrame.add(panelEstado, BorderLayout.NORTH);
         internalFrame.add(scrollPane, BorderLayout.CENTER);
         internalFrame.add(panelInferior, BorderLayout.SOUTH);
 
-
         // Añadir el JInternalFrame al JDesktopPane
         desktopPane.add(internalFrame);
         internalFrame.setVisible(true);
     }
+
+    // Método auxiliar para crear el JInternalFrame
+    private static JInternalFrame crearInternalFrame(String titulo) {
+        JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
+        internalFrame.setSize(600, 400);
+        internalFrame.setLayout(new BorderLayout());
+        internalFrame.setLocation(100, 100);
+        return internalFrame;
+    }
+
+    // Método auxiliar para crear el panel de estado de distribución
+    private static JPanel crearPanelEstadoDistribucion(JInternalFrame internalFrame) {
+        JPanel panelEstado = new JPanel();
+        JLabel lblEstado = new JLabel("Estado de Distribución:");
+        JComboBox<String> cbEstado = new JComboBox<>();
+
+        cbEstado.addItem("");  // Espacio inicial vacío
+        cbEstado.addItem("Todas");  // Opción para todas las distribuciones
+
+        for (EnumEstadoDistribucion estado : EnumEstadoDistribucion.values()) {
+            cbEstado.addItem(estado.name());
+        }
+
+        panelEstado.add(lblEstado);
+        panelEstado.add(cbEstado);
+        return panelEstado;
+    }
+
+    // Método auxiliar para crear el modelo de la tabla
+    private static DefaultTableModel crearTableModel() {
+        String[] columnNames = {"Fecha Preparación", "Fecha Entrega", "Tipo", "Descripción"};
+        return new DefaultTableModel(columnNames, 0);
+    }
+
+    // Método auxiliar para crear el panel inferior con el botón Cancelar
+    private static JPanel crearPanelInferior(JInternalFrame internalFrame) {
+        JPanel panelInferior = new JPanel();
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> internalFrame.dispose());
+        panelInferior.add(btnCancelar);
+        return panelInferior;
+    }
+
+    // Método para actualizar la tabla de distribuciones según el estado seleccionado
+    private static void actualizarTablaDistribuciones(JComboBox<String> cbEstado, DefaultTableModel tableModel) {
+        String estadoSeleccionado = (String) cbEstado.getSelectedItem();
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                try {
+                    List<DTDistribucion> distribuciones = "Todas".equals(estadoSeleccionado)
+                            ? fabrica.getIControlador().listarDistribuciones()
+                            : fabrica.getIControlador().listarDistribucionesPorEstado(EnumEstadoDistribucion.valueOf(estadoSeleccionado));
+
+                    SwingUtilities.invokeLater(() -> tableModel.setRowCount(0));
+
+                    for (DTDistribucion distribucion : distribuciones) {
+                        new SwingWorker<Void, Void>() {
+                            @Override
+                            protected Void doInBackground() {
+                                agregarFilaDistribucion(tableModel, distribucion);
+                                return null;
+                            }
+                        }.execute();
+                    }
+
+                } catch (IllegalArgumentException ex) {
+                    SwingUtilities.invokeLater(() -> {
+                        tableModel.setRowCount(0);
+                        tableModel.addRow(new Object[]{"Estado no válido seleccionado", "", "", ""});
+                    });
+                }
+                return null;
+            }
+        };
+
+        worker.execute();
+    }
+
+
+
+    // Método auxiliar para agregar una fila a la tabla de distribuciones
+    private static void agregarFilaDistribucion(DefaultTableModel tableModel, DTDistribucion distribucion) {
+        DTDonacion donacion = fabrica.getIControlador().obtenerDonacion(distribucion.getId());
+
+        String tipo = donacion instanceof DTAlimento ? "Alimento" : donacion instanceof DTArticulo ? "Artículo" : "Desconocido";
+        String descripcion = switch (donacion) {
+            case DTAlimento dTAlimento -> dTAlimento.getDescProducto();
+            case DTArticulo dTArticulo -> dTArticulo.getDescr();
+            default -> "N/A";
+        };
+
+        tableModel.addRow(new Object[]{
+                distribucion.getFechaPreparacion().toString(),
+                distribucion.getFechaEntrega().toString(),
+                tipo,
+                descripcion
+        });
+    }
+
 
     private static void mostrarFormularioModDistribucion(String titulo) {
         // Crear un JInternalFrame para el formulario

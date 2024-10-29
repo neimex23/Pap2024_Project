@@ -1,6 +1,7 @@
 package org.pap.dtClasses;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.pap.Enums.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,6 +16,7 @@ public class DTBeneficiario extends DTUsuario{
     private String direccion;
 
     @XmlElement(name = "fechaNacimiento")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime fechaNacimiento;
 
     @XmlElement(name = "estado")
