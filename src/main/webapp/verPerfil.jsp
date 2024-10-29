@@ -74,6 +74,7 @@
     </style>
 </head>
 <body>
+
     <div class="profile-container">
         <div class="profile-header">
             <h1>Mi Perfil</h1>
