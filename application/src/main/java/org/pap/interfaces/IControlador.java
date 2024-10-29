@@ -43,6 +43,4 @@ public interface IControlador {
     DTUsuario obtenerDTRepartidor(String emailBeneficiario);
     List<DTUsuario> ListarBeneficiarioZona(EnumBarrio barrio); //Para listar beneficiarios por zona
     List<DTUsuario> ListarBeneficiarioEstado(EnumEstadoBeneficiario estado); //Para listar beneficiarios por estado
-
-    List<DTDistribucion> listarDistribucionesBD();
 }

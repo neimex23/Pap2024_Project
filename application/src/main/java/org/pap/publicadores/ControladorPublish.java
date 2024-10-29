@@ -50,7 +50,7 @@ public class ControladorPublish {
 
     @WebMethod
     public DTDistribucion[] listarDistribuciones(){
-        List<DTDistribucion> distribuciones = icon.listarDistribucionesBD();
+        List<DTDistribucion> distribuciones = icon.listarDistribuciones();
         if (distribuciones == null) {
             return new DTDistribucion[0]; // Devolver un array vacío en lugar de null
         }

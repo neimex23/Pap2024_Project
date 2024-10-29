@@ -37,7 +37,7 @@ public class DTDistribucion {
         this.fechaEntrega = FechaEntrega;
         this.fechaPreparacion = FechaPreparacion;
         this.estado = estado;
-        this.Id = idDonacionAsc;
+        this.Id = Id;
         this.donacionAsc = idDonacionAsc;
         this.emailBenefAsc = emailBenefAsc;
     }

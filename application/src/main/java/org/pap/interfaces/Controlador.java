@@ -489,31 +489,6 @@ public class Controlador implements IControlador {
     }
 
     @Override
-    public List<DTDistribucion> listarDistribucionesBD() {
-        emf = Persistence.createEntityManagerFactory("Conexion");
-        em = emf.createEntityManager();
-        em.getTransaction().begin();
-
-        List<DTDistribucion> dTDistribuciones = new ArrayList<>();
-
-        try {
-            // HQL para obtener todas las distribuciones
-            List<Distribucion> distribuciones = em.createQuery("FROM Distribucion", Distribucion.class)
-                    .getResultList();
-
-            // Transformar cada entidad Distribucion a DTDistribucion
-            distribuciones.forEach(distribucion ->
-                    dTDistribuciones.add(distribucion.transform())
-            );
-
-            return dTDistribuciones;
-        } finally {
-            em.close(); // Cierra el EntityManager después de usarlo
-        }
-    }
-
-
-    @Override
     public List<DTDistribucion> listarDistribucionesPorEstado(EnumEstadoDistribucion estado) {
         List<Distribucion> distribuciones = manejadorDistribucion.getDistribuciones();
         List<DTDistribucion> lista = new ArrayList<>();
