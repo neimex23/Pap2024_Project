@@ -32,7 +32,7 @@ public class verPerfilServlet extends HttpServlet {
 
         // Verificar si el usuario está autenticado
         UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
-        if (usuarioLogin.getTipo() == UsuarioLogin.LoginL.NoLogin) {
+        if (usuarioLogin.getUsuario() == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -58,7 +58,7 @@ public class verPerfilServlet extends HttpServlet {
                 // Impresiones para ver los resultados obtenidos
                 System.out.println("Nombre: " + beneficiario.getNombre());
                 System.out.println("Email: " + beneficiario.getEmail());
-                System.out.println("Fecha de Nacimiento: " + beneficiario.getFechaNacimiento());
+                //System.out.println("Fecha de Nacimiento: " + beneficiario.getFechaNacimiento());
                 
                 
                 // Obtener y formatear la fecha de nacimiento
@@ -103,7 +103,7 @@ public class verPerfilServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
-        if (usuarioLogin.getTipo() == UsuarioLogin.LoginL.NoLogin) {
+        if (usuarioLogin.getUsuario() == null) {
             response.sendRedirect("login.jsp");
             return;
         }
