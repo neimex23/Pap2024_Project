@@ -8,7 +8,6 @@ import org.pap.publicadores.*;
 
 
 public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobre el usuario logeado en el sistema
-    public static enum LoginL {NoLogin, Beneficiario, Repartidor}
     
     private static UsuarioLogin instancia = null;
     private UsuarioLogin() {}
@@ -19,7 +18,6 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
     }
     
     private DtUsuario usuario = null;
-    private LoginL tipo = LoginL.NoLogin; //Se va a usar para hacer la historia de cerrar secion
 
     public DtUsuario getUsuario() {
         return usuario;
@@ -27,27 +25,11 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
 
     public void setUsuario(DtUsuario usuario) {
         this.usuario = usuario;
-        if (usuario != null){
-            if (usuario instanceof DtRepartidor) {
-                tipo = LoginL.Repartidor;
-            } 
-            else 
-            {
-                tipo = LoginL.Beneficiario;
-            }
-        }
     }
 
-    public LoginL getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(LoginL tipo) {
-        this.tipo = tipo;
-        if (tipo == LoginL.NoLogin) { //Reiniciar datos
-            usuario = null;
-        }
-    }
+    public boolean isLogin(){return usuario!=null;}
+    
+    public void Logout() {setUsuario(null);}
     
      
 }
