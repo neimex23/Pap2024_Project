@@ -3,7 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package cscorner;
-import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.pap.publicadores.*;
 
 
@@ -29,7 +33,27 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
 
     public boolean isLogin(){return usuario!=null;}
     
-    public void Logout() {setUsuario(null);}
+    public void Logout(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException { 
+        {setUsuario(null);
+        // Redirigir a Login
+        request.setAttribute("error", "Se Cerro Sesión");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+        dispatcher.forward(request, response); 
+    }}
+    
+    public void checkLogin(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+        if (!isLogin()) {
+        //Establece la pagina sin Cache al iniciar
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // Proxies
+        
+        // Redirigir a Login
+        request.setAttribute("error", "Debe Iniciar Sesión Primero");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+        dispatcher.forward(request, response); 
+        }
+    }
     
      
 }
