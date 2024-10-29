@@ -74,6 +74,8 @@
     </style>
 </head>
 <body>
+    <!-- Incluir la barra de navegación -->
+    <jsp:include page="navbar.jsp" />
     <div class="profile-container">
         <div class="profile-header">
             <h1>Mi Perfil</h1>

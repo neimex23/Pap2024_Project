@@ -27,6 +27,8 @@
     </style>
 </head>
 <body>
+    <!-- Incluir la barra de navegación -->
+    <jsp:include page="navbar.jsp" />
     <h1>Filtrar Distribuciones por Zona</h1>
     <form id="filterForm" onsubmit="return false;">
         <label for="barrio">Seleccione un barrio:</label>

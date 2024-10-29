@@ -25,6 +25,8 @@
     </style>
 </head>
 <body>
+    <!-- Incluir la barra de navegación -->
+    <jsp:include page="navbar.jsp" />
     <h1>Listar Distribuciones</h1>
     <form id="autoSubmitForm" action="verDistribucionesServlet" method="post"">
         <button type="submit">Listar</button>
