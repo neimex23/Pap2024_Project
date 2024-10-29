@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.pap.publicadores.*;
 
 @WebServlet("/verPerfil")
@@ -58,18 +60,22 @@ public class verPerfilServlet extends HttpServlet {
                 System.out.println("Email: " + beneficiario.getEmail());
                 System.out.println("Fecha de Nacimiento: " + beneficiario.getFechaNacimiento());
                 
+                
                 // Obtener y formatear la fecha de nacimiento
-                org.pap.publicadores.LocalDateTime fechaNacSOAP = beneficiario.getFechaNacimiento();
-                //org.pap.publicadores.LocalDateTime fechaNacSOAP = new LocalDateTime(1997, 11, 19, 00, 00, 00);
-                // La linea de arriba es para probar
-                // Si le cargo los datos a mano con "new LocalDateTime(1997, 11, 19, 00, 00, 00)" funciona correctamente, por lo tanto
-                // la funcion transforma la fecha a string. El problema es al obtener la fecha cuando se genera el DtBeneficiario
+                String fechaNacSOAP = beneficiario.getFechaNacimiento();
                 if (fechaNacSOAP != null) {
                     try {
-                        // Formatear la fecha simple YYYY-MM-DD
-                        String fechaNacStr = fechaNacSOAP.getFechaString();
-                        request.setAttribute("fechaNacimiento", fechaNacStr);
-                        System.out.println("Fecha formateada: " + fechaNacStr);
+                        // Define el formato original
+                        DateTimeFormatter formatoOriginal = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+                        // Parsea la cadena a LocalDateTime
+                        LocalDateTime fecha = LocalDateTime.parse(fechaNacSOAP, formatoOriginal);
+                        // Define el nuevo formato
+                        DateTimeFormatter formatoNuevo = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        // Formatea la fecha al nuevo formato
+                        String fechaFormateada = fecha.format(formatoNuevo);
+                        request.setAttribute("fechaNacimiento", fechaFormateada);
+                        // Mostrar salida
+                        System.out.println("Fecha formateada: " + fechaFormateada);
                     } catch (Exception e) {
                         System.out.println("Error al formatear la fecha: " + e.getMessage());
                         request.setAttribute("fechaNacimiento", "Fecha no disponible");
