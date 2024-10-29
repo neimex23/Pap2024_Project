@@ -1,5 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
+<%@ page import="cscorner.UsuarioLogin" %> 
+<%
+    // Verificar el estado de la sesión y Establece no cache en la pagina
+    UsuarioLogin.GetInstancia().checkLogin(request, response);
+%>
+
+<%
+    // Verifica si se ha presionado el botón de cierre de sesión
+    if (request.getParameter("logoutButton") != null) {
+        UsuarioLogin.GetInstancia().Logout(request, response);
+        return; // 
+    }
+%>
+
 <%@ page import="org.pap.publicadores.DtUsuario"%>
 <%@ page import="cscorner.UsuarioLogin"%>
 <%@ page import="org.pap.publicadores.DtRepartidor"%>
@@ -71,7 +86,8 @@
         <%
             }
         %>
-        
+        <form method="post">
+        <button type="submit" name="logoutButton">Cerrar Sesión</button>
     </nav>
 </body>
 </html>
