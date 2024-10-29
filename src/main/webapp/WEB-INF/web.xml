@@ -1,47 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="4.0"
-         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
-
+<web-app id="WebApp_ID" version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
     <!-- Nombre de la aplicación -->
     <display-name>webPap2024</display-name>
-
     <!-- Definir los servlets -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>cscorner.LoginServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>verDistribucionesServlet</servlet-name>
         <servlet-class>cscorner.verDistribuciones</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>filtrarDistribucionesPorZonaServlet</servlet-name>
         <servlet-class>cscorner.filtrarDistribucionesPorZonaServlet</servlet-class>
     </servlet>
-
     <!-- Mapeos de los servlets -->
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>cscorner.LogoutServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>verDistribucionesServlet</servlet-name>
         <url-pattern>/verDistribuciones</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>filtrarDistribucionesPorZonaServlet</servlet-name>
         <url-pattern>/filtrarDistribucionesPorZona</url-pattern>
     </servlet-mapping>
-
     <!-- Configuración de página de bienvenida -->
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>
