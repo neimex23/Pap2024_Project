@@ -8,9 +8,9 @@
 package org.pap.publicadores;
 
 public interface ControladorPublish extends java.rmi.Remote {
+    public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException;
     public org.pap.publicadores.DtUsuario obtenerUsuario(java.lang.String arg0) throws java.rmi.RemoteException;
     public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorEstado(java.lang.String arg0) throws java.rmi.RemoteException;
-    public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException;
     public org.pap.publicadores.DtDistribucion[] listarDistribuciones() throws java.rmi.RemoteException;
     public void modificarBeneficiario(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.util.Calendar arg4, java.lang.String arg5, java.lang.String arg6) throws java.rmi.RemoteException;
     public void modificarRepartidor(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3) throws java.rmi.RemoteException;

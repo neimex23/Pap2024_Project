@@ -44,6 +44,12 @@ public class ControladorPublishProxy implements org.pap.publicadores.Controlador
     return controladorPublish;
   }
   
+  public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException{
+    if (controladorPublish == null)
+      _initControladorPublishProxy();
+    return controladorPublish.listarDistribucionesPorZona(arg0);
+  }
+  
   public org.pap.publicadores.DtUsuario obtenerUsuario(java.lang.String arg0) throws java.rmi.RemoteException{
     if (controladorPublish == null)
       _initControladorPublishProxy();
@@ -54,12 +60,6 @@ public class ControladorPublishProxy implements org.pap.publicadores.Controlador
     if (controladorPublish == null)
       _initControladorPublishProxy();
     return controladorPublish.listarDistribucionesPorEstado(arg0);
-  }
-  
-  public org.pap.publicadores.DtDistribucion[] listarDistribucionesPorZona(java.lang.String arg0) throws java.rmi.RemoteException{
-    if (controladorPublish == null)
-      _initControladorPublishProxy();
-    return controladorPublish.listarDistribucionesPorZona(arg0);
   }
   
   public org.pap.publicadores.DtDistribucion[] listarDistribuciones() throws java.rmi.RemoteException{
