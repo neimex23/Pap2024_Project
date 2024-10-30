@@ -195,11 +195,69 @@ public class Principal {
         // Mostrar el cuadro de diálogo de inicio de sesión
         // Hacer visible el JFrame
         ventanaP.setVisible(true);
+        ventanaP.setEnabled(false);
 
-        Fabrica.getInstancia().getIControlador().cargarBaseDatos();
-        ControladorPublish cp = new ControladorPublish();
-        cp.publicar();
+        // Usar SwingWorker para cargar la base de datos en segundo plano
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                // Mostrar el diálogo de carga en el hilo de trabajo
+                JDialog loadingDialog = new JDialog(ventanaP, "Cargando", false);
+                loadingDialog.setSize(300, 150);
+                loadingDialog.setLayout(new BorderLayout());
+                loadingDialog.setLocationRelativeTo(ventanaP);
+
+                // Progreso de carga
+                JProgressBar progressBar = new JProgressBar();
+                progressBar.setIndeterminate(true); // Indeterminate para indicar carga sin tiempo fijo
+                loadingDialog.add(progressBar, BorderLayout.CENTER);
+                loadingDialog.add(new JLabel("Cargando base de datos, por favor espera..."), BorderLayout.NORTH);
+
+                loadingDialog.setVisible(true); // Mostrar el diálogo de carga
+
+                try {
+                    // Simulación de carga de la base de datos
+                    Fabrica.getInstancia().getIControlador().cargarBaseDatos();
+                    ControladorPublish cp = new ControladorPublish();
+                    cp.publicar();
+                } catch (Exception e) {
+                    // Manejo del error en el hilo de trabajo
+                    mostrarError(e.getMessage());
+                } finally {
+                    loadingDialog.dispose(); // Cerrar el diálogo de carga
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                ventanaP.setEnabled(true); // Habilitar el JFrame
+                ventanaP.toFront();       // Lleva el frame al frente
+                ventanaP.requestFocus();
+            }
+        }.execute();
     }
+
+    private static void mostrarError(String mensaje) {
+        SwingUtilities.invokeLater(() -> {
+            // Crear un cuadro de diálogo para mostrar el error
+            JDialog errorDialog = new JDialog(ventanaP, "Error", true);
+            errorDialog.setSize(300, 150);
+            errorDialog.setLayout(new BorderLayout());
+            errorDialog.setLocationRelativeTo(ventanaP);
+
+            // Mensaje de error
+            errorDialog.add(new JLabel(mensaje), BorderLayout.CENTER);
+
+            // Botón para cerrar
+            JButton btnCerrar = new JButton("Cerrar");
+            btnCerrar.addActionListener((ActionEvent e) -> errorDialog.dispose());
+            errorDialog.add(btnCerrar, BorderLayout.SOUTH);
+
+            errorDialog.setVisible(true);
+        });
+    }
+
 
     private static void mostrarFormularioBeneficiario(String titulo) {
         // Crear un JInternalFrame para el formulario
@@ -874,6 +932,7 @@ public class Principal {
                 } catch (IllegalArgumentException ex) {
                     filas.add(new Object[]{"Estado no válido seleccionado", "", "", ""});
                 }
+                if (filas.isEmpty()) filas.add (new Object[]{ "No hay Distribuciones" });
                 return filas;
             }
 

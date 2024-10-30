@@ -79,6 +79,7 @@ public class Controlador implements IControlador {
             // En caso de error, revertir la transacción
             instanceEM.getTransaction().rollback();
             e.printStackTrace();
+            throw new RuntimeException("Error al cargar la base de datos: " + e.getMessage(), e);
         } finally {
             // Cerrar el EntityManager
             instanceEM.close();
