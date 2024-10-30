@@ -574,8 +574,8 @@ public class Controlador implements IControlador {
 
     @Override
     public DTDonacion obtenerDonacion(int id) {
-        DTDonacion donacion = manejadorDonacion.obtenerDonacionPorID(id).transformarADtDonacion();
-        return donacion;
+        Donacion donacionObtenido = manejadorDonacion.obtenerDonacionPorID(id);
+        return donacionObtenido.transformarADtDonacion();
     }
 
     @Override

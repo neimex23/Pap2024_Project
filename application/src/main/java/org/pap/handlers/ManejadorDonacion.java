@@ -30,11 +30,12 @@ public class ManejadorDonacion {
 		boolean encontrado = false;
 		int i = 0;
 		Donacion donacion = null;
-		while(i <= donaciones.size() && !encontrado ){
+		while(i < donaciones.size() && !encontrado ){
 			if(donaciones.get(i).getId() == id){
 				encontrado = true;
 				donacion = this.donaciones.get(i);
 			}
+			i++;
 		}
 		return donacion;
 	}
