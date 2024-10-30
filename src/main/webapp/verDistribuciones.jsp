@@ -1,7 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="cscorner.UsuarioLogin" %> 
+<% 
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setDateHeader("Expires", 0); // Proxies
+%>
 <%
-    // Verificar el estado de la sesi髇 y Establece no cache en la pagina
+    // Verificar el estado de la sesi贸n y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
 %>
 <!DOCTYPE html>
@@ -25,7 +30,7 @@
     </style>
 </head>
 <body>
-    <!-- Incluir la barra de navegaci髇 -->
+    <!-- Incluir la barra de navegaci贸n -->
     <jsp:include page="navbar.jsp" />
     <h1>Listar Distribuciones</h1>
     <form id="autoSubmitForm" action="verDistribucionesServlet" method="post"">
@@ -38,8 +43,8 @@
                 <th>Email Beneficiario</th>
                 <th>Estado</th>
                 <th>Fecha Entrega</th>
-                <th>Fecha Preparaci髇</th>
-                <th>ID Donaci髇</th>
+                <th>Fecha Preparaci贸n</th>
+                <th>ID Donaci贸n</th>
             </tr>
         </thead>
         <tbody>
