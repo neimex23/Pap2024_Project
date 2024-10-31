@@ -28,41 +28,37 @@
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
     <h1>Listar Distribuciones</h1>
-    <form id="autoSubmitForm" action="verDistribucionesServlet" method="post"">
-        <button type="submit">Listar</button>
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Email Beneficiario</th>
-                <th>Estado</th>
-                <th>Fecha Entrega</th>
-                <th>Fecha Preparación</th>
-                <th>ID Donación</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:choose>
-                <c:when test="${not empty distribuciones}">
-                    <c:forEach var="distribucion" items="${distribuciones}">
-                        <tr>
-                            <td>${distribucion.id}</td>
-                            <td>${distribucion.emailBenefAsc}</td>
-                            <td>${distribucion.estado}</td>
-                            <td>${distribucion.fechaEntrega}</td>
-                            <td>${distribucion.fechaPreparacion}</td>
-                            <td>${distribucion.donacionAsc}</td>
-                        </tr>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                        <td colspan="6">No hay distribuciones pendientes.</td>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
-        </tbody>
-    </table>
+    <button onclick="fetchDistribuciones(event)">Cargar Distribuciones</button>
+
+     <div id="result"></div>
+     
+     <script>
+         document.addEventListener("DOMContentLoaded", function() {
+            fetchDistribuciones(); // Llama a la función al inicio
+        });
+        async function fetchDistribuciones(event) {
+            event.preventDefault(); // Evita el comportamiento predeterminado del formulario
+            try {
+                const response = await fetch('verDistribucionesServlet', {
+                    method: 'POST',
+                    headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    document.getElementById('result').innerHTML = data; // Muestra el resultado en el div
+                } else {
+                    alert('Error al obtener distribuciones.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al comunicarse con el servidor.');
+            }
+        }
+    </script>
 </body>
 </html>
+
