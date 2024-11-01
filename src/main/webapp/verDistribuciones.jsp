@@ -1,7 +1,8 @@
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="cscorner.UsuarioLogin" %> 
 <%
-    // Verificar el estado de la sesión y Establece no cache en la pagina
+    // Verificar el estado de la sesiÃ³n y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
 %>
 <!DOCTYPE html>
@@ -25,19 +26,17 @@
     </style>
 </head>
 <body>
-    <!-- Incluir la barra de navegación -->
+    <!-- Incluir la barra de navegaciÃ³n -->
     <jsp:include page="navbar.jsp" />
     <h1>Listar Distribuciones</h1>
-    <button onclick="fetchDistribuciones(event)">Cargar Distribuciones</button>
-
+    
      <div id="result"></div>
      
      <script>
          document.addEventListener("DOMContentLoaded", function() {
-            fetchDistribuciones(); // Llama a la función al inicio
+            fetchDistribuciones(); // Llama a la funciÃ³n al inicio
         });
         async function fetchDistribuciones(event) {
-            event.preventDefault(); // Evita el comportamiento predeterminado del formulario
             try {
                 const response = await fetch('verDistribucionesServlet', {
                     method: 'POST',

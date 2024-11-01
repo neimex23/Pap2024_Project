@@ -5,9 +5,13 @@
 package cscorner;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +43,7 @@ public class verDistribucionesServlet extends HttpServlet {
     }
 
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
         DtDistribucion[] distribuciones = controlador.listarDistribucionesPorEstado("PENDIENTE");
@@ -56,9 +60,11 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
                 }
             }
             if (!lstDistribucionesFilter.isEmpty()) {
+                lstDistribucionesFilter = formatFecha(lstDistribucionesFilter);
                 request.setAttribute("distribuciones", lstDistribucionesFilter);
             }else {request.setAttribute("distribuciones", null);}  
         } else {
+            lstDistribuciones = formatFecha(lstDistribuciones);
             request.setAttribute("distribuciones", lstDistribuciones);
         }
 
@@ -72,6 +78,32 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             dispatcher.forward(request, response); // En este caso, se puede escribir en el flujo
         }
     }
+    
+    public static List<DtDistribucion> formatFecha(List<DtDistribucion> listChange) {
+    // Define el formato original y el formato deseado
+        DateTimeFormatter formatoOriginal = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]");
+        DateTimeFormatter formatoDeseado = DateTimeFormatter.ofPattern("dd-MM-yyyy - HH:mm:ss");
+
+        for (var dist : listChange) {
+            String fechaEn = dist.getFechaEntrega();
+            String fechaPre = dist.getFechaPreparacion();
+
+            // Convierte las fechas desde el formato original al nuevo formato
+            LocalDateTime fechaEntrega = LocalDateTime.parse(fechaEn, formatoOriginal);
+            LocalDateTime fechaPreparacion = LocalDateTime.parse(fechaPre, formatoOriginal);
+
+            // Formatea las fechas
+            String fechaEntregaFormateada = fechaEntrega.format(formatoDeseado);
+            String fechaPreparacionFormateada = fechaPreparacion.format(formatoDeseado);
+
+            // Asigna las fechas formateadas de nuevo a los objetos
+            dist.setFechaEntrega(fechaEntregaFormateada);
+            dist.setFechaPreparacion(fechaPreparacionFormateada);
+        }
+
+        return listChange;
+    }
+
 }
 
 
