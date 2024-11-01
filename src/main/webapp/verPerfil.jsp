@@ -1,147 +1,94 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="cscorner.UsuarioLogin" %> 
+<%
+    // Verificar el estado de la sesión y Establece no cache en la pagina
+    UsuarioLogin.GetInstancia().checkLogin(request, response);
+%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil</title>
-    <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 30px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .profile-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        .profile-field {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        .profile-label {
-            font-weight: bold;
-            color: #333;
-            width: 150px;
-            display: inline-block;
-        }
-        .profile-value {
-            color: #666;
-        }
-        .error-message {
-            color: #dc3545;
-            text-align: center;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #fff3f3;
-            border-radius: 4px;
-        }
-        button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .user-type-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 15px;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
-    <div class="profile-container">
-        <div class="profile-header">
-            <h1>Mi Perfil</h1>
-            <c:if test="${not empty tipoUsuario}">
-                <div class="user-type-badge">${tipoUsuario}</div>
-            </c:if>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>Mi Perfil</h1>
+                <c:if test="${not empty tipoUsuario}">
+                    <span class="badge badge-success">${tipoUsuario}</span>
+                </c:if>
+            </div>
+            <div class="card-body">
+                <form action="verPerfil" method="post">
+                    <button type="submit" class="btn btn-primary btn-block">Actualizar Información</button>
+                </form>
+
+                <c:if test="${not empty mensaje}">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <p>${mensaje}</p>
+                    </div>
+                </c:if>
+
+                <c:if test="${not empty nombreUsuario}">
+                    <!-- Información común -->
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Nombre:</label>
+                        <p>${nombreUsuario}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Email:</label>
+                        <p>${emailUsuario}</p>
+                    </div>
+
+                    <!-- Información específica del Beneficiario -->
+                    <c:if test="${tipoUsuario eq 'Beneficiario'}">
+                        <div class="mb-3">
+                            <label class="font-weight-bold">Dirección:</label>
+                            <p>${direccion}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="font-weight-bold">Fecha de Nacimiento:</label>
+                            <p>
+                                <c:choose>
+                                    <c:when test="${empty fechaNacimiento or fechaNacimiento eq 'Fecha no disponible'}">
+                                        Fecha no disponible
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${fechaNacimiento}
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="font-weight-bold">Estado:</label>
+                            <p>${estado}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="font-weight-bold">Barrio:</label>
+                            <p>${barrio}</p>
+                        </div>
+                    </c:if>
+
+                    <!-- Información específica del Repartidor -->
+                    <c:if test="${tipoUsuario eq 'Repartidor'}">
+                        <div class="mb-3">
+                            <label class="font-weight-bold">Número de Licencia:</label>
+                            <p>${numeroLicencia}</p>
+                        </div>
+                    </c:if>
+                </c:if>
+            </div>
         </div>
-        
-        <form action="verPerfil" method="post">
-            <button type="submit">Actualizar Información</button>
-        </form>
-        
-        <c:if test="${not empty mensaje}">
-            <div class="error-message">
-                <p>${mensaje}</p>
-            </div>
-        </c:if>
-        
-        <c:if test="${not empty nombreUsuario}">
-            <!-- Información común -->
-            <div class="profile-field">
-                <span class="profile-label">Nombre:</span>
-                <span class="profile-value">${nombreUsuario}</span>
-            </div>
-            <div class="profile-field">
-                <span class="profile-label">Email:</span>
-                <span class="profile-value">${emailUsuario}</span>
-            </div>
-            
-            <!-- Información específica del Beneficiario -->
-            <c:if test="${tipoUsuario eq 'Beneficiario'}">
-                <div class="profile-field">
-                    <span class="profile-label">Dirección:</span>
-                    <span class="profile-value">${direccion}</span>
-                </div>
-                <div class="profile-field">
-                    <span class="profile-label">Fecha de Nacimiento:</span>
-                    <span class="profile-value">
-                        <c:choose>
-                            <c:when test="${empty fechaNacimiento or fechaNacimiento eq 'Fecha no disponible'}">
-                                Fecha no disponible
-                            </c:when>
-                            <c:otherwise>
-                                ${fechaNacimiento}
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
-                <div class="profile-field">
-                    <span class="profile-label">Estado:</span>
-                    <span class="profile-value">${estado}</span>
-                </div>
-                <div class="profile-field">
-                    <span class="profile-label">Barrio:</span>
-                    <span class="profile-value">${barrio}</span>
-                </div>
-            </c:if>
-            
-            <!-- Información específica del Repartidor -->
-            <c:if test="${tipoUsuario eq 'Repartidor'}">
-                <div class="profile-field">
-                    <span class="profile-label">Número de Licencia:</span>
-                    <span class="profile-value">${numeroLicencia}</span>
-                </div>
-            </c:if>
-        </c:if>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

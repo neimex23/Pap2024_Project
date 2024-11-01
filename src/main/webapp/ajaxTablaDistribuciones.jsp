@@ -6,10 +6,12 @@
     // Verificar el estado de la sesión y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
 %>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <c:choose>
     <c:when test="${not empty distribuciones}">
-        <table>
-            <thead>
+        <table class="table table-striped">
+            <thead class="thead-light">
                 <tr>
                     <th>ID</th>
                     <th>Email Beneficiario</th>
@@ -37,4 +39,5 @@
         <h2>No hay distribuciones pendientes</h2>
     </c:otherwise>
 </c:choose>
+
 

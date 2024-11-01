@@ -11,35 +11,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Filtrar Distribuciones por Zona</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
     <h1>Filtrar Distribuciones por Zona</h1>
-    <form id="filterForm" onsubmit="return false;">
-        <label for="barrio">Seleccione un barrio:</label>
-        <select name="barrio" id="barrio" onchange="fetchDistribuciones(event)">
-            <option value="" selected disabled></option>
-            <option value="CENTRO">Centro</option>
-            <option value="CIUDAD_VIEJA">Ciudad Vieja</option>
-            <option value="CORDON">Cordón</option>
-            <option value="PARQUE_RODO">Parque Rodó</option>
-            <option value="PALERMO">Palermo</option>
-        </select>
+    <form id="filterForm" onsubmit="return false;" class="mb-3">
+        <div class="form-group">
+            <label for="barrio">Seleccione un barrio:</label>
+            <select name="barrio" id="barrio" class="form-control" onchange="fetchDistribuciones(event)">
+                <option value="" selected disabled></option>
+                <option value="CENTRO">Centro</option>
+                <option value="CIUDAD_VIEJA">Ciudad Vieja</option>
+                <option value="CORDON">Cordón</option>
+                <option value="PARQUE_RODO">Parque Rodó</option>
+                <option value="PALERMO">Palermo</option>
+            </select>
+        </div>
     </form>
 
     <div id="result"></div> <!-- aca se muestra la tabla -->
