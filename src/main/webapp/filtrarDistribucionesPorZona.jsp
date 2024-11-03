@@ -1,10 +1,6 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="cscorner.UsuarioLogin" %> 
-<%
-    // Verificar el estado de la sesión y Establece no cache en la pagina
-    UsuarioLogin.GetInstancia().checkLogin(request, response);
-%>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,8 +10,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <!-- Incluir la barra de navegación -->
-    <jsp:include page="navbar.jsp" />
     <h1>Filtrar Distribuciones por Zona</h1>
     <form id="filterForm" onsubmit="return false;" class="mb-3">
         <div class="form-group">

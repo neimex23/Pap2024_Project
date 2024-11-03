@@ -3,15 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package cscorner;
-import java.io.IOException;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.WebServlet;
 import org.pap.publicadores.*;
 
 
 public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobre el usuario logeado en el sistema
+    public static enum LoginL {NoLogin, Beneficiario, Repartidor}
     
     private static UsuarioLogin instancia = null;
     private UsuarioLogin() {}
@@ -22,6 +19,7 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
     }
     
     private DtUsuario usuario = null;
+    private LoginL tipo = LoginL.NoLogin; //Se va a usar para hacer la historia de cerrar secion
 
     public DtUsuario getUsuario() {
         return usuario;
@@ -29,29 +27,25 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
 
     public void setUsuario(DtUsuario usuario) {
         this.usuario = usuario;
+        if (usuario != null){
+            if (usuario instanceof DtRepartidor) {
+                tipo = LoginL.Repartidor;
+            } 
+            else 
+            {
+                tipo = LoginL.Beneficiario;
+            }
+        }
     }
 
-    public boolean isLogin(){return usuario!=null;}
-    
-    public void Logout(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException { 
-        {setUsuario(null);
-        // Redirigir a Login
-        request.setAttribute("error", "Se Cerro Sesión");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
-        dispatcher.forward(request, response); 
-    }}
-    
-    public void checkLogin(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-        if (!isLogin()) {
-        //Establece la pagina sin Cache al iniciar
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        response.setDateHeader("Expires", 0); // Proxies
-        
-        // Redirigir a Login
-        request.setAttribute("error", "Debe Iniciar Sesión Primero");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
-        dispatcher.forward(request, response); 
+    public LoginL getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(LoginL tipo) {
+        this.tipo = tipo;
+        if (tipo == LoginL.NoLogin) { //Reiniciar datos
+            usuario = null;
         }
     }
     

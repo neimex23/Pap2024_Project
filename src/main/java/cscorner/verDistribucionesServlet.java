@@ -52,7 +52,7 @@ public class verDistribucionesServlet extends HttpServlet {
         UsuarioLogin userControler = UsuarioLogin.GetInstancia();
         List<DtDistribucion> lstDistribucionesFilter = new ArrayList<>();
 
-        if (userControler.getUsuario() instanceof DtBeneficiario) {
+        if (userControler.getTipo() == UsuarioLogin.LoginL.Beneficiario) {
             String email = userControler.getUsuario().getEmail();
             for (DtDistribucion distribucion : lstDistribuciones) {
                 if (distribucion.getEmailBenefAsc().equals(email)) {

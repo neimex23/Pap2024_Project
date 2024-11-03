@@ -10,7 +10,7 @@ package org.pap.publicadores;
 public class DtBeneficiario  extends org.pap.publicadores.DtUsuario  implements java.io.Serializable {
     private java.lang.String direccion;
 
-    private java.lang.String fechaNacimiento;
+    private org.pap.publicadores.LocalDateTime fechaNacimiento;
 
     private org.pap.publicadores.EnumEstadoBeneficiario estado;
 
@@ -24,7 +24,7 @@ public class DtBeneficiario  extends org.pap.publicadores.DtUsuario  implements 
            java.lang.String password,
            java.lang.String email,
            java.lang.String direccion,
-           java.lang.String fechaNacimiento,
+           org.pap.publicadores.LocalDateTime fechaNacimiento,
            org.pap.publicadores.EnumEstadoBeneficiario estado,
            org.pap.publicadores.EnumBarrio barrio) {
         super(
@@ -63,7 +63,7 @@ public class DtBeneficiario  extends org.pap.publicadores.DtUsuario  implements 
      * 
      * @return fechaNacimiento
      */
-    public java.lang.String getFechaNacimiento() {
+    public org.pap.publicadores.LocalDateTime getFechaNacimiento() {
         return fechaNacimiento;
     }
 
@@ -73,7 +73,7 @@ public class DtBeneficiario  extends org.pap.publicadores.DtUsuario  implements 
      * 
      * @param fechaNacimiento
      */
-    public void setFechaNacimiento(java.lang.String fechaNacimiento) {
+    public void setFechaNacimiento(org.pap.publicadores.LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
@@ -183,7 +183,7 @@ public class DtBeneficiario  extends org.pap.publicadores.DtUsuario  implements 
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("fechaNacimiento");
         elemField.setXmlName(new javax.xml.namespace.QName("", "fechaNacimiento"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://publicadores.pap.org/", "localDateTime"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);

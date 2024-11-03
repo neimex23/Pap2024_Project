@@ -29,9 +29,6 @@ public class filtrarDistribucionesPorZonaServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
         
-        // Configurar la codificación de la respuesta
-        response.setContentType("text/html; charset=UTF-8");
-        
         String barrio = request.getParameter("barrio");
         
         // Llamar al método del servicio para listar distribuciones por zona

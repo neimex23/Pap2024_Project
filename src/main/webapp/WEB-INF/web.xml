@@ -17,8 +17,12 @@
     </servlet>
     <!-- Mapeos de los servlets -->
     <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>cscorner.LogoutServlet</servlet-class>
+        <servlet-name>CambEstServlet</servlet-name>
+        <servlet-class>cscorner.CambEstServlet</servlet-class>
+        <init-param>
+            <param-name>Inicializacion</param-name>
+            <param-value>Valor</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -33,10 +37,6 @@
         <url-pattern>/filtrarDistribucionesPorZona</url-pattern>
     </servlet-mapping>
     <!-- Configuración de página de bienvenida -->
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/LogoutServlet</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CambEstServlet</servlet-name>
         <url-pattern>/CambEstServlet</url-pattern>
