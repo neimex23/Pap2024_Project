@@ -1,94 +1,86 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="cscorner.UsuarioLogin" %> 
 <%
-    // Verificar el estado de la sesión y Establece no cache en la pagina
-    UsuarioLogin.GetInstancia().checkLogin(request, response);
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setDateHeader("Expires", 0); // Proxies
 %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
-    <div class="container mt-4">
-        <div class="card">
-            <div class="card-header text-center">
-                <h1>Mi Perfil</h1>
-                <c:if test="${not empty tipoUsuario}">
-                    <span class="badge badge-success">${tipoUsuario}</span>
-                </c:if>
-            </div>
-            <div class="card-body">
-                <form action="verPerfil" method="post">
-                    <button type="submit" class="btn btn-primary btn-block">Actualizar Información</button>
-                </form>
-
-                <c:if test="${not empty mensaje}">
-                    <div class="alert alert-danger text-center" role="alert">
-                        <p>${mensaje}</p>
-                    </div>
-                </c:if>
-
-                <c:if test="${not empty nombreUsuario}">
-                    <!-- Información común -->
-                    <div class="mb-3">
-                        <label class="font-weight-bold">Nombre:</label>
-                        <p>${nombreUsuario}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="font-weight-bold">Email:</label>
-                        <p>${emailUsuario}</p>
-                    </div>
-
-                    <!-- Información específica del Beneficiario -->
-                    <c:if test="${tipoUsuario eq 'Beneficiario'}">
-                        <div class="mb-3">
-                            <label class="font-weight-bold">Dirección:</label>
-                            <p>${direccion}</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="font-weight-bold">Fecha de Nacimiento:</label>
-                            <p>
-                                <c:choose>
-                                    <c:when test="${empty fechaNacimiento or fechaNacimiento eq 'Fecha no disponible'}">
-                                        Fecha no disponible
-                                    </c:when>
-                                    <c:otherwise>
-                                        ${fechaNacimiento}
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="font-weight-bold">Estado:</label>
-                            <p>${estado}</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="font-weight-bold">Barrio:</label>
-                            <p>${barrio}</p>
-                        </div>
-                    </c:if>
-
-                    <!-- Información específica del Repartidor -->
-                    <c:if test="${tipoUsuario eq 'Repartidor'}">
-                        <div class="mb-3">
-                            <label class="font-weight-bold">Número de Licencia:</label>
-                            <p>${numeroLicencia}</p>
-                        </div>
-                    </c:if>
-                </c:if>
-            </div>
+    
+    <div class="container text-center my-4">
+        <h1>Mi perfil</h1> <!-- Título centrado -->
+        <div class="d-flex justify-content-center mt-4 mb-3">
+                <div class="input-group" style="width: auto;">
+                        <span class="input-group-text input-group-text-custom">${sessionScope.tipoUsuario}</span>
+                </div>
         </div>
+
+        <hr class="my-4"> <!-- Separador entre Tipo de Usuario y Datos del Usuario -->
+        
+        <!-- Información común -->
+        <div class="input-group mb-3">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Nombre</span>
+                <div class="form-control text-start" aria-label="nombre" aria-describedby="basic-addon1">${sessionScope.nombreUsuario}</div>
+        </div>
+        
+        <c:if test="${not empty sessionScope.emailUsuario}">
+            <c:set var="emailUsuario" value="${sessionScope.emailUsuario}" />
+            <c:set var="correo" value="${fn:substringBefore(emailUsuario, '@')}" />
+            <c:set var="dominio" value="${fn:substring(emailUsuario, fn:indexOf(emailUsuario, '@'), fn:length(emailUsuario))}" />
+        </c:if>
+        <c:if test="${empty sessionScope.emailUsuario}">
+            <c:set var="correo" value="Desconocido" />
+            <c:set var="dominio" value="@desconocido.com" />
+        </c:if>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text input-group-text-custom" id="basic-addon1">Email</span>
+            <div class="form-control text-start" aria-label="email2" aria-describedby="basic-addon2">${correo}</div>
+            <span class="input-group-text input-group-text-custom" id="basic-addon2">${dominio}</span>
+        </div>
+
+        <!-- Información específica del Beneficiario -->
+        <c:if test="${sessionScope.tipoUsuario eq 'Beneficiario'}">
+            <div class="input-group mb-3">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Dirección</span>
+                <div class="form-control text-start" aria-label="direccion" aria-describedby="basic-addon1">${sessionScope.direccion}</div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Barrio</span>
+                <div class="form-control text-start" aria-label="barrio" aria-describedby="basic-addon1">${sessionScope.barrio}</div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Fecha de Nacimiento</span>
+                <div class="form-control text-start" aria-label="fechaNac" aria-describedby="basic-addon1">${sessionScope.fechaNacimiento}</div>
+            </div>
+
+            <div class="input-group mb-4">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Estado del Usuario</span>
+                <div class="form-control text-start" aria-label="estado" aria-describedby="basic-addon1">${sessionScope.estado}</div>
+            </div>
+        </c:if>
+        
+        <!-- Información específica del Repartidor -->
+        <c:if test="${sessionScope.tipoUsuario eq 'Repartidor'}">
+            <div class="input-group mb-4">
+                <span class="input-group-text input-group-text-custom" id="basic-addon1">Número de Licencia</span>
+                <div class="form-control text-start" aria-label="estado" aria-describedby="basic-addon1">${sessionScope.numeroLicencia}</div>
+            </div>
+        </c:if>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
