@@ -6,18 +6,23 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.rpc.ServiceException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import org.pap.publicadores.*;
 
 @WebServlet("/modificarPerfilServlet")
-public class ModificarPerfilServlet extends HttpServlet {
+public class modificarPerfilServlet extends HttpServlet {
     
     private ControladorPublishService cps = new ControladorPublishServiceLocator();
     private ControladorPublish controlador;
     
-    public ModificarPerfilServlet() {
+    public modificarPerfilServlet() {
         super();
         try {
             controlador = cps.getControladorPublishPort();
@@ -27,67 +32,151 @@ public class ModificarPerfilServlet extends HttpServlet {
     }
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Verificar si el usuario está autenticado
+        UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
+        if (usuarioLogin.getUsuario() == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        DtUsuario usuario = usuarioLogin.getUsuario();
+        System.out.println("Usuario recuperado: " + (usuario != null ? usuario.getNombre() : "null"));
+
+        if (usuario != null) {
+        // Almacena los datos en la sesión
+        HttpSession session = request.getSession();
+        session.setAttribute("nombreUsuario", usuario.getNombre());
+        session.setAttribute("emailUsuario", usuario.getEmail());
+
+        if (usuario instanceof DtBeneficiario) {
+            DtBeneficiario beneficiario = (DtBeneficiario) usuario;
+            session.setAttribute("tipoUsuario", "Beneficiario");
+            session.setAttribute("direccion", beneficiario.getDireccion());
+
+            // Obtener y formatear la fecha de nacimiento
+            String fechaNacSOAP = beneficiario.getFechaNacimiento();
+            if (fechaNacSOAP != null) {
+                try {
+                    DateTimeFormatter formatoOriginal = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+                    LocalDateTime fecha = LocalDateTime.parse(fechaNacSOAP, formatoOriginal);
+                    DateTimeFormatter formatoNuevo = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String fechaFormateada = fecha.format(formatoNuevo);
+                    session.setAttribute("fechaNacimiento", fechaFormateada);
+                } catch (Exception e) {
+                    System.out.println("Error al formatear la fecha: " + e.getMessage());
+                    session.setAttribute("fechaNacimiento", "Fecha no disponible");
+                }
+            } else {
+                session.setAttribute("fechaNacimiento", "Fecha no disponible");
+            }
+
+            session.setAttribute("estado", beneficiario.getEstado());
+            session.setAttribute("barrio", beneficiario.getBarrio());
+        } else if (usuario instanceof DtRepartidor) {
+            DtRepartidor repartidor = (DtRepartidor) usuario;
+            session.setAttribute("tipoUsuario", "Repartidor");
+            session.setAttribute("numeroLicencia", repartidor.getNumeroLicencia());
+        }
+    } else {
+        request.setAttribute("mensaje", "Error al recuperar la información del usuario.");
+        System.out.println("No se pudo recuperar la información del usuario");
+    }
+
+    // Redirigir a la JSP
+    response.sendRedirect("modificarPerfil.jsp");
+    }
+    
+   @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Verificar si el usuario está autenticado
+        UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
+        if (usuarioLogin.getUsuario() == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        DtUsuario usuario = usuarioLogin.getUsuario();
+        System.out.println("Usuario recuperado: " + (usuario != null ? usuario.getNombre() : "null"));
+
+        // Obteniendo los parámetros del formulario
+        String nombre = request.getParameter("nombre");
+        String direccion = request.getParameter("direccion");
+        String barrio = request.getParameter("barrio");
+        String fechaNacimiento = request.getParameter("fechaNacimiento");
+        String estado = request.getParameter("estado");
+        String numeroLicencia = request.getParameter("numeroLicencia");
         
-        response.setContentType("text/plain");
-        
-        try {
-            UsuarioLogin usuarioLogin = UsuarioLogin.GetInstancia();
-            DtUsuario usuario = usuarioLogin.getUsuario();
+        // Si no se selecciona un nuevo barrio, se carga el que tenia el usuario
+        if (barrio == null || barrio.isEmpty()) {
+            barrio = (String) request.getSession().getAttribute("barrio");
+        }
+
+        if (usuario instanceof DtBeneficiario) {
+            // Si es un beneficiario, actualiza sus datos
+            DtBeneficiario beneficiario = (DtBeneficiario) usuario;
             
-            if (usuario instanceof DtBeneficiario) {
-                DtBeneficiario beneficiario = (DtBeneficiario) usuario;
-                beneficiario.setNombre(request.getParameter("nombre"));
-                beneficiario.setDireccion(request.getParameter("direccion"));
-                
-                // Convertir el valor de barrio al enum correspondiente
-                EnumBarrio barrio = obtenerEnumBarrio(request.getParameter("barrio"));
-                if (barrio != null) {
-                    beneficiario.setBarrio(barrio);
-                } else {
-                    response.getWriter().write("Error: Barrio inválido");
+            // Se formatea la fecha de nacimiento
+            Calendar fechaNacimientoCalendar = null;
+            
+            if (fechaNacimiento != null && !fechaNacimiento.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Ajusta el formato según tus necesidades
+                try {
+                    Date date = sdf.parse(fechaNacimiento);
+                    fechaNacimientoCalendar = Calendar.getInstance();
+                    fechaNacimientoCalendar.setTime(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    // Manejo de error: la fecha no se pudo parsear
+                    request.setAttribute("error", "Formato de fecha no válido.");
+                    request.getRequestDispatcher("modificarPerfil.jsp").forward(request, response);
                     return;
                 }
-
-                String fechaNac = request.getParameter("fechaNacimiento");
-                if (fechaNac != null && !fechaNac.isEmpty()) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate fechaNacimiento = LocalDate.parse(fechaNac, formatter);
-                    beneficiario.setFechaNacimiento(fechaNacimiento.toString());
-                }
-                
-                controlador.actualizarBeneficiario(beneficiario);
-                
-            } else if (usuario instanceof DtRepartidor) {
-                DtRepartidor repartidor = (DtRepartidor) usuario;
-                repartidor.setNombre(request.getParameter("nombre"));
-                repartidor.setNumeroLicencia(request.getParameter("numeroLicencia"));
-                
-                controlador.actualizarRepartidor(repartidor);
             }
             
-            response.getWriter().write("Perfil actualizado exitosamente");
+            // obtengo el mail y el password 
+            String email = beneficiario.getEmail();
+            String password = beneficiario.getPassword();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().write("Error al actualizar el perfil: " + e.getMessage());
+            // Se llama al metodo para hacer la modificacion
+            controlador.modificarBeneficiario(nombre, email, password, direccion, fechaNacimientoCalendar, estado, barrio); 
+            
+            // Actualiza los datos en la sesión
+            HttpSession session = request.getSession();
+            session.setAttribute("nombreUsuario", nombre);
+            session.setAttribute("fechaNacimiento", fechaNacimiento);
+            session.setAttribute("direccion", direccion);
+            session.setAttribute("barrio", barrio);
+            session.setAttribute("estado", estado);
+        } else {
+            // Si es un repartidor, actualiza sus datos
+            DtRepartidor repartidor = (DtRepartidor) usuario;
+            
+            // obtengo el mail y el password 
+            String email = repartidor.getEmail();
+            String password = repartidor.getPassword();
+            
+            // Se llama al metodo para hacer la modificacion
+            controlador.modificarRepartidor(nombre, email, password, numeroLicencia);
+            
+            // Actualiza los datos en la sesión
+            HttpSession session = request.getSession();
+            session.setAttribute("nombreUsuario", nombre);
+            session.setAttribute("numeroLicencia", numeroLicencia);
+            
+            System.out.println("Licencia actualizada: " + numeroLicencia);
+            System.out.println("Licencia en sesión: " + session.getAttribute("numeroLicencia"));
         }
-    }
 
-    private EnumBarrio obtenerEnumBarrio(String barrioStr) {
-        if (barrioStr == null) {
-            return null;
-        }
-        for (EnumBarrio barrio : EnumBarrio.values()) {
-            if (barrio.name().equalsIgnoreCase(barrioStr)) {
-                return barrio;
-            }
-        }
-        return null; // Retorna null si no encuentra coincidencias
+        // Almacenar el mensaje en la sesión
+        request.getSession().setAttribute("mensaje", "Datos actualizados correctamente");
+
+        // Redirigir a la JSP
+        response.sendRedirect("verPerfil.jsp");
     }
 }
-
-
-
 

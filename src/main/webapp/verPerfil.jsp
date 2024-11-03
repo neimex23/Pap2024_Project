@@ -19,6 +19,13 @@
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
     
+    <c:if test="${not empty sessionScope.mensaje}">
+        <script>
+            alert("${sessionScope.mensaje}");
+        </script>
+        <c:remove var="mensaje" scope="session" />
+    </c:if>
+    
     <div class="container text-center my-4">
         <h1>Mi perfil</h1> <!-- Título centrado -->
         <div class="d-flex justify-content-center mt-4 mb-3">
@@ -78,7 +85,7 @@
         <c:if test="${sessionScope.tipoUsuario eq 'Repartidor'}">
             <div class="input-group mb-4">
                 <span class="input-group-text input-group-text-custom" id="basic-addon1">Número de Licencia</span>
-                <div class="form-control text-start" aria-label="estado" aria-describedby="basic-addon1">${sessionScope.numeroLicencia}</div>
+                <div class="form-control text-start" aria-label="numeroLicencia" aria-describedby="basic-addon1">${sessionScope.numeroLicencia}</div>
             </div>
         </c:if>
     </div>
