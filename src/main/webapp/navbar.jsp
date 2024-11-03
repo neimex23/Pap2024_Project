@@ -8,7 +8,6 @@
     // Verificar el estado de la sesión y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
 %>
-
 <%
     // Verifica si se ha presionado el botón de cierre de sesión
     if (request.getParameter("logoutButton") != null) {
@@ -57,7 +56,7 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/verPerfil.jsp">Mi Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Modificar Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="/modificarPerfil.jsp">Modificar Mi Perfil</a></li>
                         </ul>
                     </li>
                     <% 
@@ -74,7 +73,7 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/verPerfil.jsp">Mi Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Modificar Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="/modificarPerfil.jsp">Modificar Mi Perfil</a></li>
                         </ul>
                     </li>
                     <% 
@@ -86,7 +85,7 @@
                 </ul>
                 <div class="dropdown ms-auto"> <!-- Dropdown para el botón UserLogueado -->
                     <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <%= usuarioObtenido.getNombre() %>
+                        ${sessionScope.nombreUsuario}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>
