@@ -46,7 +46,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 usuarioLogin.setUsuario(usuarioObtenido);                   
                 request.getSession().setAttribute("usuario", email);
-                response.sendRedirect("home.jsp");
+                response.sendRedirect("verPerfil");
             } else {
                 // Login fallido
                 request.setAttribute("error", "Email o contraseña incorrectos");
