@@ -80,6 +80,9 @@
                     <% 
                     } 
                     %>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/about.jsp">Sobre</a>
+                    </li>
                 </ul>
                 <div class="dropdown ms-auto"> <!-- Dropdown para el botón UserLogueado -->
                     <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
