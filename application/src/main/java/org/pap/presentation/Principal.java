@@ -41,14 +41,55 @@ public class Principal {
 
     private static JFrame ventanaP;
     private static JDesktopPane desktopPane;
-// Obtener la instancia de la fabrica
+    // Obtener la instancia de la fabrica
     private static Fabrica fabrica = Fabrica.getInstancia();
 
     public static void main(String[] args) {
-
+        
+        /* Buenas gente! aca les dejo varios temas, pueden sustituir el codigo para cambiar un tema por otro
+        
+        // Se agreta tema "Nimbus"
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Manejo de excepciones
+        }
+        
+        // Se agrega tema "Windows"
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Manejo de excepciones
+        }
+        
+        // Se agrega tema "Motif"
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Manejo de excepciones
+        }       
+        */
+        
+        // Se agreta tema "Nimbus"
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Manejo de excepciones
+        }
+        
         // Inicializar y configurar ventana que es un objeto JFrame
         ventanaP = new JFrame("Ayudemos");
-        ventanaP.setBounds(200, 200, 900, 600); // coordenada x, y luego ancho, alto
+        ventanaP.setBounds(200, 200, 1000, 600); // coordenada x, y luego ancho, alto
         ventanaP.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // alternativas JFrame.DO_NOTHING_ON_CLOSE, JFrame.HIDE_ON_CLOSE, JFrame.DISPOSE_ON_CLOSE
 
         // Crear el JDesktopPane para manejar JInternalFrames
@@ -262,8 +303,8 @@ public class Principal {
     private static void mostrarFormularioBeneficiario(String titulo) {
         // Crear un JInternalFrame para el formulario
         JInternalFrame internalFrame = new JInternalFrame(titulo, true, true, true, true);
-        internalFrame.setSize(400, 300);
-        internalFrame.setLayout(new GridLayout(15, 2));
+        internalFrame.setSize(400, 400);
+        internalFrame.setLayout(new GridLayout(12, 2));
         internalFrame.setLocation(50, 50);
 
         // Etiquetas y campos de texto
