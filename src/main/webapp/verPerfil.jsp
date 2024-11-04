@@ -67,7 +67,28 @@
 
             <div class="input-group mb-3">
                 <span class="input-group-text input-group-text-custom" id="basic-addon1">Barrio</span>
-                <div class="form-control text-start" aria-label="barrio" aria-describedby="basic-addon1">${sessionScope.barrio}</div>
+                <div class="form-control text-start" aria-label="barrio" aria-describedby="basic-addon1">
+                    <c:choose>
+                        <c:when test="${sessionScope.barrio eq 'CENTRO'}">
+                            Centro
+                        </c:when>
+                        <c:when test="${sessionScope.barrio eq 'CIUDAD_VIEJA'}">
+                            Ciudad Vieja
+                        </c:when>
+                        <c:when test="${sessionScope.barrio eq 'CORDON'}">
+                            Cordón
+                        </c:when>
+                        <c:when test="${sessionScope.barrio eq 'PALERMO'}">
+                            Palermo
+                        </c:when>
+                        <c:when test="${sessionScope.barrio eq 'PARQUE_RODO'}">
+                            Parque Rodó
+                        </c:when>
+                        <c:otherwise>
+                            Barrio no seleccionado
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
 
             <div class="input-group mb-3">
@@ -75,9 +96,21 @@
                 <div class="form-control text-start" aria-label="fechaNac" aria-describedby="basic-addon1">${sessionScope.fechaNacimiento}</div>
             </div>
 
-            <div class="input-group mb-4">
+            <div class="input-group mb-3">
                 <span class="input-group-text input-group-text-custom" id="basic-addon1">Estado del Usuario</span>
-                <div class="form-control text-start" aria-label="estado" aria-describedby="basic-addon1">${sessionScope.estado}</div>
+                <div class="form-control text-start" aria-label="estado" aria-describedby="basic-addon1">
+                    <c:choose>
+                        <c:when test="${sessionScope.estado eq 'ACTIVO'}">
+                            Activo
+                        </c:when>
+                        <c:when test="${sessionScope.estado eq 'SUSPENDIDO'}">
+                            Suspendido
+                        </c:when>
+                        <c:otherwise>
+                            Estado no seleccionado
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
         </c:if>
         
