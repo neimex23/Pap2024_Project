@@ -27,7 +27,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/home.jsp">
                 <img src="https://www.pngplay.com/wp-content/uploads/7/Home-Logo-Background-PNG-Image.png" alt="Logo" width="30" height="24">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">

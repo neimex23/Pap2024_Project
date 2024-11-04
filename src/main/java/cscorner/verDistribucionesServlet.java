@@ -79,9 +79,16 @@ public class verDistribucionesServlet extends HttpServlet {
         }
     }
     
-    public static List<DtDistribucion> formatFecha(List<DtDistribucion> listChange) {
-    // Define el formato original y el formato deseado
-        DateTimeFormatter formatoOriginal = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]");
+   public static List<DtDistribucion> formatFecha(List<DtDistribucion> listChange) {
+    // Lista de posibles formatos de entrada
+        DateTimeFormatter[] formatosOriginales = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+        };
+
+        // Formato deseado
         DateTimeFormatter formatoDeseado = DateTimeFormatter.ofPattern("dd-MM-yyyy - HH:mm:ss");
 
         for (var dist : listChange) {
@@ -89,20 +96,44 @@ public class verDistribucionesServlet extends HttpServlet {
             String fechaPre = dist.getFechaPreparacion();
 
             // Convierte las fechas desde el formato original al nuevo formato
-            LocalDateTime fechaEntrega = LocalDateTime.parse(fechaEn, formatoOriginal);
-            LocalDateTime fechaPreparacion = LocalDateTime.parse(fechaPre, formatoOriginal);
+            LocalDateTime fechaEntrega = null;
+            LocalDateTime fechaPreparacion = null;
 
-            // Formatea las fechas
-            String fechaEntregaFormateada = fechaEntrega.format(formatoDeseado);
-            String fechaPreparacionFormateada = fechaPreparacion.format(formatoDeseado);
+            // Intenta analizar la fecha de entrega con cada formato
+            for (DateTimeFormatter formato : formatosOriginales) {
+                try {
+                    fechaEntrega = LocalDateTime.parse(fechaEn, formato);
+                    break; // Si se analiza correctamente, se sale del bucle
+                } catch (Exception e) {
+                    // Ignorar y seguir intentando con el siguiente formato
+                }
+            }
 
-            // Asigna las fechas formateadas de nuevo a los objetos
-            dist.setFechaEntrega(fechaEntregaFormateada);
-            dist.setFechaPreparacion(fechaPreparacionFormateada);
+            // Intenta analizar la fecha de preparación con cada formato
+            for (DateTimeFormatter formato : formatosOriginales) {
+                try {
+                    fechaPreparacion = LocalDateTime.parse(fechaPre, formato);
+                    break; // Si se analiza correctamente, se sale del bucle
+                } catch (Exception e) {
+                    // Ignorar y seguir intentando con el siguiente formato
+                }
+            }
+
+            // Si las fechas se analizaron correctamente, las formatea
+            if (fechaEntrega != null) {
+                String fechaEntregaFormateada = fechaEntrega.format(formatoDeseado);
+                dist.setFechaEntrega(fechaEntregaFormateada);
+            }
+
+            if (fechaPreparacion != null) {
+                String fechaPreparacionFormateada = fechaPreparacion.format(formatoDeseado);
+                dist.setFechaPreparacion(fechaPreparacionFormateada);
+            }
         }
 
         return listChange;
     }
+
 
 }
 
