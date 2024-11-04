@@ -72,7 +72,7 @@ public class modificarPerfilServlet extends HttpServlet {
             } else {
                 session.setAttribute("fechaNacimiento", "Fecha no disponible");
             }
-
+            
             session.setAttribute("estado", beneficiario.getEstado());
             session.setAttribute("barrio", beneficiario.getBarrio());
         } else if (usuario instanceof DtRepartidor) {
@@ -102,74 +102,148 @@ public class modificarPerfilServlet extends HttpServlet {
 
         DtUsuario usuario = usuarioLogin.getUsuario();
         System.out.println("Usuario recuperado: " + (usuario != null ? usuario.getNombre() : "null"));
-
-        // Obteniendo los parámetros del formulario
-        String nombre = request.getParameter("nombre");
-        String direccion = request.getParameter("direccion");
-        String barrio = request.getParameter("barrio");
-        String fechaNacimiento = request.getParameter("fechaNacimiento");
-        String estado = request.getParameter("estado");
-        String numeroLicencia = request.getParameter("numeroLicencia");
         
-        // Si no se selecciona un nuevo barrio, se carga el que tenia el usuario
-        if (barrio == null || barrio.isEmpty()) {
-            barrio = (String) request.getSession().getAttribute("barrio");
-        }
-
+        // Creo las variables para modificar al usuario
+        String modName;
+        String modDirection;
+        String modBarrio;
+        String modBirthdate;
+        String modStatus;
+        String modLicencia;
+        String modPassBeneficiario;
+        String modPassRepartidor;
+        
         if (usuario instanceof DtBeneficiario) {
             // Si es un beneficiario, actualiza sus datos
             DtBeneficiario beneficiario = (DtBeneficiario) usuario;
             
-            // Se formatea la fecha de nacimiento
+            // Obtengo los datos anteriores y actuales del usuario
+            String OLD_name = request.getParameter("OLD_name");
+            String NEW_name = request.getParameter("NEW_name");
+
+            String OLD_direction = request.getParameter("OLD_direction");
+            String NEW_direction = request.getParameter("NEW_direction");
+
+            String OLD_barrio = request.getParameter("OLD_barrio");
+            String NEW_barrio = request.getParameter("NEW_barrio");
+
+            String OLD_birthdate = request.getParameter("OLD_birthdate");
+            String NEW_birthdate = request.getParameter("NEW_birthdate");
+
+            String ODL_status = request.getParameter("ODL_status");
+            String NEW_status = request.getParameter("NEW_status");
+
+            String OLD_passBene = beneficiario.getPassword();
+            String NEW_passBene = request.getParameter("NEW_passwordBeneficiario");
+            
+            String email = beneficiario.getEmail();
+            
+            // Comparo si el usuario ingreso algun dato a modificar, de lo contrario se mantiene el dato anterior
+            if (NEW_name == null || NEW_name.isEmpty()) {
+                modName = OLD_name;
+            } else {
+                modName = NEW_name;
+            }
+            
+            if (NEW_direction == null || NEW_direction.isEmpty()) {
+                modDirection = OLD_direction;
+            } else {
+                modDirection = NEW_direction;
+            }
+                        
+            if (NEW_barrio == null || NEW_barrio.isEmpty()) {
+                modBarrio = OLD_barrio;
+            } else {
+                modBarrio = NEW_barrio;
+            }
+                        
+            if (NEW_status == null || NEW_status.isEmpty()) {
+                modStatus = ODL_status;
+            } else {
+                modStatus = NEW_status;
+            } 
+            
+            if (NEW_passBene == null || NEW_passBene.isEmpty()) {
+                modPassBeneficiario = OLD_passBene;
+            } else {
+                modPassBeneficiario = NEW_passBene;
+            } 
+            
+            if (NEW_birthdate == null || NEW_birthdate.isEmpty()) {
+                modBirthdate = OLD_birthdate;
+            } else {
+                modBirthdate = NEW_birthdate;
+            } 
+            
+            // Se parsea la fecha de nacimiento
             Calendar fechaNacimientoCalendar = null;
             
-            if (fechaNacimiento != null && !fechaNacimiento.isEmpty()) {
+            if (modBirthdate != null && !modBirthdate.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Ajusta el formato según tus necesidades
                 try {
-                    Date date = sdf.parse(fechaNacimiento);
+                    Date date = sdf.parse(modBirthdate);
                     fechaNacimientoCalendar = Calendar.getInstance();
                     fechaNacimientoCalendar.setTime(date);
                 } catch (ParseException e) {
                     e.printStackTrace();
                     // Manejo de error: la fecha no se pudo parsear
-                    request.setAttribute("error", "Formato de fecha no válido.");
-                    request.getRequestDispatcher("modificarPerfil.jsp").forward(request, response);
+                    request.setAttribute("error", "Formato de fecha no válida.");
                     return;
                 }
             }
-            
-            // obtengo el mail y el password 
-            String email = beneficiario.getEmail();
-            String password = beneficiario.getPassword();
 
             // Se llama al metodo para hacer la modificacion
-            controlador.modificarBeneficiario(nombre, email, password, direccion, fechaNacimientoCalendar, estado, barrio); 
+            controlador.modificarBeneficiario(modName, email, modPassBeneficiario, modDirection, fechaNacimientoCalendar, modStatus, modBarrio); 
             
             // Actualiza los datos en la sesión
             HttpSession session = request.getSession();
-            session.setAttribute("nombreUsuario", nombre);
-            session.setAttribute("fechaNacimiento", fechaNacimiento);
-            session.setAttribute("direccion", direccion);
-            session.setAttribute("barrio", barrio);
-            session.setAttribute("estado", estado);
+            session.setAttribute("nombreUsuario", modName);
+            session.setAttribute("fechaNacimiento", modBirthdate);
+            session.setAttribute("direccion", modDirection);
+            session.setAttribute("barrio", modBarrio);
+            session.setAttribute("estado", modStatus);
         } else {
             // Si es un repartidor, actualiza sus datos
             DtRepartidor repartidor = (DtRepartidor) usuario;
             
-            // obtengo el mail y el password 
+            // Obtengo los datos anteriores y actuales del usuario
+            String OLD_name = request.getParameter("OLD_name");
+            String NEW_name = request.getParameter("NEW_name");
+
+            String OLD_license = request.getParameter("OLD_license");
+            String NEW_license = request.getParameter("NEW_license");
+
+            String OLD_passRep = repartidor.getPassword();
+            String NEW_passRep = request.getParameter("NEW_passwordRepartidor");
+            
             String email = repartidor.getEmail();
-            String password = repartidor.getPassword();
+            
+            // Comparo si el usuario ingreso algun dato a modificar, de lo contrario se mantiene el dato anterior
+            if (NEW_name == null || NEW_name.isEmpty()) {
+                modName = OLD_name;
+            } else {
+                modName = NEW_name;
+            }
+                        
+            if (NEW_license == null || NEW_license.isEmpty()) {
+                modLicencia = OLD_license;
+            } else {
+                modLicencia = NEW_license;
+            } 
+            
+            if (NEW_passRep == null || NEW_passRep.isEmpty()) {
+                modPassRepartidor = OLD_passRep;
+            } else {
+                modPassRepartidor = NEW_passRep;
+            } 
             
             // Se llama al metodo para hacer la modificacion
-            controlador.modificarRepartidor(nombre, email, password, numeroLicencia);
+            controlador.modificarRepartidor(modName, email, modPassRepartidor, modLicencia);
             
             // Actualiza los datos en la sesión
             HttpSession session = request.getSession();
-            session.setAttribute("nombreUsuario", nombre);
-            session.setAttribute("numeroLicencia", numeroLicencia);
-            
-            System.out.println("Licencia actualizada: " + numeroLicencia);
-            System.out.println("Licencia en sesión: " + session.getAttribute("numeroLicencia"));
+            session.setAttribute("nombreUsuario", modName);
+            session.setAttribute("numeroLicencia", modLicencia);
         }
 
         // Almacenar el mensaje en la sesión
@@ -179,4 +253,3 @@ public class modificarPerfilServlet extends HttpServlet {
         response.sendRedirect("verPerfil.jsp");
     }
 }
-
