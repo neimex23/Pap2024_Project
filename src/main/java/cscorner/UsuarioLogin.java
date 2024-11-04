@@ -43,15 +43,18 @@ public class UsuarioLogin { // Esta Clase se utilizara para consultar datos sobr
     
     public void checkLogin(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         if (!isLogin()) {
-        //Establece la pagina sin Cache al iniciar
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        response.setDateHeader("Expires", 0); // Proxies
-        
-        // Redirigir a Login
-        request.setAttribute("error", "Debe Iniciar Sesión Primero");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
-        dispatcher.forward(request, response); 
+            //Establece la pagina sin Cache al iniciar
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+            response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+            response.setDateHeader("Expires", 0); // Proxies
+
+            // Redirigir a Login
+            if (!response.isCommitted()) {
+                // Redirigir a Login
+                request.setAttribute("error", "Debe Iniciar Sesión Primero");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+                dispatcher.forward(request, response);
+            }
         }
     }
     

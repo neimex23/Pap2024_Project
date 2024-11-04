@@ -7,8 +7,7 @@
 <%
     // Verificar el estado de la sesión y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
-%>
-<%
+    
     // Verifica si se ha presionado el botón de cierre de sesión
     if (request.getParameter("logoutButton") != null) {
         UsuarioLogin.GetInstancia().Logout(request, response);
@@ -49,7 +48,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/filtrarDistribucionesPorZona.jsp">Distribuciones Por Zona</a></li>
                             <li><a class="dropdown-item" href="/verDistribuciones.jsp">Todas Las Distribuciones</a></li>
-                            <li><a class="dropdown-item" href="#">Modificar Distribuciones</a></li>
+                            <li><a class="dropdown-item" href="/CambEstServlet">Modificar Distribuciones</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

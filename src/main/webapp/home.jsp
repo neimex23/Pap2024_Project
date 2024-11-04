@@ -22,6 +22,7 @@
     <div class="text-center">
         <img src="https://i.imgur.com/VLo82eq.png" alt="Ayudémonos Logo" class="img-fluid mb-3" style="max-width: 100%; height: auto; width: 230px;">
         <p class="h4 font-weight-bold">Bienvenidos</p>
+        
     </div>
 </body>
 </html>
