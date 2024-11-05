@@ -5,25 +5,25 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '22'  # Ajusta la versión de Java según tu proyecto
-      
-      - name: Build the project
-        run: |
-          chmod +x ./mvnw  # Cambia los permisos para permitir la ejecución
-          ./mvnw clean install  # O usa 'mvn' según cómo esté configurado tu proyecto
-          ./mvnw spring-boot:run &  # Levanta la aplicación de fondo
+    - name: Set up JDK 22
+      uses: actions/setup-java@v2
+      with:
+        java-version: '22'
 
-      - name: Wait for the backend to be up
-        run: sleep 30  # Espera a que el backend esté completamente levantado
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Run tests
+      run: mvn test
+
+    - name: Package application
+      run: mvn package
 
