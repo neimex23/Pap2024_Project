@@ -15,38 +15,40 @@
     </style>
 </head>
 <body>
+    <div class="container mt-5">
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
-    <h1>Listar Distribuciones</h1>
-    
-     <div id="result"></div>
-     
-     <script>
-         document.addEventListener("DOMContentLoaded", function() {
-            fetchDistribuciones(); // Llama a la función al inicio
-        });
-        async function fetchDistribuciones(event) {
-            try {
-                const response = await fetch('verDistribucionesServlet', {
-                    method: 'POST',
-                    headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
+        <h1 class="mb-4">Listar Distribuciones</h1>
 
-                if (response.ok) {
-                    const data = await response.text();
-                    document.getElementById('result').innerHTML = data; // Muestra el resultado en el div
-                } else {
-                    alert('Error al obtener distribuciones.');
+         <div id="result" class="mt-4"></div>
+
+         <script>
+             document.addEventListener("DOMContentLoaded", function() {
+                fetchDistribuciones(); // Llama a la función al inicio
+            });
+            async function fetchDistribuciones(event) {
+                try {
+                    const response = await fetch('verDistribucionesServlet', {
+                        method: 'POST',
+                        headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.text();
+                        document.getElementById('result').innerHTML = data; // Muestra el resultado en el div
+                    } else {
+                        alert('Error al obtener distribuciones.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al comunicarse con el servidor.');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al comunicarse con el servidor.');
             }
-        }
-    </script>
+        </script>
+    </div>
 </body>
 </html>
 

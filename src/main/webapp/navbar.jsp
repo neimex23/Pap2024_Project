@@ -64,7 +64,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mis Distribuciones</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Mis Distribuciones Por Estado</a></li>
+                            <li><a class="dropdown-item" href="/listarDistribucionesPorEstado.jsp">Mis Distribuciones Por Estado</a></li>
                             <li><a class="dropdown-item" href="/verDistribuciones.jsp">Todas Mis Distribuciones</a></li>
                         </ul>
                     </li>
