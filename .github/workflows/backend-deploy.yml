@@ -17,9 +17,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '22'  # Ajusta la versión de Java según tu proyecto
-
+      
       - name: Build the project
         run: |
+          chmod +x ./mvnw  # Cambia los permisos para permitir la ejecución
           ./mvnw clean install  # O usa 'mvn' según cómo esté configurado tu proyecto
           ./mvnw spring-boot:run &  # Levanta la aplicación de fondo
 
