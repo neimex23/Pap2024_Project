@@ -1,0 +1,28 @@
+name: Deploy Backend
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '22'  # Ajusta la versión de Java según tu proyecto
+
+      - name: Build the project
+        run: |
+          ./mvnw clean install  # O usa 'mvn' según cómo esté configurado tu proyecto
+          ./mvnw spring-boot:run &  # Levanta la aplicación de fondo
+
+      - name: Wait for the backend to be up
+        run: sleep 30  # Espera a que el backend esté completamente levantado
+
