@@ -125,8 +125,8 @@
                 
                 <div class="input-group mb-3">
                     <span class="input-group-text input-group-text-custom" id="basic-addon1">Nueva Fecha</span>
-                    <input type="text" class="form-control" name="NEW_birthdate" placeholder="Ingresar... (yyyy-mm-dd)" aria-describedby="basic-addon1">
-                </div>  
+                    <input type="date" class="form-control" name="NEW_birthdate" aria-describedby="basic-addon1">
+                </div>
                 
                 <!-- Estado del Usuario -->
                 <div class="input-group mb-3">
