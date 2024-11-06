@@ -100,6 +100,10 @@ public class Principal {
         JMenuBar menuBar = new JMenuBar();
         ventanaP.setJMenuBar(menuBar);
 
+        ImageIcon icon = new ImageIcon(Principal.class.getResource("/programLogo.jpg")); // Ruta del ícono
+        ventanaP.setIconImage(icon.getImage());
+
+
         // Crear el menú "Agregar Usuario"
         JMenu mnAgregarBeneficiario = new JMenu("Agregar Usuario");
         menuBar.add(mnAgregarBeneficiario);
