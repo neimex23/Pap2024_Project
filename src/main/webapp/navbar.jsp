@@ -5,12 +5,25 @@
 <%@ page import="org.pap.publicadores.DtBeneficiario"%>
 
 <%
-    // Verificar el estado de la sesión y Establece no cache en la pagina
-    UsuarioLogin.GetInstancia().checkLogin(request, response);
+    //Elimina el cache en todas las paginas
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setDateHeader("Expires", 0); // Proxies
     
+    //Chequea si el usuario esta en sesion, se asigna parametro usuario en /LoginServlet
+    if (session.getAttribute("usuario") == null){
+            request.setAttribute("error", "Debe Iniciar Sesión Primero");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+            dispatcher.forward(request, response);
+    }
+                
     // Verifica si se ha presionado el botón de cierre de sesión
     if (request.getParameter("logoutButton") != null) {
-        UsuarioLogin.GetInstancia().Logout(request, response);
+        request.getSession(false).invalidate(); 
+        
+        request.setAttribute("error", "Se Cerro Sesión");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+        dispatcher.forward(request, response); 
         return; // 
     }
 %>
@@ -22,6 +35,14 @@
     <title>Ayudemonos.uy</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // Detecta si el usuario está intentando volver atrás en el historial
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    </script>
     <style>
         @media (max-width: 767px) {
             .dropdown-menu {

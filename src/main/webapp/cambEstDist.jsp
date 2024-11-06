@@ -6,10 +6,7 @@
 <%@page import="java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ page import="cscorner.UsuarioLogin" %> 
 <%
-    UsuarioLogin.GetInstancia().checkLogin(request, response);
-
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
             .optionalStart()

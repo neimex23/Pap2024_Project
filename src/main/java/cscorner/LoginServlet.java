@@ -44,6 +44,8 @@ public class LoginServlet extends HttpServlet {
                         request.getRequestDispatcher("login.jsp").forward(request, response);
                     }
                 }
+                
+                //Se define el usuario logueado en el sistema
                 usuarioLogin.setUsuario(usuarioObtenido);                   
                 request.getSession().setAttribute("usuario", email);
 
