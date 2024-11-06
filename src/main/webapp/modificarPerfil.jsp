@@ -5,6 +5,12 @@
 <%
     // Verificar el estado de la sesión y Establece no cache en la pagina
     UsuarioLogin.GetInstancia().checkLogin(request, response);
+    
+    // Verifica si se ha presionado el botón de cierre de sesión
+    if (request.getParameter("logoutButton") != null) {
+        UsuarioLogin.GetInstancia().Logout(request, response);
+        return; // 
+    }
 %>
 
 <!DOCTYPE html>
@@ -26,6 +32,21 @@
                 <span class="input-group-text input-group-text-custom">${sessionScope.tipoUsuario}</span>
             </div>
         </div>
+            
+        <!-- Verificar y mostrar el mensaje emergente de éxito o error -->
+        <c:if test="${not empty sessionScope.error}">
+            <div class="alert alert-danger mt-3" role="alert">
+                ${sessionScope.error} <!-- Mostrar error de formato de fecha -->
+            </div>
+            <c:remove var="error" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty sessionScope.mensaje}">
+            <script>
+                alert("${sessionScope.mensaje}");
+            </script>
+            <c:remove var="mensaje" scope="session" />
+        </c:if>        
 
         <hr class="my-4"> <!-- Separador entre Tipo de Usuario y Datos del Usuario -->
 
@@ -81,20 +102,12 @@
                     <span class="input-group-text input-group-text-custom" id="basic-addon1">Barrio Actual</span>
                     <input type="text" class="form-control" name="OLD_barrio" 
                            value="${sessionScope.barrio}"
-                           data-display-value="<c:choose>
-                                               <c:when test="${sessionScope.barrio eq 'CENTRO'}">Centro</c:when>
-                                               <c:when test="${sessionScope.barrio eq 'CIUDAD_VIEJA'}">Ciudad Vieja</c:when>
-                                               <c:when test="${sessionScope.barrio eq 'CORDON'}">Cordón</c:when>
-                                               <c:when test="${sessionScope.barrio eq 'PALERMO'}">Palermo</c:when>
-                                               <c:when test="${sessionScope.barrio eq 'PARQUE_RODO'}">Parque Rodó</c:when>
-                                               <c:otherwise>Barrio no seleccionado</c:otherwise>
-                                               </c:choose>"
                            readonly>
                 </div>
             
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="NEW_barrioSelect">Nuevo Barrio</label>
-                    <select class="form-select" id="NEW_barrioSelect" name="NEW_barrio" onchange="handleSelectChange(this)">
+                    <select class="form-select" id="NEW_barrioSelect" name="NEW_barrio">
                         <option value="" disabled selected>Seleccionar...</option>
                         <option value="CENTRO">Centro</option>
                         <option value="CIUDAD_VIEJA">Ciudad Vieja</option>
@@ -104,14 +117,6 @@
                     </select>
                 </div>
                 
-                <script>
-                    function handleSelectChange(select) {
-                        if (select.options[0].selected) {
-                            select.options[0].disabled = true; // Deshabilita la opción "Seleccionar..."
-                        }
-                    }
-                </script>
-
                 <!-- Fecha de Nacimiento -->
                 <div class="input-group mb-3">
                     <span class="input-group-text input-group-text-custom" id="basic-addon1">Fecha de Nacimiento Actual</span>
@@ -128,30 +133,17 @@
                     <span class="input-group-text input-group-text-custom" id="basic-addon1">Estado Actual del Usuario</span>
                     <input type="text" class="form-control" name="ODL_status" 
                            value="${sessionScope.estado}" 
-                           data-display-value="<c:choose>
-                                               <c:when test="${sessionScope.estado eq 'ACTIVO'}">Activo</c:when>
-                                               <c:when test="${sessionScope.estado eq 'SUSPENDIDO'}">Suspendido</c:when>
-                                               <c:otherwise>Estado no seleccionado</c:otherwise>
-                                               </c:choose>"
                            readonly>
                 </div>
                 
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="NEW_estadoSelect">Nuevo Estado</label>
-                    <select class="form-select" id="NEW_estadoSelect" name="NEW_status"onchange="handleSelectChange(this)">
-                        <option value="" disabled selected>Seleccionar...</option>>
+                    <select class="form-select" id="NEW_estadoSelect" name="NEW_status">
+                        <option value="" disabled selected>Seleccionar...</option>
                         <option value="ACTIVO">Activo</option>
                         <option value="SUSPENDIDO">Suspendido</option>
                     </select>
                 </div>
-                        
-                <script>
-                    function handleSelectChange(select) {
-                        if (select.options[0].selected) {
-                            select.options[0].disabled = true; // Deshabilita la opción "Seleccionar..."
-                        }
-                    }
-                </script>                        
             </c:if>
 
             <!-- Información específica del Repartidor -->
@@ -177,13 +169,5 @@
             <button type="submit" class="btn btn-primary">Modificar Perfil</button>
         </form>
     </div>
-            
-    <%-- Verificar y mostrar el mensaje emergente --%>
-    <c:if test="${not empty sessionScope.mensaje}">
-        <script>
-            alert("${sessionScope.mensaje}");
-        </script>
-        <c:remove var="mensaje" scope="session" />
-    </c:if>
 </body>
 </html>

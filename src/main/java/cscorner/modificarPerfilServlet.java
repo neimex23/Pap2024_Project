@@ -185,10 +185,12 @@ public class modificarPerfilServlet extends HttpServlet {
                     fechaNacimientoCalendar = Calendar.getInstance();
                     fechaNacimientoCalendar.setTime(date);
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                    // Manejo de error: la fecha no se pudo parsear
-                    request.setAttribute("error", "Formato de fecha no válida.");
-                    return;
+                    // En lugar de imprimir el error en la consola, se establece un mensaje de error en el request
+                    request.getSession().setAttribute("error", "Formato de fecha no válida. Por favor, usa el formato yyyy-MM-dd.");
+                    
+                    // Redirigir de vuelta a la página de modificación de perfil para mostrar el error
+                    request.getRequestDispatcher("modificarPerfil.jsp").forward(request, response);
+                    return;  // Termina la ejecución aquí para evitar continuar con la lógica
                 }
             }
 

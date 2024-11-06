@@ -15,14 +15,14 @@
     </style>
 </head>
 <body>
-    <div class="container mt-5">
     <!-- Incluir la barra de navegación -->
     <jsp:include page="navbar.jsp" />
+    
+    <div class="container mt-5">
         <h1 class="mb-4">Listar Distribuciones</h1>
 
-         <div id="result" class="mt-4"></div>
-
-         <script>
+        <div id="result" class="mt-4"></div>
+        <script>
              document.addEventListener("DOMContentLoaded", function() {
                 fetchDistribuciones(); // Llama a la función al inicio
             });
