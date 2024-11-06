@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles/login.css">
+    <link rel="icon" type="image/jpg" href="${pageContext.request.contextPath}/resources/programlogo.jpg">
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
