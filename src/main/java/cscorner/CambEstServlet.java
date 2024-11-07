@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ public class CambEstServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CheckLogin(request,response);
         try {
             DtDistribucion[] distribucionesArray = controlador.listarDistribuciones();
             List<DtDistribucion> distribuciones = Arrays.asList(distribucionesArray);
@@ -52,6 +54,7 @@ public class CambEstServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CheckLogin(request,response);
         try {
             int idDistribucion = Integer.parseInt(request.getParameter("idDistribucion"));
             LocalDateTime fechaEntrega = LocalDateTime.parse(request.getParameter("fechaEntrega"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
@@ -80,6 +83,29 @@ public class CambEstServlet extends HttpServlet {
             Logger.getLogger(CambEstServlet.class.getName()).log(Level.SEVERE, "Error al modificar el estado", e);
             response.setContentType("application/json");
             response.getWriter().write("{\"mensaje\":\"Error al modificar el estado\"}");
+        }
+    }
+    
+    private void CheckLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //Elimina el cache en todas las paginas
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // Proxies
+
+        //Chequea si el usuario esta en sesion, se asigna parametro usuario en /LoginServlet
+        if (request.getSession().getAttribute("usuario") == null){
+                request.setAttribute("error", "Debe Iniciar Sesión Primero");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+                dispatcher.forward(request, response);
+        }
+
+        // Verifica si se ha presionado el botón de cierre de sesión
+        if (request.getParameter("logoutButton") != null) {
+            request.getSession(false).invalidate(); 
+
+            request.setAttribute("error", "Se Cerro Sesión");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+            dispatcher.forward(request, response); 
         }
     }
 }
