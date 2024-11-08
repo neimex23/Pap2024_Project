@@ -13,6 +13,11 @@
     
     <div class="container mt-5">
         <h1 class="mb-4">Listar Distribuciones</h1>
+        
+        <!-- Botón para descargar PDF -->
+        <button onclick="window.location.href='generarPDFDistribuciones'" class="btn btn-primary">
+            Descargar PDF
+        </button>
 
         <div id="result" class="mt-4"></div>
         <script>
